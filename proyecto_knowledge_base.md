@@ -1104,6 +1104,134 @@ Los checkpoints pesan ~170 MB por modelo en DeepLabV3+, menos en los otros. Se c
 
 ---
 
-*Documento actualizado — v8. Reemplaza completamente la v7.*
-*Últimos cambios: Bug 10 documentado (history perdido al reanudar + seed incorrecto como mejor); `mars_utils.py` actualizado con Fix 1-3 y `_serialize_history()`; intervalo de checkpoint periódico cambiado de 5 a 3 epochs; instrucciones para compañeros actualizadas (punto 7 reescrito); sección 14 actualizada con descripción del sistema de checkpoints.*
-*Próximos pasos: lanzar entrenamientos completos en paralelo — 05a en Colab Pro, 05b/05c en laptop principal, 05d en compañero 1, 05e en compañero 2.*
+## 19. Bugs Encontrados y Fixes Aplicados — Colab (sesión v9)
+
+Bugs encontrados al intentar ejecutar `05a_model_deeplabv3plus.ipynb` en Google Colab. Todos los fixes aplican a `mars_utils.py` y afectan potencialmente a todos los notebooks `05a`–`05e` cuando se ejecutan en Linux/Colab.
+
+---
+
+### Bug 11 — `df_train` y `df_val` vacíos en Colab / `ValueError: num_samples=0`
+
+**Síntoma**:
+```
+ValueError: num_samples should be a positive integer value, but got num_samples=0
+```
+`df_train.shape` y `df_val.shape` muestran `(0, 6)` mientras que `df_gold.shape` es `(322, 6)` correctamente.
+
+**Causa**: `Path(p).stem` en Linux no interpreta `\` como separador de ruta. Las rutas del `manifest_msl_train.csv` fueron generadas en Windows con backslashes (ej. `msl\ncam\images\edr\NLA_...jpg`). En Linux, `Path` toma el string completo como nombre de archivo y `.stem` retorna todo menos la extensión — nunca el nombre de archivo solo. El filtrado `df_full["_stem"].isin(train_ids)` falla silenciosamente porque ningún stem coincide con los IDs del pickle.
+
+**Fix**: reemplazar `Path(p).stem` por `PureWindowsPath(p).stem` en todas las ocurrencias dentro de `load_split()` que operan sobre rutas del manifest. Añadir `PureWindowsPath` al import:
+
+```python
+from pathlib import Path, PureWindowsPath
+```
+
+`PureWindowsPath` parsea correctamente rutas con backslash en cualquier SO. En Windows produce el mismo resultado que `Path` — el fix es transparente para notebooks locales.
+
+**Líneas afectadas en `load_split()`** — exactamente 6:
+1. `df_full["_stem"] = df_full["image_path"].apply(lambda x: PureWindowsPath(x).stem)`
+2. `_train_ids = set(df_train["image_path"].apply(lambda x: PureWindowsPath(x).stem))` — anti-leakage
+3. `_gold_ids  = set(df_gold["image_path"].apply(lambda x: PureWindowsPath(x).stem))` — anti-leakage
+4. `df["image_path"] = df["image_path"].apply(lambda p: str(DATA_DIR / "images_256" / (PureWindowsPath(p).stem + ".jpg")))` — redirección train/val
+5. `df["mask_path"]  = df["mask_path"].apply(lambda p: str(DATA_DIR / "masks_256"  / (PureWindowsPath(p).stem + ".png")))` — redirección train/val
+6. `df_gold["image_path"] = df_gold["image_path"].apply(lambda p: str(DATA_DIR / "images_256" / (PureWindowsPath(p).stem + ".jpg")))` — redirección gold
+
+**Afecta**: `mars_utils.py` — todos los notebooks se benefician automáticamente.
+
+---
+
+### Bug 12 — `FileNotFoundError` en DataLoader: rutas con backslash no resueltas en redirección
+
+**Síntoma**:
+```
+FileNotFoundError: [Errno 2] No such file or directory:
+'/content/ai4mars_DL-v3/data/images_256/msl\\ncam\\images\\edr\\NLB_556312110EDR_...jpg'
+```
+
+**Causa**: el mismo problema de `Path(p).stem` de Bug 11, pero en las líneas de redirección de rutas de `load_split()`. El filtrado por stems funcionó (df_train tiene filas), pero al reconstruir la ruta se concatena el stem incorrecto (ruta Windows completa) en vez del nombre de archivo solo.
+
+**Fix**: mismo que Bug 11 — las líneas 4, 5 y 6 de la lista anterior. El Bug 12 es consecuencia directa de no haber aplicado el fix completo del Bug 11 en todas las líneas.
+
+**Nota**: este bug aparece después de aplicar un fix parcial del Bug 11. El fix completo de las 6 líneas resuelve ambos bugs simultáneamente.
+
+---
+
+### Bug 13 — `AttributeError: 'tuple' object has no attribute 'detach'` en `train_one_epoch`
+
+**Síntoma**:
+```
+AttributeError: 'tuple' object has no attribute 'detach'
+```
+Error en la línea `acc.update(logits.detach(), masks)` dentro de `train_one_epoch`.
+
+**Causa**: pendiente de confirmar — requiere ver `build_model()` del notebook `05a`. Hipótesis más probable: el modelo DeepLabV3+ retorna una tupla en vez de un `OrderedDict` o tensor, posiblemente por diferencia de versión de `torchvision` entre local y Colab, o por alguna configuración del wrapper del modelo en el notebook. `train_one_epoch` extrae `output["out"]` cuando `isinstance(output, dict)`, pero si el output es una tupla ese bloque no se activa y `logits` queda como la tupla completa.
+
+**Fix**: pendiente — se documenta cuando se confirme la causa exacta revisando `build_model()` del notebook `05a`.
+
+---
+
+### Nota sobre instalación de dependencias en Colab
+
+Tras verificar con `pip show` en un runtime CPU de Colab, **todas las dependencias del proyecto ya vienen preinstaladas** en la imagen base de Colab con versiones correctas o superiores:
+
+| Paquete | Versión en Colab | Requerida |
+|---------|-----------------|-----------|
+| torch | 2.6.0+cu124 | 2.6.0 |
+| torchvision | 0.21.0+cu124 | 0.21.0 |
+| transformers | 5.0.0 | ≥4.40.0 |
+| timm | 1.0.26 | ≥1.0.26 |
+| numpy | 2.0.2 | ≥1.26.0 |
+| pandas | 2.2.2 | ≥2.2.0 |
+| scipy | 1.16.3 | ≥1.13.0 |
+| scikit-learn | 1.6.1 | ≥1.5.0 |
+| scikit-posthocs | 0.13.0 | ≥0.9.0 |
+| Pillow | 11.3.0 | ≥10.3.0 |
+| matplotlib | 3.10.0 | ≥3.9.0 |
+| seaborn | 0.13.2 | ≥0.13.0 |
+| tqdm | 4.67.3 | ≥4.66.0 |
+| jupyter-book | 2.1.5 | ≥1.0.0 |
+
+⚠️ **Esto fue verificado en runtime CPU**. El runtime A100/T4 puede tener imagen distinta — verificar con `pip show` antes de asumir que aplica igual.
+
+La celda de setup de Colab puede simplificarse a solo montar Drive y clonar el repo, eliminando el bloque `pip install` que tardaba ~8 minutos:
+
+```python
+if IN_COLAB:
+    from google.colab import drive
+    drive.mount('/content/drive')
+    !git clone https://github.com/UnDauphin/ai4mars_DL-v3 /content/ai4mars_DL-v3
+    print('Colab — Drive montado, repo clonado')
+```
+
+⚠️ **Pendiente confirmar** que esto aplica también en runtime GPU (T4/A100) antes de actualizar el notebook definitivamente.
+
+---
+
+### Nota sobre recarga de módulos en Colab
+
+Después de hacer `git pull` para actualizar `mars_utils.py`, el kernel sigue usando la versión vieja del módulo que ya estaba en memoria. Para forzar la recarga sin reiniciar el kernel:
+
+```python
+import importlib
+import mars_utils
+importlib.reload(mars_utils)
+from mars_utils import *
+```
+
+Si hay dudas sobre qué versión está activa, reiniciar el kernel (Runtime → Restart session) y ejecutar todas las celdas desde el principio es la opción más segura.
+
+---
+
+### Nota sobre `git pull` en Colab
+
+Ejecutar `!git pull` desde una celda falla si el directorio de trabajo no es el repositorio. El comando correcto especificando la ruta:
+
+```bash
+!git -C /content/ai4mars_DL-v3 pull
+```
+
+---
+
+*Documento actualizado — v9. Reemplaza completamente la v8.*
+*Últimos cambios: sección 19 añadida con bugs 11, 12 y 13 encontrados al ejecutar 05a en Colab; fix de `PureWindowsPath` documentado; nota sobre dependencias preinstaladas en Colab; nota sobre recarga de módulos y git pull en Colab.*
+*Próximos pasos: confirmar Bug 13 (ver build_model() de 05a); verificar dependencias en runtime GPU A100; lanzar entrenamientos completos.*
