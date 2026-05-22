@@ -234,6 +234,7 @@ def load_split(manifest_train_path: Path = PROCESSED_DIR / "manifest_msl_train.c
     train_ids = set(indices["train_ids"])
     val_ids   = set(indices["val_ids"])
 
+    # PureWindowsPath para parsear rutas Windows con backslash en cualquier SO
     df_full["_stem"] = df_full["image_path"].apply(lambda x: PureWindowsPath(x).stem)
 
     df_train = df_full[df_full["_stem"].isin(train_ids)].drop(columns="_stem").reset_index(drop=True)
@@ -246,24 +247,23 @@ def load_split(manifest_train_path: Path = PROCESSED_DIR / "manifest_msl_train.c
     assert len(_train_ids & _gold_ids) == 0, \
         "DATA LEAKAGE: hay solapamiento entre train y gold test set."
 
-    # Redirigir train y val
+    # Redirigir train y val a imágenes resizeadas
     for df in [df_train, df_val]:
         df["image_path"] = df["image_path"].apply(
-            lambda p: str(DATA_DIR / "images_256" / (Path(p).stem + ".jpg"))
+            lambda p: str(DATA_DIR / "images_256" / (PureWindowsPath(p).stem + ".jpg"))
         )
         df["mask_path"] = df["mask_path"].apply(
-            lambda p: str(DATA_DIR / "masks_256" / (Path(p).stem + ".png"))
+            lambda p: str(DATA_DIR / "masks_256" / (PureWindowsPath(p).stem + ".png"))
         )
 
-    # Redirigir gold — máscara tiene sufijo _merged
+    # Redirigir gold
     df_gold["image_path"] = df_gold["image_path"].apply(
-        lambda p: str(DATA_DIR / "images_256" / (Path(p).stem + ".jpg"))
+        lambda p: str(DATA_DIR / "images_256" / (PureWindowsPath(p).stem + ".jpg"))
     )
     df_gold["mask_path"] = df_gold["image_path"].apply(
-        lambda p: str(DATA_DIR / "masks_256" / (Path(p).stem + ".png"))
+        lambda p: str(DATA_DIR / "masks_256" / (PureWindowsPath(p).stem + ".png"))
     )
 
-    
     print(f"✅ Split cargado — train: {len(df_train)} | val: {len(df_val)} | gold test: {len(df_gold)}")
     return df_train, df_val, df_gold
 
