@@ -565,13 +565,15 @@ def train_model(model, train_loader, val_loader,
         start_epoch = ckpt["epoch"] + 1
         best_miou   = ckpt["best_miou"]
         no_improve  = ckpt["no_improve"]
+        history     = ckpt.get("history", {"train": [], "val": []})  # ← restaurar historial
         # Restaurar también el best_state desde el _best.pth si existe
         best_ckpt = CHECKPOINTS_DIR / f"{model_name}_best.pth"
         if best_ckpt.exists():
             best_data  = torch.load(best_ckpt, map_location=device, weights_only=True)
             best_state = best_data["model_state"]
             best_epoch = best_data["epoch"]
-        print(f"  Reanudando desde epoch {start_epoch} | best_miou: {best_miou:.4f}")
+        print(f"  Reanudando desde epoch {start_epoch} | best_miou: {best_miou:.4f} | "
+              f"epochs en historial: {len(history['train'])}")
     else:
         print(f"  Entrenamiento desde cero")
 
@@ -617,8 +619,8 @@ def train_model(model, train_loader, val_loader,
                       f"(sin mejora por {patience} epochs)")
                 break
 
-        # Checkpoint periódico cada 5 epochs — sobreescribe siempre el mismo archivo
-        if epoch % 5 == 0:
+        # Checkpoint periódico cada 3 epochs — sobreescribe siempre el mismo archivo
+        if epoch % 3 == 0:
             torch.save(
                 {
                     "epoch":           epoch,
@@ -627,6 +629,7 @@ def train_model(model, train_loader, val_loader,
                     "scheduler_state": scheduler.state_dict() if scheduler else None,
                     "best_miou":       best_miou,
                     "no_improve":      no_improve,
+                    "history":         history,   # ← guardar historial completo
                 },
                 periodic_ckpt,
             )
@@ -650,6 +653,30 @@ def train_model(model, train_loader, val_loader,
 # ─────────────────────────────────────────────────────────────────────────────
 # MULTI-SEED  —  3 runs, reporta media ± std e IC95%
 # ─────────────────────────────────────────────────────────────────────────────
+def _serialize_history(history: dict) -> dict:
+    """
+    Convierte el dict history a tipos nativos Python para serialización JSON.
+    Maneja float, numpy.floating, dict de floats (IoU_per_class) y otros valores.
+    """
+    def _to_native(v):
+        if isinstance(v, dict):
+            return {ck: float(cv) for ck, cv in v.items()}
+        if isinstance(v, (float, int)):
+            return v
+        try:
+            return float(v)   # captura numpy.float32/64, torch scalars, etc.
+        except (TypeError, ValueError):
+            return v          # fallback: dejar tal cual (str, None, etc.)
+
+    return {
+        split: [
+            {k: _to_native(val) for k, val in epoch_dict.items()}
+            for epoch_dict in epochs
+        ]
+        for split, epochs in history.items()
+    }
+
+
 def run_multi_seed(model_fn, df_train, df_val, df_gold,
                    criterion_fn, optimizer_fn, scheduler_fn,
                    model_name: str, device,
@@ -732,10 +759,11 @@ def run_multi_seed(model_fn, df_train, df_val, df_gold,
         print(f"  Gold test mIoU={test_res['mIoU']:.4f}")
 
         # ── Guardar progreso tras cada seed completado ────────────────────
-        # history no es serializable a JSON directamente — guardamos sin él
+        # Serializar history a tipos nativos Python para JSON
         progress_data = {
             "completed_seeds": [
-                {k: v for k, v in r.items() if k != "history"}
+                {**{k: v for k, v in r.items() if k != "history"},
+                 "history": _serialize_history(r["history"])}
                 for r in all_test
             ]
         }

@@ -1,2 +1,15 @@
-# Auto detect text files and perform LF normalization
+# Normalizar finales de linea al hacer checkout
 * text=auto
+
+# Python siempre con LF (Linux style) — importante para Colab
+*.py text eol=lf
+*.ipynb text eol=lf
+
+# Archivos binarios — que Git no intente convertirlos
+*.pkl binary
+*.pth binary
+*.jpg binary
+*.png binary
+*.json text eol=lf
+*.csv text eol=lf
+*.md text eol=lf

@@ -3,7 +3,7 @@
 > **Entregable 2 — Deep Learning**
 > Estado del Arte, EDA Mejorado e Implementación de Modelos Benchmark
 >
-> **Versión**: 6 — Refleja los bugs encontrados y fixes aplicados durante el debug de `05c_model_marsseg.ipynb`. Sustituye completamente la v5.
+> **Versión**: 8 — Fix del sistema de checkpoints: history ahora se persiste en `_periodic.pth` y `_progress.json`; intervalo de checkpoint cambiado de 5 a 3 epochs; instrucciones para compañeros actualizadas; Bug 10 documentado. Sustituye completamente la v7.
 
 ---
 
@@ -67,9 +67,9 @@ ai4mars_DL-v3/                              ← ROOT del proyecto
 │   ├── images/ncam/                        ← imágenes M2020 (solo EDA exploratorio)
 │   └── labels/NAV/                         ← máscaras M2020 (solo EDA exploratorio)
 │
-├── data/                                   ← generado por 02_preprocessing.ipynb ✅
-│   ├── images_256/                         ← ~6.322 archivos .jpg (6k subset + 322 gold)
-│   └── masks_256/                          ← ~6.322 archivos .png
+├── data/                                   ← generado por 02_preprocessing.ipynb ✅ EN EL REPO
+│   ├── images_256/                         ← 6.322 archivos .jpg (6k subset + 322 gold) ~137MB
+│   └── masks_256/                          ← 6.322 archivos .png
 │
 ├── processed/                              ← generado por notebooks 01 y 02 ✅
 │   ├── manifest_clean.csv
@@ -85,18 +85,18 @@ ai4mars_DL-v3/                              ← ROOT del proyecto
 │   ├── 02_preprocessing.ipynb              ✅ ejecutado
 │   ├── 03_eda_msl.ipynb                    ✅ ejecutado
 │   ├── 04_marco_teorico.md                 ✅ completado (v3 corregida)
-│   ├── 05a_model_deeplabv3plus.ipynb       ❌ pendiente
-│   ├── 05b_model_segformer.ipynb           ✅ generado
-│   ├── 05c_model_marsseg.ipynb             ❌ pendiente
-│   ├── 05d_model_terseg.ipynb              ❌ pendiente
-│   ├── 05e_model_depthformer.ipynb         ❌ pendiente
+│   ├── 05a_model_deeplabv3plus.ipynb       ⚠️ generado y debugueado — pendiente entrenamiento completo (Colab Pro)
+│   ├── 05b_model_segformer.ipynb           ✅ generado — pendiente entrenamiento completo
+│   ├── 05c_model_marsseg.ipynb             ⚠️ debugueado manualmente — pendiente entrenamiento completo
+│   ├── 05d_model_terseg.ipynb              ⚠️ debugueado y validado fast_subset=True — pendiente entrenamiento completo
+│   ├── 05e_model_depthformer.ipynb         ⚠️ debugueado y validado fast_subset=True — pendiente entrenamiento completo
 │   ├── 06_benchmark_estadistico.ipynb      ❌ pendiente
 │   └── mars_utils.py                       ✅ reescrito v4
 │
 ├── checkpoints/                            ← en .gitignore (se llena con los modelos)
 │   └── {model}_seed{N}_best.pth
 │
-├── results/                                ← en .gitignore (se llena tras entrenamiento)
+├── results/                                ← EN EL REPO (se sube por cada companero via PR)
 │   └── benchmark_results.csv
 │
 ├── requirements.txt                        ✅
@@ -761,7 +761,7 @@ resultados = {
 - **Bug conocido en 03_eda_msl.ipynb**: la línea `rec["big_rock_border_px"] = int((np.abs(br_neighbor_y) + np.abs(br_neighbor_x)).sum())` lanza `ValueError` por shapes incompatibles `(255,256)` y `(256,255)`. Corrección: `int(np.abs(br_neighbor_y).sum() + np.abs(br_neighbor_x).sum())`
 - **PyTorch mínimo 2.6.0**: versiones anteriores (2.5.x) son incompatibles con `transformers` actual por CVE-2025-32434. Instalar con `pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124`
 - **Patience actualizado a 10**: subido de 7 a 10 para dar más margen de convergencia con el dataset completo
-- **Sistema de checkpoints robusto**: `train_model` guarda `_periodic.pth` cada 5 epochs (sobreescribe el mismo archivo). `run_multi_seed` guarda `_progress.json` tras cada seed completado. Al reanudar: se salta seeds ya completados, se retoma el seed interrumpido desde el último `_periodic.pth`
+- **Sistema de checkpoints robusto**: `train_model` guarda `_periodic.pth` cada 3 epochs (sobreescribe el mismo archivo) incluyendo el `history` completo acumulado hasta ese punto. `run_multi_seed` guarda `_progress.json` tras cada seed completado, también incluyendo el `history` completo de ese seed. Al reanudar: se salta seeds ya completados, se retoma el seed interrumpido desde el último `_periodic.pth` restaurando el historial previo.
 - **`_best.pth` nunca se borra**: es el checkpoint definitivo para evaluación y visualización. Solo se sobreescribe si el nuevo entrenamiento supera el mIoU previo. Si se interrumpe un reentrenamiento accidental, el `_best.pth` original queda intacto mientras no se supere ese mIoU
 
 ---
@@ -930,6 +930,44 @@ append_benchmark_results(summary, params_M=params_M)
 
 ---
 
+### Bug 10 — Gráficas de entrenamiento incompletas al reanudar / seed incorrecto elegido como mejor
+
+**Causa**: `train_model` inicializaba `history = {"train": [], "val": []}` siempre desde cero, sin restaurarlo del checkpoint periódico. Al reanudar, las epochs previas al corte se perdían y la gráfica empezaba desde "epoch 1" aunque fuera la epoch 47. Adicionalmente, `_progress.json` guardaba los resultados de seeds completados **sin** su `history`, por lo que al reanudar en el último seed, `plot_best_seed_curves` no podía comparar los 3 seeds y elegía el único con history en memoria (el seed en curso), independientemente de su mIoU real.
+
+**Fix aplicado en `mars_utils.py` (v8)**:
+
+1. `train_model` restaura `history` desde el `_periodic.pth` al reanudar:
+```python
+history = ckpt.get("history", {"train": [], "val": []})
+```
+
+2. El checkpoint periódico ahora incluye `history` y se guarda cada **3 epochs** (antes 5):
+```python
+if epoch % 3 == 0:
+    torch.save({..., "history": history}, periodic_ckpt)
+```
+
+3. Se añadió `_serialize_history()` — convierte el history a tipos nativos Python (float, dict) para serialización JSON, manejando `numpy.float32/64`, tensors escalares y dicts de IoU por clase.
+
+4. `_progress.json` ahora incluye el history completo de cada seed completado:
+```python
+{"history": _serialize_history(r["history"])}
+```
+
+**Ciclo de vida de archivos tras el fix**:
+
+| Archivo | Contiene history | Se destruye |
+|---------|-----------------|-------------|
+| `{model}_seed{N}_periodic.pth` | Sí — history hasta epoch actual | Al terminar ese seed |
+| `{model}_progress.json` | Sí — history completo de seeds terminados | Al terminar los 3 seeds |
+| `{model}_seed{N}_best.pth` | No | Nunca |
+
+**Compatibilidad hacia atrás**: checkpoints periódicos generados antes del fix no tienen `"history"`. El `.get(..., {"train": [], "val": []})` activa el fallback y se comporta igual que antes — no peor.
+
+**Afecta**: `mars_utils.py` — todos los notebooks que usen `run_multi_seed` se benefician automáticamente sin cambios en los notebooks.
+
+---
+
 ### Plantilla estándar para notebooks `05a`, `05c`, `05d`, `05e`
 
 Resumen del bloque de datos + verificación anti-leakage que debe ir al inicio de cada notebook (después del import y carga de split):
@@ -951,21 +989,121 @@ print(f'Normalización — mean: {mean} | std: {std}')
 
 ## 15. Instrucciones para Compañeros (onboarding)
 
-1. **Clonar el repositorio** desde el link que se compartirá por el grupo
-2. **Descargar los datos** desde Zenodo ID: 15995036 y colocarlos en la raíz del proyecto respetando la estructura de carpetas
-3. **Crear el entorno** siguiendo la sección 4 de este documento — **usar PyTorch 2.6.0, no 2.5.x**
-4. **Ejecutar en orden**:
-   - `01_eda_exploratorio.ipynb` — genera los manifests en `processed/`
-   - `02_preprocessing.ipynb` — genera imágenes resizadas en `data/` y artefactos en `processed/`
-   - El notebook del modelo asignado (`05a` a `05e`)
-5. **NO regenerar** `processed/split_indices_msl6k.pkl` — usar el que viene en el repo
-6. **Guardar checkpoints en Google Drive** si se usa Colab Pro
-7. **Verificar que `processed/` está en la raíz del proyecto** (ROOT), no dentro de `notebooks/`
-8. **Modo prueba rápida**: antes de lanzar el entrenamiento completo, correr con `fast_subset=True` en `run_multi_seed` para verificar que no hay errores en el pipeline (~2 min por seed)
-9. **Si el entrenamiento se interrumpe**: al volver a ejecutar la celda de `run_multi_seed`, el código detecta automáticamente el `_progress.json` y los `_periodic.pth` y reanuda desde donde se quedó
+Ver `README.md` en la raiz del repositorio para las instrucciones completas.
+
+Resumen de los puntos criticos:
+
+1. **Clonar el repositorio** desde `https://github.com/UnDauphin/ai4mars_DL-v3` via GitHub Desktop
+2. **NO descargar datos desde Zenodo** — `data/images_256/` y `data/masks_256/` ya estan en el repo (~137 MB)
+3. **NO ejecutar** los notebooks `01` ni `02` — todo el preprocesamiento ya esta hecho
+4. **Crear el entorno** siguiendo la seccion 4 de este documento — usar PyTorch 2.6.0, no 2.5.x
+5. **Crear su branch** en GitHub Desktop antes de tocar cualquier archivo: `resultados-nombremodelo`
+6. **NO regenerar** `processed/split_indices_msl6k.pkl` — usar el que viene en el repo
+7. **Verificar `FAST_SUBSET`** — si está en `True`, cambiarlo a `False` antes de ejecutar. Si ya está en `False`, no tocarlo
+8. **Al terminar**: commitear el notebook ejecutado (con graficas visibles) y el CSV via GitHub Desktop, luego abrir Pull Request
+9. **Si el entrenamiento se interrumpe**: volver a ejecutar la celda de `run_multi_seed` — el codigo detecta automaticamente el `_progress.json` y los `_periodic.pth` y reanuda desde donde se quedo
+
+## 18. Distribucion del Proyecto — Repositorio Git y Flujo de Trabajo
+
+### Repositorio
+
+URL: `https://github.com/UnDauphin/ai4mars_DL-v3`
+
+### Que esta en el repositorio
+
+Los datos resizeados (`data/images_256/` y `data/masks_256/`) se suben al repositorio porque pesan ~137 MB en total (12.644 archivos JPEG/PNG de 256x256, ~20-50 KB cada uno), dentro del limite practico de GitHub. Esto elimina la necesidad de que los companeros descarguen y ejecuten los notebooks de preprocesamiento.
+
+### .gitignore final
+
+```gitignore
+# Datos originales (demasiado grandes para git)
+msl/
+mer/
+m2020/
+# data/ <- NO se ignora — las imagenes resizeadas si van al repo
+
+# Checkpoints (archivos de varios cientos de MB por modelo)
+checkpoints/
+
+# Processed: ignorar todo EXCEPTO artefactos necesarios para reproducibilidad
+processed/*
+!processed/split_indices_msl6k.pkl
+!processed/normalization_stats.json
+!processed/class_weights.json
+!processed/manifest_msl_train.csv
+!processed/manifest_msl_gold_test.csv
+
+# Entornos Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.venv
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+```
+
+Nota: `results/` ya NO esta en `.gitignore` — el `benchmark_results.csv` se sube al repo via Pull Request de cada companero.
+
+### Flujo de trabajo con companeros (branches)
+
+Cada companero trabaja en su propia branch para evitar conflictos en `benchmark_results.csv`:
+
+1. Crear branch `resultados-nombremodelo` desde GitHub Desktop antes de empezar
+2. Al terminar el entrenamiento, commitear en su branch:
+   - El notebook ejecutado con todas las celdas y graficas visibles
+   - `results/benchmark_results.csv` con la fila del modelo
+3. Abrir Pull Request hacia `main` en GitHub.com
+4. El responsable principal revisa y aprueba el merge
+5. Al hacer merge, resolver el conflicto en el CSV manteniendo todas las filas — cada PR agrega una fila nueva
+
+### Configuracion de Colab Pro para 05a (DeepLabV3+)
+
+El notebook `05a` usa Google Colab Pro (A100/T4). La celda de setup:
+
+```python
+if IN_COLAB:
+    from google.colab import drive
+    drive.mount('/content/drive')
+    !git clone https://github.com/UnDauphin/ai4mars_DL-v3 /content/ai4mars_DL-v3
+    !pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124 -q
+    !pip install -r /content/ai4mars_DL-v3/requirements.txt -q
+    PROJECT_ROOT = Path('/content/ai4mars_DL-v3')
+    sys.path.append(str(PROJECT_ROOT / 'notebooks'))
+    import mars_utils
+    mars_utils.CHECKPOINTS_DIR = Path('/content/drive/MyDrive/ai4mars_DL-v3/checkpoints')
+    mars_utils.CHECKPOINTS_DIR.mkdir(parents=True, exist_ok=True)
+    print('Colab — Drive montado, repo clonado, dependencias instaladas')
+```
+
+Drive se monta para persistir los checkpoints (`_best.pth`) en caso de corte de sesion. El repo se clona para tener el codigo y los datos. Los checkpoints se redirigen a Drive sobreescribiendo `mars_utils.CHECKPOINTS_DIR` despues del import.
+
+### Lo que se guarda tras el entrenamiento y donde
+
+| Archivo | Ubicacion | Persistencia | En el repo |
+|---------|-----------|-------------|------------|
+| `{modelo}_seed{N}_best.pth` | `checkpoints/` (local) o Drive (Colab) | Permanente | No (.gitignore) |
+| `{modelo}_seed{N}_periodic.pth` | `checkpoints/` | Temporal (se sobreescribe cada 5 epochs) | No |
+| `{modelo}_progress.json` | `checkpoints/` | Temporal (se borra al completar) | No |
+| `benchmark_results.csv` | `results/` | Permanente | Si (via PR) |
+| Notebook ejecutado con graficas | `notebooks/` | Permanente | Si (via PR) |
+
+Los checkpoints pesan ~170 MB por modelo en DeepLabV3+, menos en los otros. Se comparten via Google Drive si son necesarios para visualizaciones posteriores.
 
 ---
 
-*Documento actualizado — v5. Reemplaza completamente la v4.*
-*Últimos cambios: bugs 1-5 documentados y corregidos en `mars_utils.py`; `load_split()` reescrita para usar stems y redirigir a `data/images_256/` y `data/masks_256/`; sistema de checkpoints robusto implementado en `train_model` y `run_multi_seed` (periódico cada 5 epochs + progress.json por seed); patience subido a 10; PyTorch actualizado a 2.6.0; `05b_model_segformer.ipynb` validado con fast_subset.*
-*Próximos pasos: lanzar `05b` con `fast_subset=False` (~11h); notebooks 05a, 05c, 05d, 05e en paralelo entre compañeros.*
+*Documento actualizado — v8. Reemplaza completamente la v7.*
+*Últimos cambios: Bug 10 documentado (history perdido al reanudar + seed incorrecto como mejor); `mars_utils.py` actualizado con Fix 1-3 y `_serialize_history()`; intervalo de checkpoint periódico cambiado de 5 a 3 epochs; instrucciones para compañeros actualizadas (punto 7 reescrito); sección 14 actualizada con descripción del sistema de checkpoints.*
+*Próximos pasos: lanzar entrenamientos completos en paralelo — 05a en Colab Pro, 05b/05c en laptop principal, 05d en compañero 1, 05e en compañero 2.*
