@@ -1,0 +1,26 @@
+# ── Deep Learning ──────────────────────────────────────────────────
+# PyTorch se instala por separado (ver instrucciones)
+transformers>=4.40.0
+timm>=1.0.26
+
+# ── Ciencia de datos ───────────────────────────────────────────────
+numpy>=1.26.0
+pandas>=2.2.0
+scipy>=1.13.0
+scikit-learn>=1.5.0
+scikit-posthocs>=0.9.0
+
+# ── Visión e imágenes ──────────────────────────────────────────────
+Pillow>=10.3.0
+matplotlib>=3.9.0
+seaborn>=0.13.0
+
+# ── Utilidades ─────────────────────────────────────────────────────
+tqdm>=4.66.0
+
+# ── Notebooks y Jupyter Book ───────────────────────────────────────
+jupyter>=1.0.0
+jupyterlab>=4.0.0
+jupyter-book>=1.0.0
+ipywidgets>=8.1.0
+ipykernel>=6.29.0

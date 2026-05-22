@@ -1,0 +1,5 @@
+model,mIoU_mean,mIoU_std,mIoU_ci95,pixel_acc_mean,iou_soil_mean,iou_soil_std,iou_bedrock_mean,iou_bedrock_std,iou_sand_mean,iou_sand_std,iou_big_rock_mean,iou_big_rock_std,params_M,train_time_mean_s,best_epoch_mean
+SegFormer-B2,0.7424,0.0185,0.021,0.9663,0.9592,0.0067,0.9029,0.0087,0.9218,0.0191,0.1855,0.0695,27.35,152.0,17.7
+MarsSeg,0.7054,0.0318,0.036,0.9416,0.9145,0.0192,0.8714,0.0214,0.8627,0.018,0.1731,0.1233,34.87,241.0,38.0
+DepthFormer-RGB,0.7254,0.0415,0.0469,0.9585,0.9471,0.0174,0.8839,0.0323,0.9217,0.0199,0.1491,0.1019,42.02,92.0,17.7
+TerSeg,0.7542,0.0468,0.053,0.9601,0.9461,0.0147,0.8904,0.0187,0.9157,0.0166,0.2648,0.1445,59.47,2307.0,11.0

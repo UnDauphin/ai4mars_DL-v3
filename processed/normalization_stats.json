@@ -1,0 +1,16 @@
+{
+  "mean": [
+    0.2303263779898021,
+    0.2303263779898021,
+    0.2303263779898021
+  ],
+  "std": [
+    0.10591342097577364,
+    0.10591342097577364,
+    0.10591342097577364
+  ],
+  "n_images_train": 4200,
+  "n_pixels_total": 275251200,
+  "computed_on": "train set only",
+  "note": "Aplicar a train, val y gold test. Calculado SOLO sobre train."
+}

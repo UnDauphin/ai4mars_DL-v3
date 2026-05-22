@@ -1,0 +1,37 @@
+# ── Datos originales (demasiado grandes para git) ────────────────────────────
+msl/
+mer/
+m2020/
+# data/ <- ELIMINADA, las imagenes resizeadas si van al repo
+
+# ── Checkpoints (archivos de varios GB) ──────────────────────────────────────
+checkpoints/
+
+# ── Processed: ignorar todo EXCEPTO artefactos necesarios ────────────────────
+processed/*
+!processed/split_indices_msl6k.pkl
+!processed/normalization_stats.json
+!processed/class_weights.json
+!processed/manifest_msl_train.csv
+!processed/manifest_msl_gold_test.csv
+
+# ── Entornos Python ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.venv
+env/
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── Archivos del sistema ──────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
