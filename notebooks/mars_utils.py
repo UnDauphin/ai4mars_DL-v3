@@ -20,7 +20,7 @@ Rutas clave (todas relativas a ROOT = carpeta raíz del proyecto):
 """
 
 import os, json, random, pickle, time, csv
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from collections import defaultdict
 
 import numpy as np
@@ -234,15 +234,15 @@ def load_split(manifest_train_path: Path = PROCESSED_DIR / "manifest_msl_train.c
     train_ids = set(indices["train_ids"])
     val_ids   = set(indices["val_ids"])
 
-    df_full["_stem"] = df_full["image_path"].apply(lambda x: Path(x).stem)
+    df_full["_stem"] = df_full["image_path"].apply(lambda x: PureWindowsPath(x).stem)
 
     df_train = df_full[df_full["_stem"].isin(train_ids)].drop(columns="_stem").reset_index(drop=True)
     df_val   = df_full[df_full["_stem"].isin(val_ids)  ].drop(columns="_stem").reset_index(drop=True)
     df_gold  = pd.read_csv(GOLD_MANIFEST)
 
     # Verificación anti data-leakage
-    _train_ids = set(df_train["image_path"].apply(lambda x: Path(x).stem))
-    _gold_ids  = set(df_gold["image_path"].apply(lambda x: Path(x).stem))
+    _train_ids = set(df_train["image_path"].apply(lambda x: PureWindowsPath(x).stem))
+    _gold_ids  = set(df_gold["image_path"].apply(lambda x: PureWindowsPath(x).stem))
     assert len(_train_ids & _gold_ids) == 0, \
         "DATA LEAKAGE: hay solapamiento entre train y gold test set."
 
