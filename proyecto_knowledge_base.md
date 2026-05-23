@@ -3,7 +3,7 @@
 > **Entregable 2 — Deep Learning**
 > Estado del Arte, EDA Mejorado e Implementación de Modelos Benchmark
 >
-> **Versión**: 8 — Fix del sistema de checkpoints: history ahora se persiste en `_periodic.pth` y `_progress.json`; intervalo de checkpoint cambiado de 5 a 3 epochs; instrucciones para compañeros actualizadas; Bug 10 documentado. Sustituye completamente la v7.
+> **Versión**: 10 — Actualización de progreso: DeepLabV3+ reportado como entrenamiento completo por un compañero; TerSeg optimizado/restaurado a la arquitectura ligera tipo v2 (~49.19M params), `FAST_SUBSET=False`, `BATCH_SIZE=32`, `NUM_WORKERS=6`; resultados debug de TerSeg invalidados; Bug 14 documentado. Sustituye completamente la v9.
 
 ---
 
@@ -85,10 +85,10 @@ ai4mars_DL-v3/                              ← ROOT del proyecto
 │   ├── 02_preprocessing.ipynb              ✅ ejecutado
 │   ├── 03_eda_msl.ipynb                    ✅ ejecutado
 │   ├── 04_marco_teorico.md                 ✅ completado (v3 corregida)
-│   ├── 05a_model_deeplabv3plus.ipynb       ⚠️ generado y debugueado — pendiente entrenamiento completo (Colab Pro)
+│   ├── 05a_model_deeplabv3plus.ipynb       ✅ entrenamiento completo reportado por compañero (pendiente validar/mergear resultados finales)
 │   ├── 05b_model_segformer.ipynb           ✅ generado — pendiente entrenamiento completo
 │   ├── 05c_model_marsseg.ipynb             ⚠️ debugueado manualmente — pendiente entrenamiento completo
-│   ├── 05d_model_terseg.ipynb              ⚠️ debugueado y validado fast_subset=True — pendiente entrenamiento completo
+│   ├── 05d_model_terseg.ipynb              ⚠️ optimizado: arquitectura ligera v2, FAST_SUBSET=False, batch_size=32 — pendiente/validar resultados completos
 │   ├── 05e_model_depthformer.ipynb         ⚠️ debugueado y validado fast_subset=True — pendiente entrenamiento completo
 │   ├── 06_benchmark_estadistico.ipynb      ❌ pendiente
 │   └── mars_utils.py                       ✅ reescrito v4
@@ -505,7 +505,7 @@ visualize_predictions(mejor_modelo, df_gold, DEVICE, mean=mean, std=std, n=5)
 - **Seeds**: [42, 123, 7] — obligatorio para análisis estadístico
 - **Max epochs**: 80
 - **Early stopping**: patience=7 sobre val mIoU
-- **Batch size**: 16
+- **Batch size**: por modelo (default 16; TerSeg usa 32 tras optimización de rendimiento)
 - **Input**: `[B, 3, 256, 256]` — canal grayscale replicado ×3
 - **Métrica de selección de checkpoint**: val mIoU
 - **Test**: evaluación sobre gold set fijo (manifest_msl_gold_test.csv)
@@ -518,9 +518,9 @@ visualize_predictions(mejor_modelo, df_gold, DEVICE, mean=mean, std=std, n=5)
 |-------|----------|--------|---------|-----------------|
 | 1 | 05b | SegFormer-B2 | Laptop principal | ~11h |
 | 2 | 05c | MarsSeg | Laptop principal (2ª ronda) | ~15h |
-| 3 | 05d | TerSeg | Compañero 1 | ~20h |
+| 3 | 05d | TerSeg | Compañero 1 | pendiente medir tras optimización |
 | 4 | 05e | DepthFormer-RGB | Compañero 2 | ~12h |
-| 5 | 05a | DeepLabV3+ | Colab Pro | ~4h en A100 |
+| 5 | 05a | DeepLabV3+ | Colab Pro / compañero | completado por compañero (pendiente validar/mergear resultados) |
 
 > **Nota**: El orden de implementación empieza por SegFormer (no DeepLabV3+) porque es el modelo de la laptop principal y permite verificar el pipeline antes de distribuir a los compañeros. DeepLabV3+ va en Colab y puede correr en paralelo.
 
@@ -539,6 +539,8 @@ Todas las arquitecturas están definidas. No hay ambigüedad pendiente.
 ### 9.1 DeepLabV3+ (ResNet-50) — `05a_model_deeplabv3plus.ipynb`
 
 **Paper**: Mohammad et al., iSpaRo 2024. DOI: 10.1109/iSpaRo60631.2024.10687827
+
+**Estado v10**: entrenamiento completo reportado por un compañero. Pendiente validar el notebook ejecutado y confirmar que la fila final de DeepLabV3+ en `results/benchmark_results.csv` corresponde a `FAST_SUBSET=False` antes del benchmark estadístico.
 
 | Hiperparámetro | Valor |
 |----------------|-------|
@@ -612,9 +614,11 @@ mIoU = 0.6601 ± 0.0122   seed: 0.6651 | 0.6719 | 0.6434
 | Loss | FocalLoss (α=0.25, γ=2.0) |
 | Optimizer | Adam (lr=1e-4) |
 | Scheduler | ReduceLROnPlateau (mode='max', patience=5, factor=0.5) |
+| Batch size | 32 |
+| DataLoader workers | 6 |
 | Entrenamiento | Compañero 1 |
 
-**Nota**: TerSeg interpola a 224×224 antes de Swin (limitación del modelo pretrained).
+**Nota**: TerSeg interpola a 224×224 antes de Swin (limitación del modelo pretrained). La implementación actual usa la variante ligera equivalente a v2: todas las fusiones proyectan a `out_ch=64` y el decoder FLGA es progresivo. No usar la variante pesada previa de v3 que mantenía canales [64, 128, 384, 768] y subía todos los mapas a 128×128, porque generó un cuello de botella severo.
 
 **Resultados de referencia** (subset 2.100 imgs — `[DEPRECADO]`, solo referencia histórica):
 ```
@@ -714,8 +718,8 @@ mIoU = 0.7609 ± 0.0123   seed: 0.7777 | 0.7564 | 0.7485
 |----------|------|--------|
 | EDA Mejorado | 25% | ✅ Completo — notebooks 01, 02 y 03 ejecutados y verificados |
 | Revisión de literatura | 25% | ✅ `04_marco_teorico.md` completado y corregido |
-| Implementación modelos | 30% | ⚠️ En progreso — `05b_model_segformer.ipynb` ejecutado y validado (fast_subset); 05a, 05c, 05d, 05e pendientes entrenamiento completo |
-| Benchmark y análisis estadístico | 20% | ❌ Pendiente — requiere resultados de los 5 modelos |
+| Implementación modelos | 30% | ⚠️ En progreso — `05b_model_segformer.ipynb` ejecutado completo; `05a_model_deeplabv3plus.ipynb` reportado como terminado por compañero; `05d_model_terseg.ipynb` optimizado para corrida completa; 05c y 05e pendientes/por validar |
+| Benchmark y análisis estadístico | 20% | ❌ Pendiente — requiere resultados completos y validados de los 5 modelos |
 
 ### Benchmark estadístico — requisitos no negociables
 
@@ -763,6 +767,8 @@ resultados = {
 - **Patience actualizado a 10**: subido de 7 a 10 para dar más margen de convergencia con el dataset completo
 - **Sistema de checkpoints robusto**: `train_model` guarda `_periodic.pth` cada 3 epochs (sobreescribe el mismo archivo) incluyendo el `history` completo acumulado hasta ese punto. `run_multi_seed` guarda `_progress.json` tras cada seed completado, también incluyendo el `history` completo de ese seed. Al reanudar: se salta seeds ya completados, se retoma el seed interrumpido desde el último `_periodic.pth` restaurando el historial previo.
 - **`_best.pth` nunca se borra**: es el checkpoint definitivo para evaluación y visualización. Solo se sobreescribe si el nuevo entrenamiento supera el mIoU previo. Si se interrumpe un reentrenamiento accidental, el `_best.pth` original queda intacto mientras no se supere ese mIoU
+- **TerSeg optimizado (sesión v10)**: `05d_model_terseg.ipynb` volvió a la arquitectura ligera tipo v2 (~49.19M params), con `FAST_SUBSET=False`, `BATCH_SIZE=32` y `NUM_WORKERS=6`. Los checkpoints debug antiguos se movieron a `checkpoints/debug_fast_subset_terseg/` y la fila debug de `TerSeg` se quitó de `results/benchmark_results.csv`.
+- **Nota DataLoader Windows/Jupyter**: un mensaje `Exception ignored in: _MultiProcessingDataLoaderIter.__del__` puede aparecer con `num_workers > 0` si hay workers viejos o reejecuciones de celdas. Si el entrenamiento sigue, se puede ignorar. Si se congela o corta, reiniciar kernel y bajar `NUM_WORKERS` a 4.
 
 ---
 
@@ -1232,6 +1238,52 @@ Ejecutar `!git pull` desde una celda falla si el directorio de trabajo no es el 
 
 ---
 
-*Documento actualizado — v9. Reemplaza completamente la v8.*
-*Últimos cambios: sección 19 añadida con bugs 11, 12 y 13 encontrados al ejecutar 05a en Colab; fix de `PureWindowsPath` documentado; nota sobre dependencias preinstaladas en Colab; nota sobre recarga de módulos y git pull en Colab.*
-*Próximos pasos: confirmar Bug 13 (ver build_model() de 05a); verificar dependencias en runtime GPU A100; lanzar entrenamientos completos.*
+## 20. Cambios y Progreso — sesión v10
+
+### Progreso de entrenamientos
+
+- **DeepLabV3+ (`05a`)**: un compañero reportó que terminó el entrenamiento completo. Pendiente validar el notebook ejecutado y/o integrar la fila final en `results/benchmark_results.csv` antes del benchmark estadístico.
+- **SegFormer-B2 (`05b`)**: entrenamiento completo ya disponible localmente y fila en CSV.
+- **TerSeg (`05d`)**: se corrigió la causa principal de lentitud antes de considerar resultados finales. La fila anterior en CSV correspondía a debug/fast subset y fue eliminada.
+
+### Bug 14 — TerSeg demasiado lento por arquitectura pesada accidental
+
+**Síntoma**: TerSeg tardó ~4h incluso con `FAST_SUBSET=True`, y un compañero tardó ~10h en llegar aproximadamente a epoch 17. Esto no era consistente con la corrida histórica v2 (~2100 train en menos de 1h).
+
+**Causa**: `05d_model_terseg.ipynb` en v3 no replicaba la implementación ligera de v2. La versión pesada mantenía canales grandes `[64, 128, 384, 768]` y subía todos los features a 128×128 en el decoder, generando un costo computacional muy alto. La versión v2 proyectaba todas las fusiones a `out_ch=64` y usaba un decoder progresivo.
+
+**Fix aplicado en `05d_model_terseg.ipynb`**:
+- Reemplazar `FLModule`, `FGModule` y `FLGADecoder` por `FusionModule` + `FLGA` ligero.
+- Usar `TerSeg(num_classes=NUM_CLASSES, out_ch=64, swin_img_size=224)`.
+- Dejar `FAST_SUBSET=False` para producción.
+- Subir `BATCH_SIZE` a 32 tras prueba real con DataLoader + forward/backward.
+- Mantener `NUM_WORKERS=6` como default; bajar a 4 si Windows/Jupyter muestra problemas de multiprocessing.
+- Añadir `from pathlib import Path` en imports del notebook para evitar fallo en ejecución limpia.
+
+**Validación local**:
+```
+Device: cuda
+GPU: NVIDIA GeForce RTX 4050 Laptop GPU
+Forward OK — salida: torch.Size([2, 4, 256, 256])
+Parámetros entrenables: 49.19M
+```
+
+**Prueba de batch size en RTX 4050 6GB**:
+```
+BS=16: peak ~1.89GB
+BS=24: peak ~2.71GB
+BS=32: peak ~3.48GB  ← elegido
+BS=40: peak ~4.30GB
+BS=48: peak ~5.09GB
+```
+
+**Archivos afectados**:
+- `notebooks/05d_model_terseg.ipynb`
+- `results/benchmark_results.csv` (fila debug TerSeg eliminada)
+- `checkpoints/debug_fast_subset_terseg/` (checkpoints debug movidos fuera de la raíz de checkpoints)
+
+---
+
+*Documento actualizado — v10. Reemplaza completamente la v9.*
+*Últimos cambios: DeepLabV3+ reportado como terminado por compañero; TerSeg restaurado a arquitectura ligera tipo v2, batch size 32, workers 6; resultados debug de TerSeg invalidados; Bug 14 documentado.*
+*Próximos pasos: validar/integrar resultados finales de DeepLabV3+; completar o validar TerSeg, MarsSeg y DepthFormer; construir `06_benchmark_estadistico.ipynb` cuando existan 5 filas finales.*
