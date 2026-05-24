@@ -21,6 +21,7 @@ tqdm>=4.66.0
 # ── Notebooks y Jupyter Book ───────────────────────────────────────
 jupyter>=1.0.0
 jupyterlab>=4.0.0
-jupyter-book>=1.0.0
+jupyter-book==0.15.1
+ghp-import==2.1.0
 ipywidgets>=8.1.0
 ipykernel>=6.29.0

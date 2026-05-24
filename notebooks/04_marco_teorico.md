@@ -30,8 +30,6 @@ Estos modelos cubren el espectro completo de tendencias arquitectónicas relevan
 
 ## 4.3 Análisis Detallado por Modelo
 
----
-
 ### 4.3.1 DeepLabV3+ para Clasificación de Terreno Marciano
 
 **Referencia completa:**
