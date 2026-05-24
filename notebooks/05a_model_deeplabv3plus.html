@@ -1,0 +1,1315 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>05a — DeepLabV3+ (ResNet-50) &#8212; Segmentacion Semantica de Terreno Marciano</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/05a_model_deeplabv3plus';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="05b — SegFormer-B2" href="05b_model_segformer.html" />
+    <link rel="prev" title="04 — Revisión del Estado del Arte" href="04_marco_teorico.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Wall-e.jpg" class="logo__image only-light" alt="Segmentacion Semantica de Terreno Marciano - Home"/>
+    <script>document.write(`<img src="../_static/Wall-e.jpg" class="logo__image only-dark" alt="Segmentacion Semantica de Terreno Marciano - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Segmentacion semantica de terreno marciano
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Analisis de datos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_eda_exploratorio.html">01 — EDA Exploratorio: Dataset AI4MARS Completo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_preprocessing.html">02 — Preprocesamiento: Resize, Split y Estadísticas de Normalización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_eda_msl.html">03 — EDA Profundo: Subconjunto MSL Procesado</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Estado del arte</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04_marco_teorico.html">04 — Revisión del Estado del Arte</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos benchmark</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">05a — DeepLabV3+ (ResNet-50)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05b_model_segformer.html">05b — SegFormer-B2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05c_model_marsseg.html">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05d_model_terseg.html">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05e_model_depthformer.html">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_benchmark_estadistico.html">06 - Benchmark estadistico y resultados finales</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/UnDauphin/ai4mars_DL-v3" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/05a_model_deeplabv3plus.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>05a — DeepLabV3+ (ResNet-50)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instrucciones-de-uso">Instrucciones de uso</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prueba-rapida-en-computador-local-sin-gpu-potente">Prueba rapida en computador local (sin GPU potente)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#entrenamiento-completo-en-google-colab-pro">Entrenamiento completo en Google Colab Pro</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-detectar-entorno-local-vs-colab">0. Setup — Detectar entorno (Local vs Colab)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion">1. Configuracion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos">2. Datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arquitectura-deeplabv3-con-resnet-50">3. Arquitectura — DeepLabV3+ con ResNet-50</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-optimizer-y-scheduler">4. Loss, Optimizer y Scheduler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entrenamiento-multi-seed">5. Entrenamiento Multi-Seed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-agregados">6. Resultados Agregados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizacion-cualitativa">7. Visualizacion Cualitativa</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-final">8. Resumen Final</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="a-deeplabv3-resnet-50">
+<h1>05a — DeepLabV3+ (ResNet-50)<a class="headerlink" href="#a-deeplabv3-resnet-50" title="Permalink to this heading">#</a></h1>
+<p><strong>Paper</strong>: Mohammad et al. — <em>Deep Learning based Semantic Segmentation for Mars Rover Terrain Classification</em><br />
+DOI: <code class="docutils literal notranslate"><span class="pre">10.1109/iSpaRo60631.2024.10687827</span></code> — iSpaRo 2024</p>
+<p><strong>Arquitectura</strong>: DeepLabV3+ con backbone ResNet-50 preentrenado en ImageNet, cabeza ASPP y cabeza auxiliar (weight=0.4).<br />
+<strong>Entrenamiento</strong>: Google Colab Pro (A100 / T4 recomendado).</p>
+<hr class="docutils" />
+<section id="instrucciones-de-uso">
+<h2>Instrucciones de uso<a class="headerlink" href="#instrucciones-de-uso" title="Permalink to this heading">#</a></h2>
+<section id="prueba-rapida-en-computador-local-sin-gpu-potente">
+<h3>Prueba rapida en computador local (sin GPU potente)<a class="headerlink" href="#prueba-rapida-en-computador-local-sin-gpu-potente" title="Permalink to this heading">#</a></h3>
+<p>Antes de lanzar el entrenamiento completo en Colab, verifica que el pipeline funciona en tu maquina local con <code class="docutils literal notranslate"><span class="pre">fast_subset=True</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># En la celda de configuracion, cambia:</span>
+<span class="n">FAST_SUBSET</span> <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># activa el subset pequeno (~200 imgs train, ~50 val)</span>
+</pre></div>
+</div>
+<p>Esto corre ~2 min por seed en CPU/RTX 4050 y verifica que no hay errores en el pipeline completo (carga de datos -&gt; forward -&gt; loss -&gt; metricas -&gt; checkpoint). Solo guarda el modelo del primer seed para no llenar disco.</p>
+<p><strong>No uses</strong> los resultados de <code class="docutils literal notranslate"><span class="pre">fast_subset=True</span></code> para el benchmark — son solo para depuracion.</p>
+</section>
+<section id="entrenamiento-completo-en-google-colab-pro">
+<h3>Entrenamiento completo en Google Colab Pro<a class="headerlink" href="#entrenamiento-completo-en-google-colab-pro" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Subir el proyecto a Google Drive en <code class="docutils literal notranslate"><span class="pre">/content/drive/MyDrive/ai4mars_DL-v3/</span></code></p></li>
+<li><p>Asegurarse de que <code class="docutils literal notranslate"><span class="pre">processed/split_indices_msl6k.pkl</span></code> este en el repo (no se regenera)</p></li>
+<li><p>Montar Drive y ejecutar todas las celdas en orden</p></li>
+<li><p>Los checkpoints se guardan en Drive automaticamente</p></li>
+</ol>
+</section>
+</section>
+<section id="setup-detectar-entorno-local-vs-colab">
+<h2>0. Setup — Detectar entorno (Local vs Colab)<a class="headerlink" href="#setup-detectar-entorno-local-vs-colab" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s1">&#39;google.colab&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+
+<span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">drive</span>
+    <span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive&#39;</span><span class="p">)</span>
+    <span class="o">!</span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/UnDauphin/ai4mars_DL-v3<span class="w"> </span>/content/ai4mars_DL-v3
+    <span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.6.0<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.21.0<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu124<span class="w"> </span>-q
+    <span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>/content/ai4mars_DL-v3/requirements.txt<span class="w"> </span>-q
+    <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/content/ai4mars_DL-v3&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s1">&#39;notebooks&#39;</span><span class="p">))</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">mars_utils</span>
+    <span class="n">mars_utils</span><span class="o">.</span><span class="n">CHECKPOINTS_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/content/drive/MyDrive/ai4mars_DL-v3/checkpoints&#39;</span><span class="p">)</span>
+    <span class="n">mars_utils</span><span class="o">.</span><span class="n">CHECKPOINTS_DIR</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Colab — Drive montado, repo clonado, dependencias instaladas&#39;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Local: este notebook esta en notebooks/, ROOT es el padre</span>
+    <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;__file__&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+    <span class="c1"># Fallback si __file__ no funciona en Jupyter</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s1">&#39;processed&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Local — ROOT: </span><span class="si">{</span><span class="n">PROJECT_ROOT</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;ROOT existe: </span><span class="si">{</span><span class="n">PROJECT_ROOT</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;processed/ existe: </span><span class="si">{</span><span class="p">(</span><span class="n">PROJECT_ROOT</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s2">&quot;processed&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;data/ existe: </span><span class="si">{</span><span class="p">(</span><span class="n">PROJECT_ROOT</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Local — ROOT: C:\Users\Hp\Documents\Deep_learning\ai4mars_DL-v3-main\ai4mars_DL-v3-main
+ROOT existe: True
+processed/ existe: True
+data/ existe: True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchvision.models.segmentation</span><span class="w"> </span><span class="kn">import</span> <span class="n">deeplabv3_resnet50</span><span class="p">,</span> <span class="n">DeepLabV3_ResNet50_Weights</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mars_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">set_seed</span><span class="p">,</span> <span class="n">load_norm_stats</span><span class="p">,</span> <span class="n">load_split</span><span class="p">,</span>
+    <span class="n">build_dataloaders</span><span class="p">,</span> <span class="n">MetricsAccumulator</span><span class="p">,</span>
+    <span class="n">train_one_epoch</span><span class="p">,</span> <span class="n">evaluate</span><span class="p">,</span> <span class="n">train_model</span><span class="p">,</span> <span class="n">run_multi_seed</span><span class="p">,</span>
+    <span class="n">append_benchmark_results</span><span class="p">,</span> <span class="n">plot_best_seed_curves</span><span class="p">,</span>
+    <span class="n">print_summary_table</span><span class="p">,</span> <span class="n">visualize_predictions</span><span class="p">,</span> <span class="n">count_parameters</span><span class="p">,</span>
+    <span class="n">NUM_CLASSES</span><span class="p">,</span> <span class="n">IGNORE_INDEX</span><span class="p">,</span> <span class="n">SEEDS</span><span class="p">,</span>
+    <span class="n">CHECKPOINTS_DIR</span><span class="p">,</span> <span class="n">BENCHMARK_CSV</span>
+<span class="p">)</span>
+
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Device: </span><span class="si">{</span><span class="n">DEVICE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">DEVICE</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;cuda&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;GPU: </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_name</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;VRAM: </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_properties</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">total_memory</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> GB&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Device: cuda
+GPU: NVIDIA GeForce RTX 4050 Laptop GPU
+VRAM: 6.4 GB
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="configuracion">
+<h2>1. Configuracion<a class="headerlink" href="#configuracion" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ======================================================</span>
+<span class="c1">#  CONFIGURACION — ajustar segun entorno</span>
+<span class="c1"># ======================================================</span>
+
+<span class="n">MODEL_NAME</span>   <span class="o">=</span> <span class="s1">&#39;DeepLabV3+&#39;</span>
+<span class="n">FAST_SUBSET</span>  <span class="o">=</span> <span class="kc">False</span>   <span class="c1"># True para prueba rapida local; False para produccion en Colab</span>
+
+<span class="c1"># Hiperparametros (segun KB seccion 9.1)</span>
+<span class="n">LR</span>           <span class="o">=</span> <span class="mf">0.001</span>
+<span class="n">MOMENTUM</span>     <span class="o">=</span> <span class="mf">0.9</span>
+<span class="n">WEIGHT_DECAY</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="n">AUX_WEIGHT</span>   <span class="o">=</span> <span class="mf">0.4</span>
+<span class="n">MAX_EPOCHS</span>   <span class="o">=</span> <span class="mi">80</span>
+<span class="n">PATIENCE</span>     <span class="o">=</span> <span class="mi">10</span>     <span class="c1"># KB v6: patience subido de 7 a 10</span>
+<span class="n">BATCH_SIZE</span>   <span class="o">=</span> <span class="mi">16</span>
+
+<span class="c1"># Pesos de clase: soil=1.0, bedrock=0.8, sand=2.0, big_rock=8.0</span>
+<span class="n">CLASS_WEIGHTS</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Modo: </span><span class="si">{</span><span class="s2">&quot;FAST SUBSET (prueba)&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">FAST_SUBSET</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;PRODUCCION COMPLETA&quot;</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Epochs max: </span><span class="si">{</span><span class="n">MAX_EPOCHS</span><span class="si">}</span><span class="s1"> | Early stopping patience: </span><span class="si">{</span><span class="n">PATIENCE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Seeds: </span><span class="si">{</span><span class="n">SEEDS</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Modo: PRODUCCION COMPLETA
+Epochs max: 80 | Early stopping patience: 10
+Seeds: [42, 123, 7]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="datos">
+<h2>2. Datos<a class="headerlink" href="#datos" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_val</span><span class="p">,</span> <span class="n">df_gold</span> <span class="o">=</span> <span class="n">load_split</span><span class="p">()</span>
+<span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="n">load_norm_stats</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Train: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span><span class="si">}</span><span class="s1"> | Val: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_val</span><span class="p">)</span><span class="si">}</span><span class="s1"> | Gold test: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_gold</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Normalizacion — mean: </span><span class="si">{</span><span class="n">mean</span><span class="si">}</span><span class="s1"> | std: </span><span class="si">{</span><span class="n">std</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Split cargado — train: 4200 | val: 1800 | gold test: 322
+Train: 4200 | Val: 1800 | Gold test: 322
+Normalizacion — mean: [0.2303263779898021, 0.2303263779898021, 0.2303263779898021] | std: [0.10591342097577364, 0.10591342097577364, 0.10591342097577364]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verificacion anti data leakage</span>
+<span class="c1"># Bug 6: derivar stem de image_path — df_train[&#39;stem&#39;] no existe</span>
+<span class="n">train_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;image_path&#39;</span><span class="p">])</span>
+<span class="n">gold_ids</span>  <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">df_gold</span><span class="p">[</span><span class="s1">&#39;image_path&#39;</span><span class="p">])</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_ids</span> <span class="o">&amp;</span> <span class="n">gold_ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;DATA LEAKAGE: overlap entre train y gold test&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Sin overlap entre train y gold test&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Train: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span><span class="si">}</span><span class="s1"> | Val: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_val</span><span class="p">)</span><span class="si">}</span><span class="s1"> | Gold: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_gold</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sin overlap entre train y gold test
+Train: 4200 | Val: 1800 | Gold: 322
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="arquitectura-deeplabv3-con-resnet-50">
+<h2>3. Arquitectura — DeepLabV3+ con ResNet-50<a class="headerlink" href="#arquitectura-deeplabv3-con-resnet-50" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">DeepLabV3PlusMars</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DeepLabV3+ con backbone ResNet-50 preentrenado en ImageNet.</span>
+<span class="sd">    - Salida principal: cabeza ASPP -&gt; 4 clases</span>
+<span class="sd">    - Salida auxiliar:  cabeza aux sobre layer3 -&gt; 4 clases (weight=0.4 en loss)</span>
+<span class="sd">    - Entrada esperada: [B, 3, 256, 256]</span>
+<span class="sd">    - Salida en inferencia: [B, 4, 256, 256]</span>
+
+<span class="sd">    Referencia: Mohammad et al., iSpaRo 2024.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">aux_loss</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux_loss</span> <span class="o">=</span> <span class="n">aux_loss</span>
+
+        <span class="c1"># Carga DeepLabV3 con ResNet-50 preentrenado y ajusta la cabeza final</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">DeepLabV3_ResNet50_Weights</span><span class="o">.</span><span class="n">DEFAULT</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">deeplabv3_resnet50</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">aux_loss</span><span class="o">=</span><span class="n">aux_loss</span><span class="p">)</span>
+
+        <span class="c1"># Reemplazar cabeza principal (256 canales ASPP -&gt; num_classes)</span>
+        <span class="n">base</span><span class="o">.</span><span class="n">classifier</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Reemplazar cabeza auxiliar (256 -&gt; num_classes)</span>
+        <span class="k">if</span> <span class="n">aux_loss</span> <span class="ow">and</span> <span class="n">base</span><span class="o">.</span><span class="n">aux_classifier</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">aux_classifier</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">base</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># Upsample a resolucion original si es necesario</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="s1">&#39;out&#39;</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span>
+                               <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">aux_loss</span> <span class="ow">and</span> <span class="s1">&#39;aux&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
+            <span class="n">aux_logits</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="s1">&#39;aux&#39;</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span>
+                                       <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;out&#39;</span><span class="p">:</span> <span class="n">logits</span><span class="p">,</span><span class="s1">&#39;aux&#39;</span><span class="p">:</span> <span class="n">aux_logits</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;out&#39;</span><span class="p">:</span> <span class="n">logits</span><span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_model</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">DeepLabV3PlusMars</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="n">NUM_CLASSES</span><span class="p">,</span> <span class="n">aux_loss</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+
+
+<span class="c1"># Verificacion rapida de shapes</span>
+<span class="n">_m</span> <span class="o">=</span> <span class="n">build_model</span><span class="p">()</span>
+<span class="n">_m</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+    <span class="n">_out</span> <span class="o">=</span> <span class="n">_m</span><span class="p">(</span><span class="n">_x</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Forward OK — salida eval: </span><span class="si">{</span><span class="n">_out</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>   <span class="c1"># (2, 4, 256, 256)</span>
+
+<span class="n">_m</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">_out_train</span> <span class="o">=</span> <span class="n">_m</span><span class="p">(</span><span class="n">_x</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Forward OK — salida train: logits=</span><span class="si">{</span><span class="n">_out_train</span><span class="p">[</span><span class="s2">&quot;out&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">, aux=</span><span class="si">{</span><span class="n">_out_train</span><span class="p">[</span><span class="s2">&quot;aux&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">n_params</span> <span class="o">=</span> <span class="n">count_parameters</span><span class="p">(</span><span class="n">_m</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Parametros entrenables: </span><span class="si">{</span><span class="n">n_params</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">M  (referencia KB: ~42.00M)&#39;</span><span class="p">)</span>
+<span class="k">del</span> <span class="n">_m</span><span class="p">,</span> <span class="n">_x</span><span class="p">,</span> <span class="n">_out</span><span class="p">,</span> <span class="n">_out_train</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Forward OK — salida eval: torch.Size([2, 4, 256, 256])
+Forward OK — salida train: logits=torch.Size([2, 4, 256, 256]), aux=torch.Size([2, 4, 256, 256])
+Parametros entrenables: 42.00M  (referencia KB: ~42.00M)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="loss-optimizer-y-scheduler">
+<h2>4. Loss, Optimizer y Scheduler<a class="headerlink" href="#loss-optimizer-y-scheduler" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">DeepLabLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CrossEntropyLoss con class weights e ignore_index.</span>
+<span class="sd">    En entrenamiento combina salida principal + cabeza auxiliar (weight=0.4).</span>
+<span class="sd">    En evaluacion solo usa la salida principal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">aux_weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span>
+                 <span class="n">ignore_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">255</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ce</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="n">ignore_index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux_weight</span> <span class="o">=</span> <span class="n">aux_weight</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;out&#39;</span><span class="p">]</span>
+            <span class="n">loss_main</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ce</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s1">&#39;aux&#39;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+                <span class="n">loss_aux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ce</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;aux&#39;</span><span class="p">],</span> <span class="n">target</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">loss_main</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">aux_weight</span> <span class="o">*</span> <span class="n">loss_aux</span>
+
+            <span class="k">return</span> <span class="n">loss_main</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ce</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">criterion_fn</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">DeepLabLoss</span><span class="p">(</span>
+        <span class="n">weight</span><span class="o">=</span><span class="n">CLASS_WEIGHTS</span><span class="p">,</span>
+        <span class="n">aux_weight</span><span class="o">=</span><span class="n">AUX_WEIGHT</span><span class="p">,</span>
+        <span class="n">ignore_index</span><span class="o">=</span><span class="n">IGNORE_INDEX</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">optimizer_fn</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">LR</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="n">MOMENTUM</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="n">WEIGHT_DECAY</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">scheduler_fn</span><span class="p">(</span><span class="n">optimizer</span><span class="p">):</span>
+    <span class="c1"># PolynomialLR: lr decae con potencia 0.9 a lo largo de MAX_EPOCHS iteraciones</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">PolynomialLR</span><span class="p">(</span>
+        <span class="n">optimizer</span><span class="p">,</span> <span class="n">total_iters</span><span class="o">=</span><span class="n">MAX_EPOCHS</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">0.9</span>
+    <span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Loss, optimizer y scheduler definidos&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  Loss: CrossEntropyLoss (weights=[1.0, 0.8, 2.0, 8.0], aux_weight=</span><span class="si">{</span><span class="n">AUX_WEIGHT</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  Optimizer: SGD (lr=</span><span class="si">{</span><span class="n">LR</span><span class="si">}</span><span class="s1">, momentum=</span><span class="si">{</span><span class="n">MOMENTUM</span><span class="si">}</span><span class="s1">, wd=</span><span class="si">{</span><span class="n">WEIGHT_DECAY</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  Scheduler: PolynomialLR (power=0.9, </span><span class="si">{</span><span class="n">MAX_EPOCHS</span><span class="si">}</span><span class="s1"> iters)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loss, optimizer y scheduler definidos
+  Loss: CrossEntropyLoss (weights=[1.0, 0.8, 2.0, 8.0], aux_weight=0.4)
+  Optimizer: SGD (lr=0.001, momentum=0.9, wd=0.0001)
+  Scheduler: PolynomialLR (power=0.9, 80 iters)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="entrenamiento-multi-seed">
+<h2>5. Entrenamiento Multi-Seed<a class="headerlink" href="#entrenamiento-multi-seed" title="Permalink to this heading">#</a></h2>
+<p><strong>Nota Colab</strong>: Los checkpoints se guardan en <code class="docutils literal notranslate"><span class="pre">ROOT/checkpoints/</span></code> que apunta a Google Drive.<br />
+<strong>Nota local</strong> con <code class="docutils literal notranslate"><span class="pre">FAST_SUBSET=True</span></code>: ~200 imgs train, ~50 val, ~2 min/seed — solo para verificar el pipeline.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;df_train shape: </span><span class="si">{</span><span class="n">df_train</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;df_val shape:   </span><span class="si">{</span><span class="n">df_val</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;df_gold shape:  </span><span class="si">{</span><span class="n">df_gold</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Primeras rutas de df_train:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;image_path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="c1"># Verificar que los archivos realmente existen</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;image_path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;VACÍO&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Primer archivo existe: </span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">sample</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;VACÍO&#39;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;df_train está vacío&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>df_train shape: (4200, 6)
+df_val shape:   (1800, 6)
+df_gold shape:  (322, 6)
+
+Primeras rutas de df_train:
+[&#39;C:\\Users\\Hp\\Documents\\Deep_learning\\ai4mars_DL-v3-main\\ai4mars_DL-v3-main\\data\\images_256\\NLA_397681801EDR_F0020000AUT_04096M1.jpg&#39;, &#39;C:\\Users\\Hp\\Documents\\Deep_learning\\ai4mars_DL-v3-main\\ai4mars_DL-v3-main\\data\\images_256\\NLA_397681867EDR_F0020000AUT_04096M1.jpg&#39;, &#39;C:\\Users\\Hp\\Documents\\Deep_learning\\ai4mars_DL-v3-main\\ai4mars_DL-v3-main\\data\\images_256\\NLA_397681893EDR_F0020000AUT_04096M1.jpg&#39;]
+
+Primer archivo existe: True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># Ver qué hay dentro del pickle</span>
+<span class="n">PROCESSED_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">PROJECT_ROOT</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;processed&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s1">&#39;split_indices_msl6k.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">split</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Claves del pickle:&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">split</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tipo de train_ids:&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">split</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Primeros 3 elementos de train_ids:&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">split</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total train_ids:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">split</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Claves del pickle: [&#39;train_ids&#39;, &#39;val_ids&#39;, &#39;seed&#39;, &#39;n_subset&#39;, &#39;val_ratio&#39;, &#39;stratify_col&#39;]
+Tipo de train_ids: &lt;class &#39;list&#39;&gt;
+Primeros 3 elementos de train_ids: [&#39;NLB_550542471EDR_F0633326NCAM00353M1&#39;, &#39;NLB_450326513EDR_F0310538NCAM00350M1&#39;, &#39;NLB_574253980EDR_F0681816NCAM00259M1&#39;]
+Total train_ids: 4200
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ver qué tiene el manifest y cómo se ven sus stems</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">manifest</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s1">&#39;manifest_msl_train.csv&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Columnas del manifest:&quot;</span><span class="p">,</span> <span class="n">manifest</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Primera ruta de imagen:&quot;</span><span class="p">,</span> <span class="n">manifest</span><span class="p">[</span><span class="s1">&#39;image_path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Stem de esa ruta:&quot;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">manifest</span><span class="p">[</span><span class="s1">&#39;image_path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Primer train_id del pickle:&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">split</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Columnas del manifest: [&#39;mission&#39;, &#39;camera&#39;, &#39;id&#39;, &#39;image_path&#39;, &#39;mask_path&#39;, &#39;split&#39;]
+Primera ruta de imagen: msl\ncam\images\edr\NLA_397681339EDR_F0020000AUT_04096M1.JPG
+Stem de esa ruta: NLA_397681339EDR_F0020000AUT_04096M1
+Primer train_id del pickle: NLB_550542471EDR_F0633326NCAM00353M1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bug 7: run_multi_seed NO acepta mean, std ni max_epochs.</span>
+<span class="c1"># El parametro correcto es num_epochs. mean/std los carga internamente.</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">run_multi_seed</span><span class="p">(</span>
+    <span class="n">model_fn</span>       <span class="o">=</span> <span class="n">build_model</span><span class="p">,</span>
+    <span class="n">df_train</span>       <span class="o">=</span> <span class="n">df_train</span><span class="p">,</span>
+    <span class="n">df_val</span>         <span class="o">=</span> <span class="n">df_val</span><span class="p">,</span>
+    <span class="n">df_gold</span>        <span class="o">=</span> <span class="n">df_gold</span><span class="p">,</span>
+    <span class="n">criterion_fn</span>   <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">,</span>
+    <span class="n">optimizer_fn</span>   <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">,</span>
+    <span class="n">scheduler_fn</span>   <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">,</span>
+    <span class="n">model_name</span>     <span class="o">=</span> <span class="n">MODEL_NAME</span><span class="p">,</span>
+    <span class="n">device</span>         <span class="o">=</span> <span class="n">DEVICE</span><span class="p">,</span>
+    <span class="n">num_epochs</span>     <span class="o">=</span> <span class="n">MAX_EPOCHS</span><span class="p">,</span>   <span class="c1"># &#39;num_epochs&#39;, no &#39;max_epochs&#39;</span>
+    <span class="n">patience</span>       <span class="o">=</span> <span class="n">PATIENCE</span><span class="p">,</span>
+    <span class="n">batch_size</span>     <span class="o">=</span> <span class="n">BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">fast_subset</span>    <span class="o">=</span> <span class="n">FAST_SUBSET</span><span class="p">,</span>
+    <span class="n">n_train_fast</span>   <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="n">n_val_fast</span>     <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>───────────────────────────────────────────────────────
+  Seed 42 | DeepLabV3+
+  Entrenamiento desde cero
+
+============================================================
+  DeepLabV3+_seed42 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.6444 mIoU=0.5002 | val_loss=0.3235 val_mIoU=0.6645 | rock=0.1235
+Ep   2/80 | loss=0.3523 mIoU=0.6576 | val_loss=0.2469 val_mIoU=0.7138 | rock=0.2469
+Ep   3/80 | loss=0.2949 mIoU=0.6853 | val_loss=0.2069 val_mIoU=0.7270 | rock=0.2577
+Checkpoint periódico guardado (epoch 3)
+Ep   4/80 | loss=0.2560 mIoU=0.7121 | val_loss=0.1983 val_mIoU=0.7329 | rock=0.2798
+Ep   5/80 | loss=0.2313 mIoU=0.7350 | val_loss=0.1882 val_mIoU=0.7554 | rock=0.3469
+Ep   6/80 | loss=0.2073 mIoU=0.7437 | val_loss=0.1780 val_mIoU=0.7834 | rock=0.4179
+Checkpoint periódico guardado (epoch 6)
+Ep   7/80 | loss=0.1941 mIoU=0.7548 | val_loss=0.1853 val_mIoU=0.7862 | rock=0.4564
+Ep   8/80 | loss=0.1844 mIoU=0.7642 | val_loss=0.1794 val_mIoU=0.7724 | rock=0.4021
+Ep   9/80 | loss=0.1764 mIoU=0.7690 | val_loss=0.1875 val_mIoU=0.7831 | rock=0.4283
+Checkpoint periódico guardado (epoch 9)
+Ep  10/80 | loss=0.1608 mIoU=0.7885 | val_loss=0.1742 val_mIoU=0.8000 | rock=0.4747
+Ep  11/80 | loss=0.1541 mIoU=0.7927 | val_loss=0.1874 val_mIoU=0.7658 | rock=0.4010
+Ep  12/80 | loss=0.1450 mIoU=0.7999 | val_loss=0.1748 val_mIoU=0.7992 | rock=0.4799
+Checkpoint periódico guardado (epoch 12)
+Ep  13/80 | loss=0.1369 mIoU=0.8112 | val_loss=0.1666 val_mIoU=0.7992 | rock=0.4825
+Ep  14/80 | loss=0.1288 mIoU=0.8208 | val_loss=0.1566 val_mIoU=0.7966 | rock=0.4523
+Ep  15/80 | loss=0.1293 mIoU=0.8162 | val_loss=0.1652 val_mIoU=0.7930 | rock=0.4658
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.1179 mIoU=0.8316 | val_loss=0.1666 val_mIoU=0.8014 | rock=0.4713
+Ep  17/80 | loss=0.1192 mIoU=0.8223 | val_loss=0.1622 val_mIoU=0.7969 | rock=0.4499
+Ep  18/80 | loss=0.1047 mIoU=0.8451 | val_loss=0.1696 val_mIoU=0.8101 | rock=0.4964
+Checkpoint periódico guardado (epoch 18)
+Ep  19/80 | loss=0.1049 mIoU=0.8447 | val_loss=0.1582 val_mIoU=0.8037 | rock=0.4821
+Ep  20/80 | loss=0.0999 mIoU=0.8491 | val_loss=0.1745 val_mIoU=0.8151 | rock=0.5276
+Ep  21/80 | loss=0.1022 mIoU=0.8465 | val_loss=0.1673 val_mIoU=0.8112 | rock=0.5160
+Checkpoint periódico guardado (epoch 21)
+Ep  22/80 | loss=0.0935 mIoU=0.8587 | val_loss=0.1620 val_mIoU=0.8083 | rock=0.4988
+Ep  23/80 | loss=0.0921 mIoU=0.8586 | val_loss=0.1657 val_mIoU=0.7955 | rock=0.4528
+Ep  24/80 | loss=0.0925 mIoU=0.8554 | val_loss=0.1750 val_mIoU=0.8084 | rock=0.4947
+Checkpoint periódico guardado (epoch 24)
+Ep  25/80 | loss=0.0875 mIoU=0.8621 | val_loss=0.1658 val_mIoU=0.8175 | rock=0.5192
+Ep  26/80 | loss=0.0830 mIoU=0.8692 | val_loss=0.1718 val_mIoU=0.7983 | rock=0.4724
+Ep  27/80 | loss=0.0848 mIoU=0.8658 | val_loss=0.1759 val_mIoU=0.8023 | rock=0.4822
+Checkpoint periódico guardado (epoch 27)
+Ep  28/80 | loss=0.0795 mIoU=0.8711 | val_loss=0.1707 val_mIoU=0.8047 | rock=0.4737
+Ep  29/80 | loss=0.0870 mIoU=0.8659 | val_loss=0.1734 val_mIoU=0.8169 | rock=0.5309
+Ep  30/80 | loss=0.0754 mIoU=0.8791 | val_loss=0.1622 val_mIoU=0.8045 | rock=0.4720
+Checkpoint periódico guardado (epoch 30)
+Ep  31/80 | loss=0.0713 mIoU=0.8824 | val_loss=0.1698 val_mIoU=0.8174 | rock=0.5245
+Ep  32/80 | loss=0.0688 mIoU=0.8849 | val_loss=0.1791 val_mIoU=0.8127 | rock=0.5070
+Ep  33/80 | loss=0.0766 mIoU=0.8823 | val_loss=0.1724 val_mIoU=0.8096 | rock=0.5111
+Checkpoint periódico guardado (epoch 33)
+Ep  34/80 | loss=0.0655 mIoU=0.8881 | val_loss=0.1781 val_mIoU=0.8111 | rock=0.5013
+Ep  35/80 | loss=0.0663 mIoU=0.8899 | val_loss=0.1821 val_mIoU=0.8216 | rock=0.5389
+Ep  36/80 | loss=0.0672 mIoU=0.8904 | val_loss=0.1708 val_mIoU=0.8119 | rock=0.5126
+Checkpoint periódico guardado (epoch 36)
+Ep  37/80 | loss=0.0623 mIoU=0.8956 | val_loss=0.1682 val_mIoU=0.8184 | rock=0.5239
+Ep  38/80 | loss=0.0640 mIoU=0.8967 | val_loss=0.1811 val_mIoU=0.8175 | rock=0.5255
+Ep  39/80 | loss=0.0624 mIoU=0.8979 | val_loss=0.1748 val_mIoU=0.8167 | rock=0.5238
+Checkpoint periódico guardado (epoch 39)
+Ep  40/80 | loss=0.0628 mIoU=0.8928 | val_loss=0.1841 val_mIoU=0.8207 | rock=0.5319
+Ep  41/80 | loss=0.0590 mIoU=0.8993 | val_loss=0.1918 val_mIoU=0.8144 | rock=0.5274
+Ep  42/80 | loss=0.0566 mIoU=0.9029 | val_loss=0.1829 val_mIoU=0.8197 | rock=0.5418
+Checkpoint periódico guardado (epoch 42)
+Ep  43/80 | loss=0.0543 mIoU=0.9064 | val_loss=0.1842 val_mIoU=0.8219 | rock=0.5386
+Ep  44/80 | loss=0.0557 mIoU=0.9042 | val_loss=0.1825 val_mIoU=0.8191 | rock=0.5408
+Ep  45/80 | loss=0.0535 mIoU=0.9081 | val_loss=0.1859 val_mIoU=0.8225 | rock=0.5428
+Checkpoint periódico guardado (epoch 45)
+Ep  46/80 | loss=0.0516 mIoU=0.9113 | val_loss=0.1938 val_mIoU=0.8212 | rock=0.5547
+Ep  47/80 | loss=0.0512 mIoU=0.9111 | val_loss=0.1913 val_mIoU=0.8193 | rock=0.5342
+Ep  48/80 | loss=0.0513 mIoU=0.9112 | val_loss=0.1828 val_mIoU=0.8163 | rock=0.5254
+Checkpoint periódico guardado (epoch 48)
+Ep  49/80 | loss=0.0520 mIoU=0.9129 | val_loss=0.1966 val_mIoU=0.8143 | rock=0.5296
+Ep  50/80 | loss=0.0526 mIoU=0.9096 | val_loss=0.2004 val_mIoU=0.8131 | rock=0.5211
+Ep  51/80 | loss=0.0507 mIoU=0.9101 | val_loss=0.1896 val_mIoU=0.8157 | rock=0.5220
+Checkpoint periódico guardado (epoch 51)
+Ep  52/80 | loss=0.0495 mIoU=0.9165 | val_loss=0.1960 val_mIoU=0.8153 | rock=0.5274
+Ep  53/80 | loss=0.0483 mIoU=0.9152 | val_loss=0.2021 val_mIoU=0.8186 | rock=0.5341
+Ep  54/80 | loss=0.0505 mIoU=0.9123 | val_loss=0.1983 val_mIoU=0.8134 | rock=0.5169
+Checkpoint periódico guardado (epoch 54)
+Ep  55/80 | loss=0.0465 mIoU=0.9164 | val_loss=0.1918 val_mIoU=0.8206 | rock=0.5300
+  Early stopping en epoch 55 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.8225 (epoch 45) | tiempo=11910s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.8425
+ Progreso guardado (1/3 seeds)
+
+───────────────────────────────────────────────────────
+  Seed 123 | DeepLabV3+
+  Entrenamiento desde cero
+
+============================================================
+  DeepLabV3+_seed123 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.6386 mIoU=0.5036 | val_loss=0.3409 val_mIoU=0.6748 | rock=0.1564
+Ep   2/80 | loss=0.3641 mIoU=0.6509 | val_loss=0.2655 val_mIoU=0.6721 | rock=0.1197
+Ep   3/80 | loss=0.2989 mIoU=0.6840 | val_loss=0.2118 val_mIoU=0.7415 | rock=0.3163
+Checkpoint periódico guardado (epoch 3)
+Ep   4/80 | loss=0.2430 mIoU=0.7151 | val_loss=0.2182 val_mIoU=0.7403 | rock=0.3346
+Ep   5/80 | loss=0.2216 mIoU=0.7364 | val_loss=0.2507 val_mIoU=0.6945 | rock=0.2590
+Ep   6/80 | loss=0.2102 mIoU=0.7475 | val_loss=0.1997 val_mIoU=0.7494 | rock=0.3597
+Checkpoint periódico guardado (epoch 6)
+Ep   7/80 | loss=0.1944 mIoU=0.7566 | val_loss=0.1766 val_mIoU=0.7748 | rock=0.3876
+Ep   8/80 | loss=0.1832 mIoU=0.7676 | val_loss=0.2121 val_mIoU=0.7753 | rock=0.4385
+Ep   9/80 | loss=0.1745 mIoU=0.7753 | val_loss=0.1848 val_mIoU=0.7766 | rock=0.4421
+Checkpoint periódico guardado (epoch 9)
+Ep  10/80 | loss=0.1646 mIoU=0.7876 | val_loss=0.1543 val_mIoU=0.7852 | rock=0.4129
+Ep  11/80 | loss=0.1490 mIoU=0.7937 | val_loss=0.1758 val_mIoU=0.7612 | rock=0.3679
+Ep  12/80 | loss=0.1446 mIoU=0.7990 | val_loss=0.1731 val_mIoU=0.7867 | rock=0.4501
+Checkpoint periódico guardado (epoch 12)
+Ep  13/80 | loss=0.1342 mIoU=0.8120 | val_loss=0.1674 val_mIoU=0.8008 | rock=0.4744
+Ep  14/80 | loss=0.1284 mIoU=0.8135 | val_loss=0.1657 val_mIoU=0.7881 | rock=0.4411
+Ep  15/80 | loss=0.1218 mIoU=0.8192 | val_loss=0.1653 val_mIoU=0.8084 | rock=0.4992
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.1167 mIoU=0.8267 | val_loss=0.1731 val_mIoU=0.8021 | rock=0.5043
+Ep  17/80 | loss=0.1138 mIoU=0.8298 | val_loss=0.1747 val_mIoU=0.7914 | rock=0.4449
+Ep  18/80 | loss=0.1079 mIoU=0.8388 | val_loss=0.1667 val_mIoU=0.8145 | rock=0.5183
+Checkpoint periódico guardado (epoch 18)
+Ep  19/80 | loss=0.1062 mIoU=0.8412 | val_loss=0.1607 val_mIoU=0.8024 | rock=0.4809
+Ep  20/80 | loss=0.1064 mIoU=0.8466 | val_loss=0.1958 val_mIoU=0.7918 | rock=0.4679
+Ep  21/80 | loss=0.0984 mIoU=0.8456 | val_loss=0.1659 val_mIoU=0.7975 | rock=0.4718
+Checkpoint periódico guardado (epoch 21)
+Ep  22/80 | loss=0.0921 mIoU=0.8531 | val_loss=0.1669 val_mIoU=0.8138 | rock=0.5186
+Ep  23/80 | loss=0.0888 mIoU=0.8633 | val_loss=0.1703 val_mIoU=0.8159 | rock=0.5174
+Ep  24/80 | loss=0.0855 mIoU=0.8642 | val_loss=0.1808 val_mIoU=0.8149 | rock=0.5143
+Checkpoint periódico guardado (epoch 24)
+Ep  25/80 | loss=0.0915 mIoU=0.8632 | val_loss=0.1702 val_mIoU=0.8051 | rock=0.4747
+Ep  26/80 | loss=0.0901 mIoU=0.8596 | val_loss=0.1678 val_mIoU=0.7781 | rock=0.3893
+Ep  27/80 | loss=0.0864 mIoU=0.8607 | val_loss=0.1827 val_mIoU=0.8174 | rock=0.5229
+Checkpoint periódico guardado (epoch 27)
+Ep  28/80 | loss=0.0854 mIoU=0.8681 | val_loss=0.1686 val_mIoU=0.8134 | rock=0.5210
+Ep  29/80 | loss=0.0771 mIoU=0.8767 | val_loss=0.1601 val_mIoU=0.8115 | rock=0.4961
+Ep  30/80 | loss=0.0798 mIoU=0.8758 | val_loss=0.1664 val_mIoU=0.8136 | rock=0.5080
+Checkpoint periódico guardado (epoch 30)
+Ep  31/80 | loss=0.0738 mIoU=0.8772 | val_loss=0.1641 val_mIoU=0.8122 | rock=0.5101
+Ep  32/80 | loss=0.0741 mIoU=0.8786 | val_loss=0.1729 val_mIoU=0.8113 | rock=0.5131
+Ep  33/80 | loss=0.0721 mIoU=0.8813 | val_loss=0.1672 val_mIoU=0.8132 | rock=0.5071
+Checkpoint periódico guardado (epoch 33)
+Ep  34/80 | loss=0.0714 mIoU=0.8848 | val_loss=0.1658 val_mIoU=0.8088 | rock=0.4913
+Ep  35/80 | loss=0.0674 mIoU=0.8850 | val_loss=0.1707 val_mIoU=0.8250 | rock=0.5349
+Ep  36/80 | loss=0.0682 mIoU=0.8866 | val_loss=0.1752 val_mIoU=0.8169 | rock=0.5255
+Checkpoint periódico guardado (epoch 36)
+Ep  37/80 | loss=0.0644 mIoU=0.8890 | val_loss=0.1766 val_mIoU=0.8168 | rock=0.5212
+Ep  38/80 | loss=0.0621 mIoU=0.8930 | val_loss=0.1739 val_mIoU=0.8219 | rock=0.5311
+Ep  39/80 | loss=0.0674 mIoU=0.8918 | val_loss=0.1737 val_mIoU=0.8166 | rock=0.5204
+Checkpoint periódico guardado (epoch 39)
+Ep  40/80 | loss=0.0598 mIoU=0.8990 | val_loss=0.1757 val_mIoU=0.8149 | rock=0.5180
+Ep  41/80 | loss=0.0620 mIoU=0.8933 | val_loss=0.1808 val_mIoU=0.8171 | rock=0.5076
+Ep  42/80 | loss=0.0561 mIoU=0.9008 | val_loss=0.1777 val_mIoU=0.8136 | rock=0.5097
+Checkpoint periódico guardado (epoch 42)
+Ep  43/80 | loss=0.0614 mIoU=0.8937 | val_loss=0.1833 val_mIoU=0.8198 | rock=0.5212
+Ep  44/80 | loss=0.0556 mIoU=0.9040 | val_loss=0.1935 val_mIoU=0.8163 | rock=0.5221
+Ep  45/80 | loss=0.0594 mIoU=0.8999 | val_loss=0.1888 val_mIoU=0.8072 | rock=0.5164
+  Early stopping en epoch 45 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.8250 (epoch 35) | tiempo=9738s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.7941
+ Progreso guardado (2/3 seeds)
+
+───────────────────────────────────────────────────────
+  Seed 7 | DeepLabV3+
+  Entrenamiento desde cero
+
+============================================================
+  DeepLabV3+_seed7 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.6768 mIoU=0.4845 | val_loss=0.3278 val_mIoU=0.6770 | rock=0.1785
+Ep   2/80 | loss=0.3594 mIoU=0.6479 | val_loss=0.2478 val_mIoU=0.7025 | rock=0.2286
+Ep   3/80 | loss=0.2956 mIoU=0.6844 | val_loss=0.2130 val_mIoU=0.7281 | rock=0.2923
+Checkpoint periódico guardado (epoch 3)
+Ep   4/80 | loss=0.2528 mIoU=0.7105 | val_loss=0.1904 val_mIoU=0.7503 | rock=0.3346
+Ep   5/80 | loss=0.2265 mIoU=0.7321 | val_loss=0.2005 val_mIoU=0.7578 | rock=0.3767
+Ep   6/80 | loss=0.2113 mIoU=0.7400 | val_loss=0.2010 val_mIoU=0.7748 | rock=0.4209
+Checkpoint periódico guardado (epoch 6)
+Ep   7/80 | loss=0.1959 mIoU=0.7568 | val_loss=0.1948 val_mIoU=0.7670 | rock=0.4056
+Ep   8/80 | loss=0.1809 mIoU=0.7684 | val_loss=0.1838 val_mIoU=0.7853 | rock=0.4560
+Ep   9/80 | loss=0.1782 mIoU=0.7711 | val_loss=0.1730 val_mIoU=0.7561 | rock=0.3578
+Checkpoint periódico guardado (epoch 9)
+Ep  10/80 | loss=0.1625 mIoU=0.7829 | val_loss=0.1953 val_mIoU=0.7628 | rock=0.4071
+Ep  11/80 | loss=0.1577 mIoU=0.7897 | val_loss=0.1653 val_mIoU=0.7797 | rock=0.4155
+Ep  12/80 | loss=0.1452 mIoU=0.8074 | val_loss=0.1618 val_mIoU=0.8036 | rock=0.4884
+Checkpoint periódico guardado (epoch 12)
+Ep  13/80 | loss=0.1426 mIoU=0.8032 | val_loss=0.1612 val_mIoU=0.7840 | rock=0.4333
+Ep  14/80 | loss=0.1334 mIoU=0.8177 | val_loss=0.1705 val_mIoU=0.7324 | rock=0.2456
+Ep  15/80 | loss=0.1259 mIoU=0.8124 | val_loss=0.1995 val_mIoU=0.7897 | rock=0.4877
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.1191 mIoU=0.8274 | val_loss=0.1667 val_mIoU=0.8136 | rock=0.5355
+Ep  17/80 | loss=0.1256 mIoU=0.8250 | val_loss=0.1629 val_mIoU=0.8121 | rock=0.5182
+Ep  18/80 | loss=0.1121 mIoU=0.8407 | val_loss=0.1629 val_mIoU=0.8163 | rock=0.5269
+Checkpoint periódico guardado (epoch 18)
+Ep  19/80 | loss=0.1099 mIoU=0.8407 | val_loss=0.1689 val_mIoU=0.8094 | rock=0.5028
+Ep  20/80 | loss=0.1098 mIoU=0.8430 | val_loss=0.1693 val_mIoU=0.7970 | rock=0.4623
+Ep  21/80 | loss=0.1051 mIoU=0.8443 | val_loss=0.1749 val_mIoU=0.8100 | rock=0.5173
+Checkpoint periódico guardado (epoch 21)
+Ep  22/80 | loss=0.0947 mIoU=0.8529 | val_loss=0.1626 val_mIoU=0.8020 | rock=0.4643
+Ep  23/80 | loss=0.0977 mIoU=0.8531 | val_loss=0.1864 val_mIoU=0.7747 | rock=0.4096
+Ep  24/80 | loss=0.0975 mIoU=0.8575 | val_loss=0.1798 val_mIoU=0.7995 | rock=0.4794
+Checkpoint periódico guardado (epoch 24)
+Ep  25/80 | loss=0.0874 mIoU=0.8665 | val_loss=0.1733 val_mIoU=0.8054 | rock=0.4890
+Ep  26/80 | loss=0.0881 mIoU=0.8645 | val_loss=0.1692 val_mIoU=0.8098 | rock=0.4984
+Ep  27/80 | loss=0.0825 mIoU=0.8694 | val_loss=0.1704 val_mIoU=0.8048 | rock=0.4791
+Checkpoint periódico guardado (epoch 27)
+Ep  28/80 | loss=0.0804 mIoU=0.8711 | val_loss=0.1795 val_mIoU=0.8097 | rock=0.5008
+  Early stopping en epoch 28 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.8163 (epoch 18) | tiempo=6074s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.8184
+ Progreso guardado (3/3 seeds)
+
+============================================================
+  DeepLabV3+: mIoU=0.8183 ± 0.0198  IC95=±0.0224
+  IoU(soil      )=0.9751 ± 0.0059
+  IoU(bedrock   )=0.9387 ± 0.0020
+  IoU(sand      )=0.9517 ± 0.0139
+  IoU(big_rock  )=0.4079 ± 0.0616
+============================================================
+ Archivo de progreso eliminado (todos los seeds completados)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="resultados-agregados">
+<h2>6. Resultados Agregados<a class="headerlink" href="#resultados-agregados" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">print_summary_table</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>============================================================
+  RESUMEN — DeepLabV3+
+============================================================
+  Métrica                 Media       Std      IC95
+  ------------------------------------------------
+  mIoU                   0.8183    0.0198  ± 0.0224
+  Pixel Accuracy         0.9794
+  ------------------------------------------------
+  IoU soil               0.9751    0.0059
+  IoU bedrock            0.9387    0.0020
+  IoU sand               0.9517    0.0139
+  IoU big_rock           0.4079    0.0616
+  ------------------------------------------------
+  Params (M)           —
+  Tiempo medio (s)         9241
+  Epoch mejor (mean)       32.7
+============================================================
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_best_seed_curves</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/40a62ec86dfa891ef14170207aa763ef52ccd246efa717708b37b192258761e3.png" src="../_images/40a62ec86dfa891ef14170207aa763ef52ccd246efa717708b37b192258761e3.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bug 9: limpiar fila anterior del mismo modelo antes de guardar,</span>
+<span class="c1"># para evitar duplicados si se reejecutar el notebook.</span>
+<span class="k">if</span> <span class="n">BENCHMARK_CSV</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="n">df_csv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">BENCHMARK_CSV</span><span class="p">)</span>
+    <span class="n">df_csv</span> <span class="o">=</span> <span class="n">df_csv</span><span class="p">[</span><span class="n">df_csv</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">MODEL_NAME</span><span class="p">]</span>
+    <span class="n">df_csv</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">BENCHMARK_CSV</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">params_M</span> <span class="o">=</span> <span class="n">count_parameters</span><span class="p">(</span><span class="n">build_model</span><span class="p">())</span>
+<span class="n">append_benchmark_results</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">params_M</span><span class="o">=</span><span class="n">params_M</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Resultados guardados en results/benchmark_results.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Resultados guardados en C:\Users\Hp\Documents\Deep_learning\ai4mars_DL-v3-main\ai4mars_DL-v3-main\results\benchmark_results.csv
+Resultados guardados en results/benchmark_results.csv
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualizacion-cualitativa">
+<h2>7. Visualizacion Cualitativa<a class="headerlink" href="#visualizacion-cualitativa" title="Permalink to this heading">#</a></h2>
+<p>5 ejemplos del gold set: imagen original | ground truth | prediccion del mejor seed.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bug 8: summary no tiene clave &#39;best_seed&#39; ni &#39;checkpoints&#39;.</span>
+<span class="c1"># Extraer best_seed manualmente desde summary[&#39;per_seed&#39;].</span>
+<span class="n">best_seed</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;per_seed&#39;</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;mIoU&#39;</span><span class="p">])[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span>
+<span class="n">ckpt_path</span> <span class="o">=</span> <span class="n">CHECKPOINTS_DIR</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_seed</span><span class="si">{</span><span class="n">best_seed</span><span class="si">}</span><span class="s1">_best.pth&#39;</span>
+
+<span class="n">best_model</span> <span class="o">=</span> <span class="n">build_model</span><span class="p">()</span>
+<span class="n">ckpt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">DEVICE</span><span class="p">)</span>
+<span class="n">best_model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">ckpt</span><span class="p">[</span><span class="s1">&#39;model_state&#39;</span><span class="p">])</span>
+<span class="n">best_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+<span class="n">best_miou</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;per_seed&#39;</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;mIoU&#39;</span><span class="p">])[</span><span class="s1">&#39;mIoU&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Mejor seed: </span><span class="si">{</span><span class="n">best_seed</span><span class="si">}</span><span class="s1"> | mIoU gold: </span><span class="si">{</span><span class="n">best_miou</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">visualize_predictions</span><span class="p">(</span>
+    <span class="n">model</span>  <span class="o">=</span> <span class="n">best_model</span><span class="p">,</span>
+    <span class="n">df_gold</span><span class="o">=</span> <span class="n">df_gold</span><span class="p">,</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">DEVICE</span><span class="p">,</span>
+    <span class="n">mean</span>   <span class="o">=</span> <span class="n">mean</span><span class="p">,</span>
+    <span class="n">std</span>    <span class="o">=</span> <span class="n">std</span><span class="p">,</span>
+    <span class="n">n</span>      <span class="o">=</span> <span class="mi">5</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mejor seed: 42 | mIoU gold: 0.8425
+</pre></div>
+</div>
+<img alt="../_images/90dc5e4acae94ee7fe279c08f2d1e6f61980528ee31398f9de40f1c3ae80113b.png" src="../_images/90dc5e4acae94ee7fe279c08f2d1e6f61980528ee31398f9de40f1c3ae80113b.png" />
+</div>
+</div>
+</section>
+<section id="resumen-final">
+<h2>8. Resumen Final<a class="headerlink" href="#resumen-final" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Campo</p></th>
+<th class="head"><p>Valor</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Modelo</p></td>
+<td><p>DeepLabV3+ (ResNet-50)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Paper</p></td>
+<td><p>Mohammad et al., iSpaRo 2024</p></td>
+</tr>
+<tr class="row-even"><td><p>Backbone</p></td>
+<td><p>ResNet-50 preentrenado ImageNet</p></td>
+</tr>
+<tr class="row-odd"><td><p>Loss</p></td>
+<td><p>CrossEntropyLoss + aux head (w=0.4)</p></td>
+</tr>
+<tr class="row-even"><td><p>Optimizer</p></td>
+<td><p>SGD (lr=0.001, momentum=0.9)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Scheduler</p></td>
+<td><p>PolynomialLR (power=0.9)</p></td>
+</tr>
+<tr class="row-even"><td><p>Referencia historica (2.1k imgs)</p></td>
+<td><p>mIoU = 0.6806 +/- 0.0107</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+<p><em>Los resultados definitivos del gold set se exportaron a <code class="docutils literal notranslate"><span class="pre">results/benchmark_results.csv</span></code>.</em></p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="04_marco_teorico.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">04 — Revisión del Estado del Arte</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="05b_model_segformer.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">05b — SegFormer-B2</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instrucciones-de-uso">Instrucciones de uso</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prueba-rapida-en-computador-local-sin-gpu-potente">Prueba rapida en computador local (sin GPU potente)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#entrenamiento-completo-en-google-colab-pro">Entrenamiento completo en Google Colab Pro</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-detectar-entorno-local-vs-colab">0. Setup — Detectar entorno (Local vs Colab)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion">1. Configuracion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos">2. Datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arquitectura-deeplabv3-con-resnet-50">3. Arquitectura — DeepLabV3+ con ResNet-50</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-optimizer-y-scheduler">4. Loss, Optimizer y Scheduler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entrenamiento-multi-seed">5. Entrenamiento Multi-Seed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-agregados">6. Resultados Agregados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizacion-cualitativa">7. Visualizacion Cualitativa</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-final">8. Resumen Final</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Entregable 3 - Deep Learning
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

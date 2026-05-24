@@ -1,0 +1,1332 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM) &#8212; Segmentacion Semantica de Terreno Marciano</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/05c_model_marsseg';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)" href="05d_model_terseg.html" />
+    <link rel="prev" title="05b — SegFormer-B2" href="05b_model_segformer.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Wall-e.jpg" class="logo__image only-light" alt="Segmentacion Semantica de Terreno Marciano - Home"/>
+    <script>document.write(`<img src="../_static/Wall-e.jpg" class="logo__image only-dark" alt="Segmentacion Semantica de Terreno Marciano - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Segmentacion semantica de terreno marciano
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Analisis de datos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_eda_exploratorio.html">01 — EDA Exploratorio: Dataset AI4MARS Completo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_preprocessing.html">02 — Preprocesamiento: Resize, Split y Estadísticas de Normalización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_eda_msl.html">03 — EDA Profundo: Subconjunto MSL Procesado</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Estado del arte</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04_marco_teorico.html">04 — Revisión del Estado del Arte</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos benchmark</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="05a_model_deeplabv3plus.html">05a — DeepLabV3+ (ResNet-50)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05b_model_segformer.html">05b — SegFormer-B2</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05d_model_terseg.html">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05e_model_depthformer.html">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_benchmark_estadistico.html">06 - Benchmark estadistico y resultados finales</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/UnDauphin/ai4mars_DL-v3" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/05c_model_marsseg.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">0. Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion">1. Configuración</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos">2. Datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arquitectura-marsseg">3. Arquitectura — MarsSeg</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modulos-de-mejora-de-caracteristicas">3.1 Módulos de mejora de características</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-optimizer-y-scheduler">4. Loss, Optimizer y Scheduler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entrenamiento-multi-seed">5. Entrenamiento Multi-Seed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-agregados">6. Resultados Agregados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizacion-cualitativa">7. Visualización Cualitativa</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-final">8. Resumen Final</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="c-marsseg-resnet-50-miniaspp-psa-sppm">
+<h1>05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)<a class="headerlink" href="#c-marsseg-resnet-50-miniaspp-psa-sppm" title="Permalink to this heading">#</a></h1>
+<p><strong>Paper</strong>: Li et al. — <em>MarsSeg: Mars Surface Semantic Segmentation with Multi-level Extractor and Connector</em><br />
+arXiv: <code class="docutils literal notranslate"><span class="pre">2404.04155</span></code> — Beihang University, 2024</p>
+<p><strong>Arquitectura</strong>: Encoder-decoder basado en ResNet-50 con 3 módulos de mejora de características:</p>
+<ul class="simple">
+<li><p><strong>Mini-ASPP</strong>: captura detalles locales multi-escala en features superficiales</p></li>
+<li><p><strong>PSA</strong> (Polarized Self-Attention): dependencias globales canal + espacio</p></li>
+<li><p><strong>SPPM</strong> (Strip Pyramid Pooling Module): información semántica de alto nivel</p></li>
+<li><p><strong>layer4 con dilation=2</strong> para no reducir resolución espacial</p></li>
+</ul>
+<p><strong>Advertencia</strong>: Alta varianza en big_rock (±0.054) — el más inestable de los 5 modelos. Supervisar las 3 seeds.</p>
+<section id="setup">
+<h2>0. Setup<a class="headerlink" href="#setup" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s1">&#39;google.colab&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+<span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">drive</span>
+    <span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive&#39;</span><span class="p">)</span>
+    <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/content/drive/MyDrive/ai4mars_DL-v3&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s1">&#39;notebooks&#39;</span><span class="p">))</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;__file__&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s1">&#39;processed&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;ROOT: </span><span class="si">{</span><span class="n">PROJECT_ROOT</span><span class="si">}</span><span class="s1"> | existe: </span><span class="si">{</span><span class="n">PROJECT_ROOT</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ROOT: C:\Users\User\Documents\DeepLearning\ai4mars_DL-v3 | existe: True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">resnet50</span><span class="p">,</span> <span class="n">ResNet50_Weights</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mars_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">set_seed</span><span class="p">,</span> <span class="n">load_norm_stats</span><span class="p">,</span> <span class="n">load_split</span><span class="p">,</span>
+    <span class="n">build_dataloaders</span><span class="p">,</span> <span class="n">FocalDiceLoss</span><span class="p">,</span>
+    <span class="n">train_one_epoch</span><span class="p">,</span> <span class="n">evaluate</span><span class="p">,</span> <span class="n">train_model</span><span class="p">,</span> <span class="n">run_multi_seed</span><span class="p">,</span>
+    <span class="n">append_benchmark_results</span><span class="p">,</span> <span class="n">plot_best_seed_curves</span><span class="p">,</span>
+    <span class="n">print_summary_table</span><span class="p">,</span> <span class="n">visualize_predictions</span><span class="p">,</span> <span class="n">count_parameters</span><span class="p">,</span>
+    <span class="n">NUM_CLASSES</span><span class="p">,</span> <span class="n">IGNORE_INDEX</span><span class="p">,</span> <span class="n">SEEDS</span>
+<span class="p">)</span>
+
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Device: </span><span class="si">{</span><span class="n">DEVICE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">DEVICE</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;cuda&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;GPU: </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_name</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Device: cuda
+GPU: NVIDIA GeForce RTX 4050 Laptop GPU
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="configuracion">
+<h2>1. Configuración<a class="headerlink" href="#configuracion" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MODEL_NAME</span>   <span class="o">=</span> <span class="s1">&#39;MarsSeg&#39;</span>
+<span class="n">FAST_SUBSET</span>  <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># ← True para prueba rápida (~2 min/seed)</span>
+
+<span class="n">LR</span>           <span class="o">=</span> <span class="mf">0.001</span>
+<span class="n">MOMENTUM</span>     <span class="o">=</span> <span class="mf">0.9</span>
+<span class="n">WEIGHT_DECAY</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="n">MAX_EPOCHS</span>   <span class="o">=</span> <span class="mi">80</span>
+<span class="n">PATIENCE</span>     <span class="o">=</span> <span class="mi">10</span>
+<span class="n">BATCH_SIZE</span>   <span class="o">=</span> <span class="mi">16</span>
+<span class="n">FOCAL_ALPHA</span>  <span class="o">=</span> <span class="mf">0.25</span>
+<span class="n">FOCAL_GAMMA</span>  <span class="o">=</span> <span class="mf">2.0</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Modo: </span><span class="si">{</span><span class="s2">&quot;FAST SUBSET&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">FAST_SUBSET</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;PRODUCCIÓN&quot;</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Modo: FAST SUBSET
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="datos">
+<h2>2. Datos<a class="headerlink" href="#datos" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_val</span><span class="p">,</span> <span class="n">df_gold</span> <span class="o">=</span> <span class="n">load_split</span><span class="p">()</span>
+<span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="n">load_norm_stats</span><span class="p">()</span>
+
+<span class="c1"># ← columna &#39;stem&#39; no existe en el df; derivarla de image_path</span>
+<span class="n">train_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;image_path&#39;</span><span class="p">])</span>
+<span class="n">gold_ids</span>  <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">df_gold</span><span class="p">[</span><span class="s1">&#39;image_path&#39;</span><span class="p">])</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_ids</span> <span class="o">&amp;</span> <span class="n">gold_ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;⚠️ DATA LEAKAGE detectado&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;✅ Train: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span><span class="si">}</span><span class="s1"> | Val: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_val</span><span class="p">)</span><span class="si">}</span><span class="s1"> | Gold: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_gold</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Normalización — mean: </span><span class="si">{</span><span class="n">mean</span><span class="si">}</span><span class="s1"> | std: </span><span class="si">{</span><span class="n">std</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Split cargado — train: 4200 | val: 1800 | gold test: 322
+✅ Train: 4200 | Val: 1800 | Gold: 322
+Normalización — mean: [0.2303263779898021, 0.2303263779898021, 0.2303263779898021] | std: [0.10591342097577364, 0.10591342097577364, 0.10591342097577364]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="arquitectura-marsseg">
+<h2>3. Arquitectura — MarsSeg<a class="headerlink" href="#arquitectura-marsseg" title="Permalink to this heading">#</a></h2>
+<section id="modulos-de-mejora-de-caracteristicas">
+<h3>3.1 Módulos de mejora de características<a class="headerlink" href="#modulos-de-mejora-de-caracteristicas" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MiniASPP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mini Atrous Spatial Pyramid Pooling.</span>
+<span class="sd">    3 ramas de convolución dilatada (rates 1,1,2) para capturar</span>
+<span class="sd">    representaciones multi-escala locales de forma eficiente.</span>
+<span class="sd">    Diseñado para feature maps de alta resolución (superficiales).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">out_channels</span> <span class="o">//</span> <span class="mi">3</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">mid</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dilation</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">mid</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dilation</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">mid</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Ajuste de canales tras concatenación</span>
+        <span class="n">concat_ch</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuse</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">concat_ch</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">out_channels</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">b1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">b2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">b3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">b3</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PolarizedSelfAttention</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Polarized Self-Attention (PSA).</span>
+<span class="sd">    Atiende tanto a la dimensión de canal como a la espacial</span>
+<span class="sd">    mediante auto-atención ligera paralela.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ch_half</span> <span class="o">=</span> <span class="n">channels</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="c1"># Rama canal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ch_q</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_half</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ch_v</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_half</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Rama espacial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sp_q</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sp_v</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_half</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_ch</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">ch_half</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuse</span>    <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ch_half</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c1"># Atención de canal</span>
+        <span class="n">q_ch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_q</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_half</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>        <span class="c1"># (B, C/2, HW)</span>
+        <span class="n">v_ch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_v</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_half</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>        <span class="c1"># (B, C/2, HW)</span>
+        <span class="n">attn_ch</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">q_ch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>                        <span class="c1"># (B, C/2, HW)</span>
+        <span class="n">ch_out</span> <span class="o">=</span> <span class="p">(</span><span class="n">v_ch</span> <span class="o">*</span> <span class="n">attn_ch</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>      <span class="c1"># (B, C/2, 1)</span>
+        <span class="n">ch_out</span> <span class="o">=</span> <span class="n">ch_out</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>                            <span class="c1"># (B, C/2, 1, 1)</span>
+        <span class="n">ch_out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">norm_ch</span><span class="p">(</span><span class="n">ch_out</span><span class="p">))</span>             <span class="c1"># (B, C/2, 1, 1)</span>
+
+        <span class="c1"># Atención espacial</span>
+        <span class="n">q_sp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sp_q</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>                   <span class="c1"># (B, 1, HW)</span>
+        <span class="n">v_sp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sp_v</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_half</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>        <span class="c1"># (B, C/2, HW)</span>
+        <span class="n">attn_sp</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">q_sp</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>                        <span class="c1"># (B, 1, HW)</span>
+        <span class="n">sp_out</span> <span class="o">=</span> <span class="p">(</span><span class="n">v_sp</span> <span class="o">*</span> <span class="n">attn_sp</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>                    <span class="c1"># (B, C/2)</span>
+        <span class="n">sp_out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">sp_out</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_half</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># (B, C/2, 1, 1)</span>
+
+        <span class="c1"># Combinar y proyectar</span>
+        <span class="n">combined</span> <span class="o">=</span> <span class="n">ch_out</span> <span class="o">*</span> <span class="n">sp_out</span>                               <span class="c1"># (B, C/2, 1, 1)</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SPPM</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strip Pyramid Pooling Module.</span>
+<span class="sd">    Combina pooling global multi-escala (1×1, 2×2, 4×4, 8×8) con</span>
+<span class="sd">    pooling en franja (1×W y H×1) para capturar información semántica</span>
+<span class="sd">    de categorías a múltiples escalas, incluido terreno en franja.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># Reducción de canales antes del pooling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reduce</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">out_channels</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Ramas de pooling multi-escala</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pools</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">AdaptiveAvgPool2d</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+        <span class="p">])</span>
+        <span class="n">n_branches</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pools</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>  <span class="c1"># +2 por strip H y W</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuse</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">out_channels</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">n_branches</span><span class="p">),</span> <span class="n">out_channels</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">out_channels</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">x_r</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_r</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pools</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">pool</span><span class="p">(</span><span class="n">x_r</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="c1"># Strip pooling H y W</span>
+        <span class="n">strip_h</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">adaptive_avg_pool2d</span><span class="p">(</span><span class="n">x_r</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">W</span><span class="p">))</span>
+        <span class="n">strip_w</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">adaptive_avg_pool2d</span><span class="p">(</span><span class="n">x_r</span><span class="p">,</span> <span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">strip_h</span><span class="p">,</span> <span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">strip_w</span><span class="p">,</span> <span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">parts</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MarsSeg</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    MarsSeg: encoder-decoder con ResNet-50 y capas de mejora de características.</span>
+<span class="sd">    </span>
+<span class="sd">    Flujo:</span>
+<span class="sd">      Input [B,3,256,256]</span>
+<span class="sd">        ↓ ResNet-50 layer1 (C=256, H/4×W/4)   → MiniASPP + PSA → feat1</span>
+<span class="sd">        ↓ ResNet-50 layer2 (C=512, H/8×W/8)   → MiniASPP + PSA → feat2</span>
+<span class="sd">        ↓ ResNet-50 layer3 (C=1024, H/16×W/16) → MiniASPP + PSA → feat3</span>
+<span class="sd">        ↓ ResNet-50 layer4 (C=2048, dilation=2, H/16×W/16) → SPPM → feat4</span>
+<span class="sd">        ↓ Decoder: upsample + concat + conv × 2 → logits [B,4,256,256]</span>
+<span class="sd">    </span>
+<span class="sd">    Solo se usan los 3 primeros feature maps (shallow) con dilation en layer4.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># --- Encoder: ResNet-50 con dilation en layer4 ---</span>
+        <span class="n">backbone</span> <span class="o">=</span> <span class="n">resnet50</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">ResNet50_Weights</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer0</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">backbone</span><span class="o">.</span><span class="n">conv1</span><span class="p">,</span> <span class="n">backbone</span><span class="o">.</span><span class="n">bn1</span><span class="p">,</span>
+                                    <span class="n">backbone</span><span class="o">.</span><span class="n">relu</span><span class="p">,</span> <span class="n">backbone</span><span class="o">.</span><span class="n">maxpool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer1</span> <span class="o">=</span> <span class="n">backbone</span><span class="o">.</span><span class="n">layer1</span>   <span class="c1"># out: 256ch, H/4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer2</span> <span class="o">=</span> <span class="n">backbone</span><span class="o">.</span><span class="n">layer2</span>   <span class="c1"># out: 512ch, H/8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer3</span> <span class="o">=</span> <span class="n">backbone</span><span class="o">.</span><span class="n">layer3</span>   <span class="c1"># out: 1024ch, H/16</span>
+        <span class="c1"># layer4 con dilation=2 para mantener resolución H/16</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer4</span> <span class="o">=</span> <span class="n">backbone</span><span class="o">.</span><span class="n">layer4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_dilation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer4</span><span class="p">,</span> <span class="n">dilation</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># --- Feature Enhancement ---</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mini_aspp1</span> <span class="o">=</span> <span class="n">MiniASPP</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">psa1</span>       <span class="o">=</span> <span class="n">PolarizedSelfAttention</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mini_aspp2</span> <span class="o">=</span> <span class="n">MiniASPP</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">psa2</span>       <span class="o">=</span> <span class="n">PolarizedSelfAttention</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mini_aspp3</span> <span class="o">=</span> <span class="n">MiniASPP</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">psa3</span>       <span class="o">=</span> <span class="n">PolarizedSelfAttention</span><span class="p">(</span><span class="mi">512</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sppm</span> <span class="o">=</span> <span class="n">SPPM</span><span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
+
+        <span class="c1"># --- Decoder ---</span>
+        <span class="c1"># Capa 4 (H/16, 512) + Capa 3 (H/16, 512) → fusión</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuse43</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conv_block</span><span class="p">(</span><span class="mi">512</span> <span class="o">+</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+        <span class="c1"># Upsample a H/8 + Capa 2 (H/8, 256)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuse2</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conv_block</span><span class="p">(</span><span class="mi">256</span> <span class="o">+</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+        <span class="c1"># Upsample a H/4 + Capa 1 (H/4, 128)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuse1</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conv_block</span><span class="p">(</span><span class="mi">128</span> <span class="o">+</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+        <span class="c1"># Upsample a H×W → clasificador final</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head</span>   <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_dilation</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">dilation</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Aplica dilation a todas las conv 3×3 de un bloque residual.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">layer</span><span class="o">.</span><span class="n">modules</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">)</span> <span class="ow">and</span> <span class="n">m</span><span class="o">.</span><span class="n">kernel_size</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+                <span class="n">m</span><span class="o">.</span><span class="n">dilation</span>  <span class="o">=</span> <span class="p">(</span><span class="n">dilation</span><span class="p">,</span> <span class="n">dilation</span><span class="p">)</span>
+                <span class="n">m</span><span class="o">.</span><span class="n">padding</span>   <span class="o">=</span> <span class="p">(</span><span class="n">dilation</span><span class="p">,</span> <span class="n">dilation</span><span class="p">)</span>
+                <span class="n">m</span><span class="o">.</span><span class="n">stride</span>    <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">)</span> <span class="ow">and</span> <span class="n">m</span><span class="o">.</span><span class="n">stride</span> <span class="o">==</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="n">m</span><span class="o">.</span><span class="n">stride</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_conv_block</span><span class="p">(</span><span class="n">in_ch</span><span class="p">,</span> <span class="n">out_ch</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_ch</span><span class="p">,</span> <span class="n">out_ch</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">out_ch</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+
+        <span class="c1"># Encoder</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer0</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>          <span class="c1"># H/4</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer1</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>         <span class="c1"># H/4,  256ch</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer2</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>         <span class="c1"># H/8,  512ch</span>
+        <span class="n">x3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer3</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>         <span class="c1"># H/16, 1024ch</span>
+        <span class="n">x4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer4</span><span class="p">(</span><span class="n">x3</span><span class="p">)</span>         <span class="c1"># H/16, 2048ch (dilation=2)</span>
+
+        <span class="c1"># Feature enhancement</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">psa1</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mini_aspp1</span><span class="p">(</span><span class="n">x1</span><span class="p">))</span>   <span class="c1"># H/4,  128ch</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">psa2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mini_aspp2</span><span class="p">(</span><span class="n">x2</span><span class="p">))</span>   <span class="c1"># H/8,  256ch</span>
+        <span class="n">f3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">psa3</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mini_aspp3</span><span class="p">(</span><span class="n">x3</span><span class="p">))</span>   <span class="c1"># H/16, 512ch</span>
+        <span class="n">f4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sppm</span><span class="p">(</span><span class="n">x4</span><span class="p">)</span>                     <span class="c1"># H/16, 512ch</span>
+
+        <span class="c1"># Decoder</span>
+        <span class="n">d43</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse43</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">f4</span><span class="p">,</span> <span class="n">f3</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>             <span class="c1"># H/16, 256ch</span>
+        <span class="n">d43_up</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">d43</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">f2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span>
+                               <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">d2</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse2</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">d43_up</span><span class="p">,</span> <span class="n">f2</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>          <span class="c1"># H/8, 128ch</span>
+        <span class="n">d2_up</span>  <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">d2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">f1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span>
+                               <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">d1</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse1</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">d2_up</span><span class="p">,</span> <span class="n">f1</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>           <span class="c1"># H/4, 64ch</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">d1</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">),</span>
+                            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># H×W, 4ch</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_model</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">MarsSeg</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="n">NUM_CLASSES</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+
+
+<span class="c1"># Verificación</span>
+<span class="n">_m</span> <span class="o">=</span> <span class="n">build_model</span><span class="p">()</span>
+<span class="n">_m</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+    <span class="n">_out</span> <span class="o">=</span> <span class="n">_m</span><span class="p">(</span><span class="n">_x</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Forward OK — salida: </span><span class="si">{</span><span class="n">_out</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># (2, 4, 256, 256)</span>
+
+<span class="n">n_params</span> <span class="o">=</span> <span class="n">count_parameters</span><span class="p">(</span><span class="n">_m</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Parámetros entrenables: </span><span class="si">{</span><span class="n">n_params</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">M  (referencia KB: ~38.61M)&#39;</span><span class="p">)</span>
+<span class="k">del</span> <span class="n">_m</span><span class="p">,</span> <span class="n">_x</span><span class="p">,</span> <span class="n">_out</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Forward OK — salida: torch.Size([2, 4, 256, 256])
+Parámetros entrenables: 34.87M  (referencia KB: ~38.61M)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="loss-optimizer-y-scheduler">
+<h2>4. Loss, Optimizer y Scheduler<a class="headerlink" href="#loss-optimizer-y-scheduler" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">criterion_fn</span><span class="p">():</span>
+    <span class="c1"># FocalDiceLoss — combina Focal + Dice para class imbalance</span>
+    <span class="k">return</span> <span class="n">FocalDiceLoss</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">FOCAL_ALPHA</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">FOCAL_GAMMA</span><span class="p">,</span>
+                         <span class="n">ignore_index</span><span class="o">=</span><span class="n">IGNORE_INDEX</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">optimizer_fn</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">LR</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="n">MOMENTUM</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="n">WEIGHT_DECAY</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">scheduler_fn</span><span class="p">(</span><span class="n">optimizer</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">PolynomialLR</span><span class="p">(</span>
+        <span class="n">optimizer</span><span class="p">,</span> <span class="n">total_iters</span><span class="o">=</span><span class="n">MAX_EPOCHS</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">0.9</span>
+    <span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;✅ Loss: FocalDiceLoss (α=0.25, γ=2.0)&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Optimizer: SGD (lr=0.001, momentum=0.9, wd=1e-4)&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Scheduler: PolynomialLR (power=0.9)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Loss: FocalDiceLoss (α=0.25, γ=2.0)
+  Optimizer: SGD (lr=0.001, momentum=0.9, wd=1e-4)
+  Scheduler: PolynomialLR (power=0.9)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="entrenamiento-multi-seed">
+<h2>5. Entrenamiento Multi-Seed<a class="headerlink" href="#entrenamiento-multi-seed" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">run_multi_seed</span><span class="p">(</span>
+    <span class="n">model_fn</span>       <span class="o">=</span> <span class="n">build_model</span><span class="p">,</span>
+    <span class="n">df_train</span>       <span class="o">=</span> <span class="n">df_train</span><span class="p">,</span>
+    <span class="n">df_val</span>         <span class="o">=</span> <span class="n">df_val</span><span class="p">,</span>
+    <span class="n">df_gold</span>        <span class="o">=</span> <span class="n">df_gold</span><span class="p">,</span>
+    <span class="n">criterion_fn</span>   <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">,</span>
+    <span class="n">optimizer_fn</span>   <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">,</span>
+    <span class="n">scheduler_fn</span>   <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">,</span>
+    <span class="n">model_name</span>     <span class="o">=</span> <span class="n">MODEL_NAME</span><span class="p">,</span>
+    <span class="n">device</span>         <span class="o">=</span> <span class="n">DEVICE</span><span class="p">,</span>
+    <span class="n">num_epochs</span>     <span class="o">=</span> <span class="n">MAX_EPOCHS</span><span class="p">,</span>
+    <span class="n">patience</span>       <span class="o">=</span> <span class="n">PATIENCE</span><span class="p">,</span>
+    <span class="n">batch_size</span>     <span class="o">=</span> <span class="n">BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">fast_subset</span>    <span class="o">=</span> <span class="n">FAST_SUBSET</span><span class="p">,</span>
+    <span class="n">n_train_fast</span>   <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="n">n_val_fast</span>     <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>───────────────────────────────────────────────────────
+  Seed 42 | MarsSeg
+⚡ Subset rápido — train: 200 | val: 50
+   (Para entrenamiento real usar df_train y df_val completos)
+  Entrenamiento desde cero
+
+============================================================
+  MarsSeg_seed42 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.9868 mIoU=0.1124 | val_loss=0.9478 val_mIoU=0.1026 | rock=0.0107
+Ep   2/80 | loss=0.8779 mIoU=0.2208 | val_loss=0.9001 val_mIoU=0.1773 | rock=0.0139
+Ep   3/80 | loss=0.7840 mIoU=0.3453 | val_loss=0.7793 val_mIoU=0.3373 | rock=0.0247
+Ep   4/80 | loss=0.7077 mIoU=0.4090 | val_loss=0.7050 val_mIoU=0.3884 | rock=0.0304
+Ep   5/80 | loss=0.6613 mIoU=0.4500 | val_loss=0.5882 val_mIoU=0.4930 | rock=0.0057
+Checkpoint periódico guardado (epoch 5)
+Ep   6/80 | loss=0.6214 mIoU=0.4597 | val_loss=0.4976 val_mIoU=0.5673 | rock=0.0035
+Ep   7/80 | loss=0.6296 mIoU=0.4930 | val_loss=0.5247 val_mIoU=0.5424 | rock=0.0137
+Ep   8/80 | loss=0.5758 mIoU=0.5172 | val_loss=0.5239 val_mIoU=0.5365 | rock=0.0030
+Ep   9/80 | loss=0.5843 mIoU=0.5203 | val_loss=0.4529 val_mIoU=0.5751 | rock=0.0060
+Ep  10/80 | loss=0.5571 mIoU=0.5255 | val_loss=0.4276 val_mIoU=0.5793 | rock=0.0038
+Checkpoint periódico guardado (epoch 10)
+Ep  11/80 | loss=0.5403 mIoU=0.5235 | val_loss=0.4070 val_mIoU=0.5846 | rock=0.0009
+Ep  12/80 | loss=0.5179 mIoU=0.5571 | val_loss=0.4076 val_mIoU=0.5854 | rock=0.0011
+Ep  13/80 | loss=0.5018 mIoU=0.5541 | val_loss=0.3833 val_mIoU=0.6038 | rock=0.0029
+Ep  14/80 | loss=0.5092 mIoU=0.5618 | val_loss=0.4092 val_mIoU=0.5768 | rock=0.0060
+Ep  15/80 | loss=0.4671 mIoU=0.5789 | val_loss=0.4095 val_mIoU=0.5651 | rock=0.0042
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.4804 mIoU=0.5727 | val_loss=0.3695 val_mIoU=0.5877 | rock=0.0074
+Ep  17/80 | loss=0.4581 mIoU=0.5901 | val_loss=0.3396 val_mIoU=0.6200 | rock=0.0175
+Ep  18/80 | loss=0.4152 mIoU=0.5948 | val_loss=0.3505 val_mIoU=0.6096 | rock=0.0160
+Ep  19/80 | loss=0.4739 mIoU=0.5779 | val_loss=0.3581 val_mIoU=0.6058 | rock=0.0178
+Ep  20/80 | loss=0.4082 mIoU=0.6094 | val_loss=0.3530 val_mIoU=0.6132 | rock=0.0141
+Checkpoint periódico guardado (epoch 20)
+Ep  21/80 | loss=0.4066 mIoU=0.6064 | val_loss=0.3552 val_mIoU=0.6026 | rock=0.0224
+Ep  22/80 | loss=0.4457 mIoU=0.6202 | val_loss=0.3438 val_mIoU=0.6157 | rock=0.0207
+Ep  23/80 | loss=0.4271 mIoU=0.6185 | val_loss=0.3356 val_mIoU=0.6256 | rock=0.0453
+Ep  24/80 | loss=0.4278 mIoU=0.6041 | val_loss=0.3293 val_mIoU=0.6174 | rock=0.0261
+Ep  25/80 | loss=0.4235 mIoU=0.6313 | val_loss=0.3322 val_mIoU=0.6191 | rock=0.0520
+Checkpoint periódico guardado (epoch 25)
+Ep  26/80 | loss=0.4227 mIoU=0.6267 | val_loss=0.3040 val_mIoU=0.6500 | rock=0.0699
+Ep  27/80 | loss=0.3786 mIoU=0.6539 | val_loss=0.3138 val_mIoU=0.6505 | rock=0.1048
+Ep  28/80 | loss=0.3765 mIoU=0.6814 | val_loss=0.3210 val_mIoU=0.6328 | rock=0.0770
+Ep  29/80 | loss=0.3951 mIoU=0.6707 | val_loss=0.3197 val_mIoU=0.6373 | rock=0.0721
+Ep  30/80 | loss=0.3986 mIoU=0.6825 | val_loss=0.3051 val_mIoU=0.6569 | rock=0.1158
+Checkpoint periódico guardado (epoch 30)
+Ep  31/80 | loss=0.3632 mIoU=0.7101 | val_loss=0.3169 val_mIoU=0.6521 | rock=0.1861
+Ep  32/80 | loss=0.3609 mIoU=0.7049 | val_loss=0.3122 val_mIoU=0.6539 | rock=0.1723
+Ep  33/80 | loss=0.3821 mIoU=0.7317 | val_loss=0.2877 val_mIoU=0.6782 | rock=0.1812
+Ep  34/80 | loss=0.3222 mIoU=0.7307 | val_loss=0.2946 val_mIoU=0.6717 | rock=0.1667
+Ep  35/80 | loss=0.3678 mIoU=0.7275 | val_loss=0.2912 val_mIoU=0.6859 | rock=0.2314
+Checkpoint periódico guardado (epoch 35)
+Ep  36/80 | loss=0.3304 mIoU=0.7486 | val_loss=0.3076 val_mIoU=0.6742 | rock=0.2204
+Ep  37/80 | loss=0.3441 mIoU=0.7528 | val_loss=0.3158 val_mIoU=0.6683 | rock=0.2146
+Ep  38/80 | loss=0.3736 mIoU=0.7449 | val_loss=0.2995 val_mIoU=0.6809 | rock=0.2390
+Ep  39/80 | loss=0.3506 mIoU=0.7561 | val_loss=0.2787 val_mIoU=0.6969 | rock=0.2636
+Ep  40/80 | loss=0.3384 mIoU=0.7445 | val_loss=0.3012 val_mIoU=0.6878 | rock=0.2680
+Checkpoint periódico guardado (epoch 40)
+Ep  41/80 | loss=0.3049 mIoU=0.7284 | val_loss=0.3048 val_mIoU=0.6896 | rock=0.2852
+Ep  42/80 | loss=0.3269 mIoU=0.7653 | val_loss=0.2909 val_mIoU=0.6853 | rock=0.2657
+Ep  43/80 | loss=0.3266 mIoU=0.7616 | val_loss=0.3000 val_mIoU=0.6744 | rock=0.2622
+Ep  44/80 | loss=0.3046 mIoU=0.7811 | val_loss=0.2917 val_mIoU=0.6822 | rock=0.2677
+Ep  45/80 | loss=0.2904 mIoU=0.7999 | val_loss=0.3007 val_mIoU=0.6751 | rock=0.2589
+Checkpoint periódico guardado (epoch 45)
+Ep  46/80 | loss=0.2825 mIoU=0.7870 | val_loss=0.2973 val_mIoU=0.6705 | rock=0.2331
+Ep  47/80 | loss=0.3522 mIoU=0.7721 | val_loss=0.2848 val_mIoU=0.6791 | rock=0.2484
+Ep  48/80 | loss=0.2599 mIoU=0.8058 | val_loss=0.2712 val_mIoU=0.6896 | rock=0.2298
+Ep  49/80 | loss=0.2954 mIoU=0.8039 | val_loss=0.2936 val_mIoU=0.6741 | rock=0.2136
+  Early stopping en epoch 49 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.6969 (epoch 39) | tiempo=233s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.7051
+ Progreso guardado (1/3 seeds)
+
+───────────────────────────────────────────────────────
+  Seed 123 | MarsSeg
+⚡ Subset rápido — train: 200 | val: 50
+   (Para entrenamiento real usar df_train y df_val completos)
+  Entrenamiento desde cero
+
+============================================================
+  MarsSeg_seed123 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.9621 mIoU=0.1455 | val_loss=0.9424 val_mIoU=0.1737 | rock=0.0000
+Ep   2/80 | loss=0.8600 mIoU=0.2881 | val_loss=0.8768 val_mIoU=0.2655 | rock=0.0002
+Ep   3/80 | loss=0.7516 mIoU=0.4041 | val_loss=0.7296 val_mIoU=0.4476 | rock=0.0000
+Ep   4/80 | loss=0.6793 mIoU=0.4535 | val_loss=0.6191 val_mIoU=0.4598 | rock=0.0000
+Ep   5/80 | loss=0.6128 mIoU=0.5053 | val_loss=0.5352 val_mIoU=0.5029 | rock=0.0000
+Checkpoint periódico guardado (epoch 5)
+Ep   6/80 | loss=0.5565 mIoU=0.5298 | val_loss=0.5082 val_mIoU=0.5238 | rock=0.0000
+Ep   7/80 | loss=0.4890 mIoU=0.5507 | val_loss=0.5020 val_mIoU=0.5248 | rock=0.0000
+Ep   8/80 | loss=0.4779 mIoU=0.5577 | val_loss=0.4767 val_mIoU=0.5469 | rock=0.0000
+Ep   9/80 | loss=0.5384 mIoU=0.5419 | val_loss=0.4710 val_mIoU=0.5667 | rock=0.0000
+Ep  10/80 | loss=0.4633 mIoU=0.5699 | val_loss=0.4772 val_mIoU=0.5499 | rock=0.0000
+Checkpoint periódico guardado (epoch 10)
+Ep  11/80 | loss=0.4800 mIoU=0.5619 | val_loss=0.4458 val_mIoU=0.5864 | rock=0.0000
+Ep  12/80 | loss=0.4400 mIoU=0.5896 | val_loss=0.4340 val_mIoU=0.5858 | rock=0.0000
+Ep  13/80 | loss=0.4384 mIoU=0.5949 | val_loss=0.4227 val_mIoU=0.5899 | rock=0.0000
+Ep  14/80 | loss=0.4204 mIoU=0.6143 | val_loss=0.4284 val_mIoU=0.5769 | rock=0.0000
+Ep  15/80 | loss=0.4489 mIoU=0.5928 | val_loss=0.4148 val_mIoU=0.5867 | rock=0.0000
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.4101 mIoU=0.6210 | val_loss=0.4024 val_mIoU=0.5904 | rock=0.0000
+Ep  17/80 | loss=0.4226 mIoU=0.6060 | val_loss=0.3996 val_mIoU=0.5990 | rock=0.0000
+Ep  18/80 | loss=0.4036 mIoU=0.6171 | val_loss=0.4296 val_mIoU=0.5799 | rock=0.0000
+Ep  19/80 | loss=0.3824 mIoU=0.6188 | val_loss=0.4251 val_mIoU=0.5786 | rock=0.0000
+Ep  20/80 | loss=0.4255 mIoU=0.6112 | val_loss=0.4066 val_mIoU=0.5964 | rock=0.0000
+Checkpoint periódico guardado (epoch 20)
+Ep  21/80 | loss=0.4023 mIoU=0.6321 | val_loss=0.4105 val_mIoU=0.5899 | rock=0.0000
+Ep  22/80 | loss=0.3889 mIoU=0.6304 | val_loss=0.4045 val_mIoU=0.5979 | rock=0.0000
+Ep  23/80 | loss=0.3989 mIoU=0.6297 | val_loss=0.3892 val_mIoU=0.6030 | rock=0.0000
+Ep  24/80 | loss=0.3818 mIoU=0.6258 | val_loss=0.3892 val_mIoU=0.6030 | rock=0.0000
+Ep  25/80 | loss=0.3974 mIoU=0.6350 | val_loss=0.3981 val_mIoU=0.6086 | rock=0.0000
+Checkpoint periódico guardado (epoch 25)
+Ep  26/80 | loss=0.3495 mIoU=0.6333 | val_loss=0.3925 val_mIoU=0.6070 | rock=0.0000
+Ep  27/80 | loss=0.3480 mIoU=0.6635 | val_loss=0.3944 val_mIoU=0.5920 | rock=0.0000
+Ep  28/80 | loss=0.3785 mIoU=0.6326 | val_loss=0.3873 val_mIoU=0.5924 | rock=0.0000
+Ep  29/80 | loss=0.3886 mIoU=0.6370 | val_loss=0.4069 val_mIoU=0.5896 | rock=0.0000
+Ep  30/80 | loss=0.3708 mIoU=0.6319 | val_loss=0.3870 val_mIoU=0.6120 | rock=0.0000
+Checkpoint periódico guardado (epoch 30)
+Ep  31/80 | loss=0.3631 mIoU=0.6372 | val_loss=0.3866 val_mIoU=0.6090 | rock=0.0000
+Ep  32/80 | loss=0.3532 mIoU=0.6434 | val_loss=0.3750 val_mIoU=0.6034 | rock=0.0000
+Ep  33/80 | loss=0.3555 mIoU=0.6522 | val_loss=0.3791 val_mIoU=0.6177 | rock=0.0000
+Ep  34/80 | loss=0.3807 mIoU=0.6447 | val_loss=0.3877 val_mIoU=0.6144 | rock=0.0000
+Ep  35/80 | loss=0.3506 mIoU=0.6478 | val_loss=0.4022 val_mIoU=0.5989 | rock=0.0000
+Checkpoint periódico guardado (epoch 35)
+Ep  36/80 | loss=0.3225 mIoU=0.6659 | val_loss=0.3822 val_mIoU=0.5958 | rock=0.0000
+Ep  37/80 | loss=0.3565 mIoU=0.6481 | val_loss=0.3862 val_mIoU=0.5964 | rock=0.0003
+Ep  38/80 | loss=0.3486 mIoU=0.6725 | val_loss=0.3870 val_mIoU=0.6016 | rock=0.0007
+Ep  39/80 | loss=0.3116 mIoU=0.6739 | val_loss=0.3824 val_mIoU=0.6019 | rock=0.0000
+Ep  40/80 | loss=0.3247 mIoU=0.6737 | val_loss=0.3946 val_mIoU=0.5982 | rock=0.0016
+Checkpoint periódico guardado (epoch 40)
+Ep  41/80 | loss=0.3337 mIoU=0.6648 | val_loss=0.3929 val_mIoU=0.5999 | rock=0.0001
+Ep  42/80 | loss=0.3433 mIoU=0.7128 | val_loss=0.3852 val_mIoU=0.6039 | rock=0.0031
+Ep  43/80 | loss=0.3461 mIoU=0.7109 | val_loss=0.3827 val_mIoU=0.6031 | rock=0.0016
+  Early stopping en epoch 43 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.6177 (epoch 33) | tiempo=221s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.7446
+ Progreso guardado (2/3 seeds)
+
+───────────────────────────────────────────────────────
+  Seed 7 | MarsSeg
+⚡ Subset rápido — train: 200 | val: 50
+   (Para entrenamiento real usar df_train y df_val completos)
+  Entrenamiento desde cero
+
+============================================================
+  MarsSeg_seed7 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.9776 mIoU=0.1463 | val_loss=0.9752 val_mIoU=0.1354 | rock=0.0013
+Ep   2/80 | loss=0.8574 mIoU=0.3176 | val_loss=0.9193 val_mIoU=0.3351 | rock=0.0024
+Ep   3/80 | loss=0.7568 mIoU=0.4483 | val_loss=0.8150 val_mIoU=0.4786 | rock=0.0079
+Ep   4/80 | loss=0.6401 mIoU=0.5256 | val_loss=0.7474 val_mIoU=0.4842 | rock=0.0026
+Ep   5/80 | loss=0.6078 mIoU=0.5273 | val_loss=0.6276 val_mIoU=0.5482 | rock=0.0019
+Checkpoint periódico guardado (epoch 5)
+Ep   6/80 | loss=0.5291 mIoU=0.5565 | val_loss=0.5694 val_mIoU=0.5704 | rock=0.0000
+Ep   7/80 | loss=0.5365 mIoU=0.5436 | val_loss=0.5419 val_mIoU=0.5883 | rock=0.0000
+Ep   8/80 | loss=0.5009 mIoU=0.5793 | val_loss=0.5191 val_mIoU=0.6091 | rock=0.0000
+Ep   9/80 | loss=0.5022 mIoU=0.5641 | val_loss=0.5116 val_mIoU=0.6056 | rock=0.0000
+Ep  10/80 | loss=0.4364 mIoU=0.5911 | val_loss=0.5114 val_mIoU=0.6032 | rock=0.0000
+Checkpoint periódico guardado (epoch 10)
+Ep  11/80 | loss=0.3800 mIoU=0.6149 | val_loss=0.5133 val_mIoU=0.6041 | rock=0.0000
+Ep  12/80 | loss=0.4640 mIoU=0.5873 | val_loss=0.4921 val_mIoU=0.6260 | rock=0.0000
+Ep  13/80 | loss=0.4372 mIoU=0.6034 | val_loss=0.4916 val_mIoU=0.6212 | rock=0.0000
+Ep  14/80 | loss=0.4446 mIoU=0.6045 | val_loss=0.4899 val_mIoU=0.6179 | rock=0.0000
+Ep  15/80 | loss=0.3937 mIoU=0.6173 | val_loss=0.4654 val_mIoU=0.6252 | rock=0.0000
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.4039 mIoU=0.6077 | val_loss=0.4691 val_mIoU=0.6271 | rock=0.0000
+Ep  17/80 | loss=0.4471 mIoU=0.5980 | val_loss=0.4576 val_mIoU=0.6287 | rock=0.0000
+Ep  18/80 | loss=0.4126 mIoU=0.6281 | val_loss=0.4579 val_mIoU=0.6290 | rock=0.0000
+Ep  19/80 | loss=0.3852 mIoU=0.6411 | val_loss=0.4710 val_mIoU=0.6137 | rock=0.0000
+Ep  20/80 | loss=0.4096 mIoU=0.6210 | val_loss=0.4619 val_mIoU=0.6246 | rock=0.0000
+Checkpoint periódico guardado (epoch 20)
+Ep  21/80 | loss=0.4196 mIoU=0.6353 | val_loss=0.4405 val_mIoU=0.6337 | rock=0.0000
+Ep  22/80 | loss=0.3915 mIoU=0.6300 | val_loss=0.4460 val_mIoU=0.6348 | rock=0.0000
+Ep  23/80 | loss=0.3682 mIoU=0.6383 | val_loss=0.4398 val_mIoU=0.6332 | rock=0.0000
+Ep  24/80 | loss=0.3873 mIoU=0.6288 | val_loss=0.4373 val_mIoU=0.6333 | rock=0.0000
+Ep  25/80 | loss=0.3856 mIoU=0.6419 | val_loss=0.4469 val_mIoU=0.6301 | rock=0.0000
+Checkpoint periódico guardado (epoch 25)
+Ep  26/80 | loss=0.3686 mIoU=0.6374 | val_loss=0.4547 val_mIoU=0.6318 | rock=0.0000
+Ep  27/80 | loss=0.3368 mIoU=0.6523 | val_loss=0.4473 val_mIoU=0.6305 | rock=0.0000
+Ep  28/80 | loss=0.4167 mIoU=0.6116 | val_loss=0.4482 val_mIoU=0.6297 | rock=0.0000
+Ep  29/80 | loss=0.3909 mIoU=0.6445 | val_loss=0.4372 val_mIoU=0.6279 | rock=0.0000
+Ep  30/80 | loss=0.3416 mIoU=0.6554 | val_loss=0.4339 val_mIoU=0.6354 | rock=0.0000
+Checkpoint periódico guardado (epoch 30)
+Ep  31/80 | loss=0.3770 mIoU=0.6488 | val_loss=0.4402 val_mIoU=0.6254 | rock=0.0000
+Ep  32/80 | loss=0.3539 mIoU=0.6558 | val_loss=0.4432 val_mIoU=0.6249 | rock=0.0000
+Ep  33/80 | loss=0.3312 mIoU=0.6605 | val_loss=0.4543 val_mIoU=0.6240 | rock=0.0000
+Ep  34/80 | loss=0.3772 mIoU=0.6386 | val_loss=0.4432 val_mIoU=0.6302 | rock=0.0000
+Ep  35/80 | loss=0.3735 mIoU=0.6604 | val_loss=0.4304 val_mIoU=0.6379 | rock=0.0000
+Checkpoint periódico guardado (epoch 35)
+Ep  36/80 | loss=0.3159 mIoU=0.6684 | val_loss=0.4391 val_mIoU=0.6272 | rock=0.0000
+Ep  37/80 | loss=0.3216 mIoU=0.6552 | val_loss=0.4335 val_mIoU=0.6337 | rock=0.0000
+Ep  38/80 | loss=0.3399 mIoU=0.6509 | val_loss=0.4347 val_mIoU=0.6330 | rock=0.0000
+Ep  39/80 | loss=0.3499 mIoU=0.6583 | val_loss=0.4320 val_mIoU=0.6351 | rock=0.0000
+Ep  40/80 | loss=0.3393 mIoU=0.6748 | val_loss=0.4284 val_mIoU=0.6376 | rock=0.0000
+Checkpoint periódico guardado (epoch 40)
+Ep  41/80 | loss=0.3384 mIoU=0.6746 | val_loss=0.4248 val_mIoU=0.6404 | rock=0.0000
+Ep  42/80 | loss=0.3197 mIoU=0.6489 | val_loss=0.4112 val_mIoU=0.6442 | rock=0.0000
+Ep  43/80 | loss=0.3372 mIoU=0.6673 | val_loss=0.4127 val_mIoU=0.6435 | rock=0.0000
+Ep  44/80 | loss=0.3496 mIoU=0.6284 | val_loss=0.4271 val_mIoU=0.6315 | rock=0.0000
+Ep  45/80 | loss=0.3189 mIoU=0.6603 | val_loss=0.4238 val_mIoU=0.6342 | rock=0.0000
+Checkpoint periódico guardado (epoch 45)
+Ep  46/80 | loss=0.3656 mIoU=0.6440 | val_loss=0.4179 val_mIoU=0.6286 | rock=0.0000
+Ep  47/80 | loss=0.3503 mIoU=0.6622 | val_loss=0.4345 val_mIoU=0.6169 | rock=0.0000
+Ep  48/80 | loss=0.2998 mIoU=0.6671 | val_loss=0.4244 val_mIoU=0.6296 | rock=0.0000
+Ep  49/80 | loss=0.2848 mIoU=0.6722 | val_loss=0.4297 val_mIoU=0.6294 | rock=0.0000
+Ep  50/80 | loss=0.3141 mIoU=0.6821 | val_loss=0.4189 val_mIoU=0.6373 | rock=0.0000
+Checkpoint periódico guardado (epoch 50)
+Ep  51/80 | loss=0.3467 mIoU=0.6625 | val_loss=0.4233 val_mIoU=0.6369 | rock=0.0000
+Ep  52/80 | loss=0.3145 mIoU=0.6749 | val_loss=0.4156 val_mIoU=0.6409 | rock=0.0000
+  Early stopping en epoch 52 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.6442 (epoch 42) | tiempo=269s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.6667
+ Progreso guardado (3/3 seeds)
+
+============================================================
+  MarsSeg: mIoU=0.7054 ± 0.0318  IC95=±0.0360
+  IoU(soil      )=0.9145 ± 0.0192
+  IoU(bedrock   )=0.8714 ± 0.0214
+  IoU(sand      )=0.8627 ± 0.0180
+  IoU(big_rock  )=0.1731 ± 0.1233
+============================================================
+ Archivo de progreso eliminado (todos los seeds completados)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="resultados-agregados">
+<h2>6. Resultados Agregados<a class="headerlink" href="#resultados-agregados" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">print_summary_table</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>============================================================
+  RESUMEN — MarsSeg
+============================================================
+  Métrica                 Media       Std      IC95
+  ------------------------------------------------
+  mIoU                   0.7054    0.0318  ± 0.0360
+  Pixel Accuracy         0.9416
+  ------------------------------------------------
+  IoU soil               0.9145    0.0192
+  IoU bedrock            0.8714    0.0214
+  IoU sand               0.8627    0.0180
+  IoU big_rock           0.1731    0.1233
+  ------------------------------------------------
+  Params (M)           —
+  Tiempo medio (s)          241
+  Epoch mejor (mean)       38.0
+============================================================
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_best_seed_curves</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/9f5800a63549054166a60cc8cb12c6f50630c77aabaa3e9453247d4bd341f184.png" src="../_images/9f5800a63549054166a60cc8cb12c6f50630c77aabaa3e9453247d4bd341f184.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Eliminar filas anteriores del mismo modelo si existen</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mars_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">BENCHMARK_CSV</span>
+<span class="k">if</span> <span class="n">BENCHMARK_CSV</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="n">df_csv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">BENCHMARK_CSV</span><span class="p">)</span>
+    <span class="n">df_csv</span> <span class="o">=</span> <span class="n">df_csv</span><span class="p">[</span><span class="n">df_csv</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">MODEL_NAME</span><span class="p">]</span>
+    <span class="n">df_csv</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">BENCHMARK_CSV</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">append_benchmark_results</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">params_M</span><span class="o">=</span><span class="n">params_M</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Resultados guardados en C:\Users\User\Documents\DeepLearning\ai4mars_DL-v3\results\benchmark_results.csv
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualizacion-cualitativa">
+<h2>7. Visualización Cualitativa<a class="headerlink" href="#visualizacion-cualitativa" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mars_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">CHECKPOINTS_DIR</span>
+
+<span class="n">best_seed</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s2">&quot;per_seed&quot;</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;mIoU&quot;</span><span class="p">])[</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mejor seed: </span><span class="si">{</span><span class="n">best_seed</span><span class="si">}</span><span class="s2"> | mIoU gold: </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;per_seed&#39;</span><span class="p">],</span><span class="w"> </span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span><span class="w"> </span><span class="n">r</span><span class="p">:</span><span class="w"> </span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;mIoU&#39;</span><span class="p">])[</span><span class="s1">&#39;mIoU&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">best_model</span> <span class="o">=</span> <span class="n">build_model</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+<span class="n">ckpt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+    <span class="n">CHECKPOINTS_DIR</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s2">_seed</span><span class="si">{</span><span class="n">best_seed</span><span class="si">}</span><span class="s2">_best.pth&quot;</span><span class="p">,</span>
+    <span class="n">map_location</span><span class="o">=</span><span class="n">DEVICE</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">best_model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">ckpt</span><span class="p">[</span><span class="s2">&quot;model_state&quot;</span><span class="p">])</span>
+<span class="n">best_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+<span class="n">visualize_predictions</span><span class="p">(</span><span class="n">best_model</span><span class="p">,</span> <span class="n">df_gold</span><span class="p">,</span> <span class="n">DEVICE</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">std</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mejor seed: 123 | mIoU gold: 0.7446
+</pre></div>
+</div>
+<img alt="../_images/876c3c552f4b553581160d67882c32489d1862869a523756377cc97d9ffdadd2.png" src="../_images/876c3c552f4b553581160d67882c32489d1862869a523756377cc97d9ffdadd2.png" />
+</div>
+</div>
+</section>
+<section id="resumen-final">
+<h2>8. Resumen Final<a class="headerlink" href="#resumen-final" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Campo</p></th>
+<th class="head"><p>Valor</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Modelo</p></td>
+<td><p>MarsSeg</p></td>
+</tr>
+<tr class="row-odd"><td><p>Paper</p></td>
+<td><p>Li et al., arXiv 2404.04155 (2024)</p></td>
+</tr>
+<tr class="row-even"><td><p>Backbone</p></td>
+<td><p>ResNet-50 + MiniASPP + PSA + SPPM</p></td>
+</tr>
+<tr class="row-odd"><td><p>Loss</p></td>
+<td><p>FocalDiceLoss (α=0.25, γ=2.0)</p></td>
+</tr>
+<tr class="row-even"><td><p>Optimizer</p></td>
+<td><p>SGD (lr=0.001, momentum=0.9)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Scheduler</p></td>
+<td><p>PolynomialLR (power=0.9)</p></td>
+</tr>
+<tr class="row-even"><td><p>layer4</p></td>
+<td><p>dilation=2 (mantiene resolución H/16)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Advertencia</p></td>
+<td><p>Alta varianza en big_rock (±0.054)</p></td>
+</tr>
+<tr class="row-even"><td><p>Referencia histórica (2.1k imgs)</p></td>
+<td><p>mIoU = 0.6601 ± 0.0122</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+<p><em>Resultados del gold set exportados a <code class="docutils literal notranslate"><span class="pre">results/benchmark_results.csv</span></code>.</em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mars_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_model</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">train_model</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(model, train_loader, val_loader, optimizer, scheduler, criterion, device, model_name: str = &#39;model&#39;, num_epochs: int = 80, patience: int = 10, aux_weight: float = 0.0, use_amp: bool = True) -&gt; tuple
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="05b_model_segformer.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">05b — SegFormer-B2</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="05d_model_terseg.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">0. Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion">1. Configuración</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos">2. Datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arquitectura-marsseg">3. Arquitectura — MarsSeg</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modulos-de-mejora-de-caracteristicas">3.1 Módulos de mejora de características</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-optimizer-y-scheduler">4. Loss, Optimizer y Scheduler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entrenamiento-multi-seed">5. Entrenamiento Multi-Seed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-agregados">6. Resultados Agregados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizacion-cualitativa">7. Visualización Cualitativa</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-final">8. Resumen Final</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Entregable 3 - Deep Learning
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

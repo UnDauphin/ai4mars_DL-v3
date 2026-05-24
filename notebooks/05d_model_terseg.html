@@ -1,0 +1,1247 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny) &#8212; Segmentacion Semantica de Terreno Marciano</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/05d_model_terseg';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)" href="05e_model_depthformer.html" />
+    <link rel="prev" title="05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)" href="05c_model_marsseg.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Wall-e.jpg" class="logo__image only-light" alt="Segmentacion Semantica de Terreno Marciano - Home"/>
+    <script>document.write(`<img src="../_static/Wall-e.jpg" class="logo__image only-dark" alt="Segmentacion Semantica de Terreno Marciano - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Segmentacion semantica de terreno marciano
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Analisis de datos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_eda_exploratorio.html">01 — EDA Exploratorio: Dataset AI4MARS Completo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_preprocessing.html">02 — Preprocesamiento: Resize, Split y Estadísticas de Normalización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_eda_msl.html">03 — EDA Profundo: Subconjunto MSL Procesado</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Estado del arte</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04_marco_teorico.html">04 — Revisión del Estado del Arte</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos benchmark</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="05a_model_deeplabv3plus.html">05a — DeepLabV3+ (ResNet-50)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05b_model_segformer.html">05b — SegFormer-B2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05c_model_marsseg.html">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05e_model_depthformer.html">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_benchmark_estadistico.html">06 - Benchmark estadistico y resultados finales</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/UnDauphin/ai4mars_DL-v3" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/05d_model_terseg.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">0. Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion">1. Configuración</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos">2. Datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arquitectura-terseg">3. Arquitectura — TerSeg</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-optimizer-y-scheduler">4. Loss, Optimizer y Scheduler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entrenamiento-multi-seed">5. Entrenamiento Multi-Seed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-agregados">6. Resultados Agregados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizacion-cualitativa">7. Visualización Cualitativa</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-final">8. Resumen Final</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="d-terseg-dual-branch-resnet-34-swin-tiny">
+<h1>05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)<a class="headerlink" href="#d-terseg-dual-branch-resnet-34-swin-tiny" title="Permalink to this heading">#</a></h1>
+<p><strong>Paper</strong>: Fan et al. — <em>TerSeg: A dual-branch semantic segmentation network for Mars terrain and autonomous path planning</em><br />
+DOI: <code class="docutils literal notranslate"><span class="pre">10.1016/j.eswa.2025.126397</span></code> — Expert Systems With Applications 270 (2025)</p>
+<p><strong>Arquitectura</strong>:</p>
+<ul class="simple">
+<li><p><strong>Branch_C</strong>: ResNet-34 pretrained — extrae features locales</p></li>
+<li><p><strong>Branch_T</strong>: Swin-Tiny (timm, pretrained) — extrae features globales</p></li>
+<li><p><strong>FL/FG modules</strong>: fusión ponderada entre ramas (local-first en capas tempranas, global-first en capas tardías)</p></li>
+<li><p><strong>FLGA decoder</strong>: agrega features multi-escala de distintas granularidades</p></li>
+</ul>
+<p><strong>Limitación importante</strong>: Swin-Tiny pretrained requiere input 224×224.<br />
+Solución: interpolación de los feature maps de entrada antes de Branch_T, no de la imagen completa.</p>
+<section id="setup">
+<h2>0. Setup<a class="headerlink" href="#setup" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s1">&#39;google.colab&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+<span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">drive</span>
+    <span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive&#39;</span><span class="p">)</span>
+    <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/content/drive/MyDrive/ai4mars_DL-v3&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s1">&#39;notebooks&#39;</span><span class="p">))</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># En local: este notebook está en notebooks/, root es el padre</span>
+    <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s1">&#39;processed&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;ROOT: </span><span class="si">{</span><span class="n">PROJECT_ROOT</span><span class="si">}</span><span class="s1"> | existe: </span><span class="si">{</span><span class="n">PROJECT_ROOT</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ROOT: c:\Users\Hp\Documents\GitHub\ai4mars_DL-v3 | existe: True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">resnet34</span><span class="p">,</span> <span class="n">ResNet34_Weights</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">timm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mars_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">set_seed</span><span class="p">,</span> <span class="n">load_norm_stats</span><span class="p">,</span> <span class="n">load_split</span><span class="p">,</span>
+    <span class="n">build_dataloaders</span><span class="p">,</span> <span class="n">FocalLoss</span><span class="p">,</span>
+    <span class="n">train_one_epoch</span><span class="p">,</span> <span class="n">evaluate</span><span class="p">,</span> <span class="n">train_model</span><span class="p">,</span> <span class="n">run_multi_seed</span><span class="p">,</span>
+    <span class="n">append_benchmark_results</span><span class="p">,</span> <span class="n">plot_best_seed_curves</span><span class="p">,</span>
+    <span class="n">print_summary_table</span><span class="p">,</span> <span class="n">visualize_predictions</span><span class="p">,</span> <span class="n">count_parameters</span><span class="p">,</span>
+    <span class="n">NUM_CLASSES</span><span class="p">,</span> <span class="n">IGNORE_INDEX</span><span class="p">,</span> <span class="n">SEEDS</span><span class="p">,</span> <span class="n">BENCHMARK_CSV</span><span class="p">,</span> <span class="n">CHECKPOINTS_DIR</span>
+<span class="p">)</span>
+
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Device: </span><span class="si">{</span><span class="n">DEVICE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">DEVICE</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;cuda&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;GPU: </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_name</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Device: cuda
+GPU: NVIDIA GeForce RTX 4050 Laptop GPU
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="configuracion">
+<h2>1. Configuración<a class="headerlink" href="#configuracion" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MODEL_NAME</span>   <span class="o">=</span> <span class="s1">&#39;TerSeg&#39;</span>
+<span class="n">FAST_SUBSET</span>  <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># False = entrenamiento completo; True solo para debug local</span>
+
+<span class="n">LR</span>           <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="n">MAX_EPOCHS</span>   <span class="o">=</span> <span class="mi">80</span>
+<span class="n">PATIENCE</span>     <span class="o">=</span> <span class="mi">10</span>
+<span class="n">BATCH_SIZE</span>   <span class="o">=</span> <span class="mi">32</span>
+<span class="n">NUM_WORKERS</span>  <span class="o">=</span> <span class="mi">6</span>
+<span class="n">FOCAL_ALPHA</span>  <span class="o">=</span> <span class="mf">0.25</span>
+<span class="n">FOCAL_GAMMA</span>  <span class="o">=</span> <span class="mf">2.0</span>
+
+<span class="c1"># Dimensiones del Swin-Tiny pretrained</span>
+<span class="n">SWIN_IMG_SIZE</span> <span class="o">=</span> <span class="mi">224</span>   <span class="c1"># limitación del pretrained; las imágenes se interpolan internamente</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Modo: </span><span class="si">{</span><span class="s2">&quot;FAST SUBSET&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">FAST_SUBSET</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;PRODUCCIÓN&quot;</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Batch size: </span><span class="si">{</span><span class="n">BATCH_SIZE</span><span class="si">}</span><span class="s1"> | num_workers: </span><span class="si">{</span><span class="n">NUM_WORKERS</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SWIN input interpolado a: </span><span class="si">{</span><span class="n">SWIN_IMG_SIZE</span><span class="si">}</span><span class="s1">×</span><span class="si">{</span><span class="n">SWIN_IMG_SIZE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Modo: PRODUCCIÓN
+Batch size: 32 | num_workers: 6
+SWIN input interpolado a: 224×224
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="datos">
+<h2>2. Datos<a class="headerlink" href="#datos" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_val</span><span class="p">,</span> <span class="n">df_gold</span> <span class="o">=</span> <span class="n">load_split</span><span class="p">()</span>
+<span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="n">load_norm_stats</span><span class="p">()</span>
+
+<span class="c1"># ── Bug 6 fix: derivar stem de image_path, NO usar df_train[&#39;stem&#39;] ──</span>
+<span class="n">train_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;image_path&#39;</span><span class="p">])</span>
+<span class="n">gold_ids</span>  <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">df_gold</span><span class="p">[</span><span class="s1">&#39;image_path&#39;</span><span class="p">])</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_ids</span> <span class="o">&amp;</span> <span class="n">gold_ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;⚠️ DATA LEAKAGE detectado&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;✅ Train: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span><span class="si">}</span><span class="s1"> | Val: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_val</span><span class="p">)</span><span class="si">}</span><span class="s1"> | Gold: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_gold</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Normalización — mean: </span><span class="si">{</span><span class="n">mean</span><span class="si">}</span><span class="s1"> | std: </span><span class="si">{</span><span class="n">std</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Split cargado — train: 4200 | val: 1800 | gold test: 322
+✅ Train: 4200 | Val: 1800 | Gold: 322
+Normalización — mean: [0.2303263779898021, 0.2303263779898021, 0.2303263779898021] | std: [0.10591342097577364, 0.10591342097577364, 0.10591342097577364]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="arquitectura-terseg">
+<h2>3. Arquitectura — TerSeg<a class="headerlink" href="#arquitectura-terseg" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FusionModule</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fusión ligera FL/FG: proyecta ambas ramas a un ancho común.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cnn_ch</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tr_ch</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">out_ch</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cnn_dominant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cnn_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">cnn_ch</span><span class="p">,</span> <span class="n">out_ch</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tr_proj</span>  <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">tr_ch</span><span class="p">,</span>  <span class="n">out_ch</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">init_cnn</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="k">if</span> <span class="n">cnn_dominant</span> <span class="k">else</span> <span class="mf">0.3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_cnn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">init_cnn</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_tr</span>  <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">init_cnn</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm</span>   <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">out_ch</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relu</span>   <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">!=</span> <span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fused</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_cnn</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cnn_proj</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_tr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_proj</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">fused</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FLGA</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decoder progresivo ligero usado por la implementación rápida de TerSeg v2.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ups</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">convs</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">channels</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">channels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">channels</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">channels</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]),</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">convs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">channels</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">channels</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">channels</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]),</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">channels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_classes</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">skips</span> <span class="o">=</span> <span class="n">features</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">up</span><span class="p">,</span> <span class="n">conv</span><span class="p">,</span> <span class="n">skip</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ups</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">convs</span><span class="p">,</span> <span class="n">skips</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">up</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">skip</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">conv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">skip</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">TerSeg</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TerSeg ligero: ResNet-34 + Swin-Tiny con fusiones a 64 canales.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">NUM_CLASSES</span><span class="p">,</span> <span class="n">out_ch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span>
+                 <span class="n">swin_img_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">224</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">swin_img_size</span> <span class="o">=</span> <span class="n">swin_img_size</span>
+
+        <span class="c1"># Branch_C: ResNet-34</span>
+        <span class="n">rn</span> <span class="o">=</span> <span class="n">resnet34</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">ResNet34_Weights</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_stem</span>   <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">rn</span><span class="o">.</span><span class="n">conv1</span><span class="p">,</span> <span class="n">rn</span><span class="o">.</span><span class="n">bn1</span><span class="p">,</span> <span class="n">rn</span><span class="o">.</span><span class="n">relu</span><span class="p">,</span> <span class="n">rn</span><span class="o">.</span><span class="n">maxpool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_layer1</span> <span class="o">=</span> <span class="n">rn</span><span class="o">.</span><span class="n">layer1</span>   <span class="c1"># 64ch,  H/4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_layer2</span> <span class="o">=</span> <span class="n">rn</span><span class="o">.</span><span class="n">layer2</span>   <span class="c1"># 128ch, H/8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_layer3</span> <span class="o">=</span> <span class="n">rn</span><span class="o">.</span><span class="n">layer3</span>   <span class="c1"># 256ch, H/16</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_layer4</span> <span class="o">=</span> <span class="n">rn</span><span class="o">.</span><span class="n">layer4</span>   <span class="c1"># 512ch, H/32</span>
+
+        <span class="c1"># Branch_T: Swin-Tiny</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">swin</span> <span class="o">=</span> <span class="n">timm</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span>
+            <span class="s1">&#39;swin_tiny_patch4_window7_224&#39;</span><span class="p">,</span>
+            <span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">features_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">out_indices</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">swin_chs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swin</span><span class="o">.</span><span class="n">feature_info</span><span class="o">.</span><span class="n">channels</span><span class="p">()</span>  <span class="c1"># [96, 192, 384, 768]</span>
+
+        <span class="c1"># FL: etapas locales dominadas por CNN; FG: etapas globales dominadas por Swin.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fl1</span> <span class="o">=</span> <span class="n">FusionModule</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span>  <span class="n">swin_chs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">out_ch</span><span class="p">,</span> <span class="n">cnn_dominant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fl2</span> <span class="o">=</span> <span class="n">FusionModule</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">swin_chs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">out_ch</span><span class="p">,</span> <span class="n">cnn_dominant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fg3</span> <span class="o">=</span> <span class="n">FusionModule</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="n">swin_chs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">out_ch</span><span class="p">,</span> <span class="n">cnn_dominant</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fg4</span> <span class="o">=</span> <span class="n">FusionModule</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="n">swin_chs</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">out_ch</span><span class="p">,</span> <span class="n">cnn_dominant</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">FLGA</span><span class="p">([</span><span class="n">out_ch</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_swin_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x_swin</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swin_img_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">swin_img_size</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span>
+            <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">feats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swin</span><span class="p">(</span><span class="n">x_swin</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">else</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">feats</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+
+        <span class="n">c0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_stem</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_layer1</span><span class="p">(</span><span class="n">c0</span><span class="p">)</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_layer2</span><span class="p">(</span><span class="n">r1</span><span class="p">)</span>
+        <span class="n">r3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_layer3</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
+        <span class="n">r4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_layer4</span><span class="p">(</span><span class="n">r3</span><span class="p">)</span>
+
+        <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t3</span><span class="p">,</span> <span class="n">t4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_swin_forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">f1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fl1</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">t1</span><span class="p">)</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fl2</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
+        <span class="n">f3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg3</span><span class="p">(</span><span class="n">r3</span><span class="p">,</span> <span class="n">t3</span><span class="p">)</span>
+        <span class="n">f4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg4</span><span class="p">(</span><span class="n">r4</span><span class="p">,</span> <span class="n">t4</span><span class="p">)</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">([</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span><span class="p">,</span> <span class="n">f4</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_model</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">TerSeg</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="n">NUM_CLASSES</span><span class="p">,</span> <span class="n">out_ch</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">swin_img_size</span><span class="o">=</span><span class="n">SWIN_IMG_SIZE</span><span class="p">)</span>
+
+
+<span class="c1"># Verificación</span>
+<span class="n">_m</span> <span class="o">=</span> <span class="n">build_model</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+<span class="n">_m</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+    <span class="n">_out</span> <span class="o">=</span> <span class="n">_m</span><span class="p">(</span><span class="n">_x</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Forward OK — salida: </span><span class="si">{</span><span class="n">_out</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">n_params</span> <span class="o">=</span> <span class="n">count_parameters</span><span class="p">(</span><span class="n">_m</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Parámetros entrenables: </span><span class="si">{</span><span class="n">n_params</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">M  (esperado: ~49.19M)&#39;</span><span class="p">)</span>
+<span class="k">del</span> <span class="n">_m</span><span class="p">,</span> <span class="n">_x</span><span class="p">,</span> <span class="n">_out</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Forward OK — salida: torch.Size([2, 4, 256, 256])
+Parámetros entrenables: 49.19M  (esperado: ~49.19M)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="loss-optimizer-y-scheduler">
+<h2>4. Loss, Optimizer y Scheduler<a class="headerlink" href="#loss-optimizer-y-scheduler" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">criterion_fn</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">FocalLoss</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">FOCAL_ALPHA</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">FOCAL_GAMMA</span><span class="p">,</span>
+                     <span class="n">ignore_index</span><span class="o">=</span><span class="n">IGNORE_INDEX</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">optimizer_fn</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">LR</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">scheduler_fn</span><span class="p">(</span><span class="n">optimizer</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">ReduceLROnPlateau</span><span class="p">(</span>
+        <span class="n">optimizer</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;✅ Loss: FocalLoss (α=0.25, γ=2.0)&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Optimizer: Adam (lr=1e-4)&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Scheduler: ReduceLROnPlateau (mode=max, patience=5, factor=0.5)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Loss: FocalLoss (α=0.25, γ=2.0)
+  Optimizer: Adam (lr=1e-4)
+  Scheduler: ReduceLROnPlateau (mode=max, patience=5, factor=0.5)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="entrenamiento-multi-seed">
+<h2>5. Entrenamiento Multi-Seed<a class="headerlink" href="#entrenamiento-multi-seed" title="Permalink to this heading">#</a></h2>
+<p>⚠️ <strong>Bug 7 fix</strong>: NO pasar <code class="docutils literal notranslate"><span class="pre">mean</span></code>, <code class="docutils literal notranslate"><span class="pre">std</span></code>, <code class="docutils literal notranslate"><span class="pre">max_epochs</span></code>. Usar <code class="docutils literal notranslate"><span class="pre">num_epochs</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">run_multi_seed</span><span class="p">(</span>
+    <span class="n">model_fn</span>       <span class="o">=</span> <span class="n">build_model</span><span class="p">,</span>
+    <span class="n">df_train</span>       <span class="o">=</span> <span class="n">df_train</span><span class="p">,</span>
+    <span class="n">df_val</span>         <span class="o">=</span> <span class="n">df_val</span><span class="p">,</span>
+    <span class="n">df_gold</span>        <span class="o">=</span> <span class="n">df_gold</span><span class="p">,</span>
+    <span class="n">criterion_fn</span>   <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">,</span>
+    <span class="n">optimizer_fn</span>   <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">,</span>
+    <span class="n">scheduler_fn</span>   <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">,</span>
+    <span class="n">model_name</span>     <span class="o">=</span> <span class="n">MODEL_NAME</span><span class="p">,</span>
+    <span class="n">device</span>         <span class="o">=</span> <span class="n">DEVICE</span><span class="p">,</span>
+    <span class="n">num_epochs</span>     <span class="o">=</span> <span class="n">MAX_EPOCHS</span><span class="p">,</span>   <span class="c1"># &#39;num_epochs&#39;, no &#39;max_epochs&#39;</span>
+    <span class="n">patience</span>       <span class="o">=</span> <span class="n">PATIENCE</span><span class="p">,</span>
+    <span class="n">batch_size</span>     <span class="o">=</span> <span class="n">BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">num_workers</span>    <span class="o">=</span> <span class="n">NUM_WORKERS</span><span class="p">,</span>
+    <span class="n">fast_subset</span>    <span class="o">=</span> <span class="n">FAST_SUBSET</span><span class="p">,</span>
+    <span class="n">n_train_fast</span>   <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="n">n_val_fast</span>     <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># mean y std NO van aquí — run_multi_seed los carga con load_norm_stats()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>───────────────────────────────────────────────────────
+  Seed 42 | TerSeg
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+c:\Users\Hp\miniconda3\envs\mars_dl\Lib\site-packages\torch\optim\lr_scheduler.py:62: UserWarning: The verbose parameter is deprecated. Please use get_last_lr() to access the learning rate.
+  warnings.warn(
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Entrenamiento desde cero
+
+============================================================
+  TerSeg_seed42 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.0424 mIoU=0.5787 | val_loss=0.0172 val_mIoU=0.6793 | rock=0.0317
+Ep   2/80 | loss=0.0206 mIoU=0.6863 | val_loss=0.0246 val_mIoU=0.7024 | rock=0.2644
+Ep   3/80 | loss=0.0162 mIoU=0.7311 | val_loss=0.0166 val_mIoU=0.7279 | rock=0.3136
+Checkpoint periódico guardado (epoch 3)
+Ep   4/80 | loss=0.0151 mIoU=0.7413 | val_loss=0.0127 val_mIoU=0.7507 | rock=0.3226
+Ep   5/80 | loss=0.0131 mIoU=0.7653 | val_loss=0.0119 val_mIoU=0.7548 | rock=0.3044
+Ep   6/80 | loss=0.0124 mIoU=0.7664 | val_loss=0.0158 val_mIoU=0.7409 | rock=0.3419
+Checkpoint periódico guardado (epoch 6)
+Ep   7/80 | loss=0.0118 mIoU=0.7730 | val_loss=0.0124 val_mIoU=0.7670 | rock=0.3853
+Ep   8/80 | loss=0.0100 mIoU=0.8061 | val_loss=0.0116 val_mIoU=0.7786 | rock=0.3833
+Ep   9/80 | loss=0.0089 mIoU=0.8101 | val_loss=0.0089 val_mIoU=0.7955 | rock=0.4187
+Checkpoint periódico guardado (epoch 9)
+Ep  10/80 | loss=0.0087 mIoU=0.8260 | val_loss=0.0108 val_mIoU=0.8078 | rock=0.4911
+Ep  11/80 | loss=0.0074 mIoU=0.8306 | val_loss=0.0105 val_mIoU=0.8106 | rock=0.5014
+Ep  12/80 | loss=0.0076 mIoU=0.8419 | val_loss=0.0107 val_mIoU=0.8104 | rock=0.5273
+Checkpoint periódico guardado (epoch 12)
+Ep  13/80 | loss=0.0066 mIoU=0.8514 | val_loss=0.0130 val_mIoU=0.7870 | rock=0.4404
+Ep  14/80 | loss=0.0068 mIoU=0.8462 | val_loss=0.0106 val_mIoU=0.8159 | rock=0.5055
+Ep  15/80 | loss=0.0067 mIoU=0.8599 | val_loss=0.0090 val_mIoU=0.8109 | rock=0.4765
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.0071 mIoU=0.8477 | val_loss=0.0106 val_mIoU=0.8066 | rock=0.4883
+Ep  17/80 | loss=0.0066 mIoU=0.8609 | val_loss=0.0109 val_mIoU=0.8059 | rock=0.5179
+Ep  18/80 | loss=0.0070 mIoU=0.8529 | val_loss=0.0121 val_mIoU=0.8042 | rock=0.5027
+Checkpoint periódico guardado (epoch 18)
+Ep  19/80 | loss=0.0056 mIoU=0.8802 | val_loss=0.0116 val_mIoU=0.7977 | rock=0.4636
+Ep  20/80 | loss=0.0061 mIoU=0.8700 | val_loss=0.0114 val_mIoU=0.7981 | rock=0.4439
+Ep  21/80 | loss=0.0047 mIoU=0.8940 | val_loss=0.0091 val_mIoU=0.8226 | rock=0.5148
+Checkpoint periódico guardado (epoch 21)
+Ep  22/80 | loss=0.0039 mIoU=0.9025 | val_loss=0.0096 val_mIoU=0.8198 | rock=0.5078
+Ep  23/80 | loss=0.0037 mIoU=0.9089 | val_loss=0.0100 val_mIoU=0.8185 | rock=0.4982
+Ep  24/80 | loss=0.0034 mIoU=0.9135 | val_loss=0.0098 val_mIoU=0.8211 | rock=0.5016
+Checkpoint periódico guardado (epoch 24)
+Ep  25/80 | loss=0.0031 mIoU=0.9208 | val_loss=0.0098 val_mIoU=0.8174 | rock=0.4942
+Ep  26/80 | loss=0.0030 mIoU=0.9229 | val_loss=0.0105 val_mIoU=0.8144 | rock=0.4820
+Ep  27/80 | loss=0.0030 mIoU=0.9242 | val_loss=0.0102 val_mIoU=0.8193 | rock=0.4980
+Checkpoint periódico guardado (epoch 27)
+Ep  28/80 | loss=0.0026 mIoU=0.9307 | val_loss=0.0126 val_mIoU=0.8202 | rock=0.5113
+Ep  29/80 | loss=0.0027 mIoU=0.9298 | val_loss=0.0111 val_mIoU=0.8217 | rock=0.5156
+Ep  30/80 | loss=0.0026 mIoU=0.9330 | val_loss=0.0106 val_mIoU=0.8242 | rock=0.5181
+Checkpoint periódico guardado (epoch 30)
+Ep  31/80 | loss=0.0025 mIoU=0.9332 | val_loss=0.0116 val_mIoU=0.8230 | rock=0.5205
+Ep  32/80 | loss=0.0024 mIoU=0.9346 | val_loss=0.0110 val_mIoU=0.8199 | rock=0.5069
+Ep  33/80 | loss=0.0023 mIoU=0.9380 | val_loss=0.0113 val_mIoU=0.8191 | rock=0.4948
+Checkpoint periódico guardado (epoch 33)
+Ep  34/80 | loss=0.0023 mIoU=0.9386 | val_loss=0.0116 val_mIoU=0.8223 | rock=0.5109
+Ep  35/80 | loss=0.0023 mIoU=0.9379 | val_loss=0.0114 val_mIoU=0.8256 | rock=0.5222
+Ep  36/80 | loss=0.0023 mIoU=0.9404 | val_loss=0.0117 val_mIoU=0.8281 | rock=0.5354
+Checkpoint periódico guardado (epoch 36)
+Ep  37/80 | loss=0.0022 mIoU=0.9391 | val_loss=0.0122 val_mIoU=0.8271 | rock=0.5458
+Ep  38/80 | loss=0.0023 mIoU=0.9400 | val_loss=0.0121 val_mIoU=0.8257 | rock=0.5275
+Ep  39/80 | loss=0.0022 mIoU=0.9408 | val_loss=0.0120 val_mIoU=0.8239 | rock=0.5192
+Checkpoint periódico guardado (epoch 39)
+Ep  40/80 | loss=0.0021 mIoU=0.9415 | val_loss=0.0128 val_mIoU=0.8227 | rock=0.5197
+Ep  41/80 | loss=0.0020 mIoU=0.9425 | val_loss=0.0125 val_mIoU=0.8235 | rock=0.5164
+Ep  42/80 | loss=0.0019 mIoU=0.9471 | val_loss=0.0131 val_mIoU=0.8236 | rock=0.5224
+Checkpoint periódico guardado (epoch 42)
+Ep  43/80 | loss=0.0019 mIoU=0.9460 | val_loss=0.0122 val_mIoU=0.8291 | rock=0.5339
+Ep  44/80 | loss=0.0018 mIoU=0.9495 | val_loss=0.0116 val_mIoU=0.8261 | rock=0.5233
+Ep  45/80 | loss=0.0017 mIoU=0.9501 | val_loss=0.0125 val_mIoU=0.8303 | rock=0.5326
+Checkpoint periódico guardado (epoch 45)
+Ep  46/80 | loss=0.0018 mIoU=0.9511 | val_loss=0.0126 val_mIoU=0.8313 | rock=0.5355
+Ep  47/80 | loss=0.0017 mIoU=0.9505 | val_loss=0.0128 val_mIoU=0.8278 | rock=0.5295
+Ep  48/80 | loss=0.0016 mIoU=0.9506 | val_loss=0.0122 val_mIoU=0.8285 | rock=0.5254
+Checkpoint periódico guardado (epoch 48)
+Ep  49/80 | loss=0.0016 mIoU=0.9548 | val_loss=0.0138 val_mIoU=0.8219 | rock=0.5102
+Ep  50/80 | loss=0.0016 mIoU=0.9557 | val_loss=0.0135 val_mIoU=0.8207 | rock=0.4994
+Ep  51/80 | loss=0.0015 mIoU=0.9552 | val_loss=0.0139 val_mIoU=0.8301 | rock=0.5419
+Checkpoint periódico guardado (epoch 51)
+Ep  52/80 | loss=0.0016 mIoU=0.9535 | val_loss=0.0133 val_mIoU=0.8277 | rock=0.5260
+Ep  53/80 | loss=0.0015 mIoU=0.9563 | val_loss=0.0133 val_mIoU=0.8262 | rock=0.5215
+Ep  54/80 | loss=0.0015 mIoU=0.9561 | val_loss=0.0138 val_mIoU=0.8272 | rock=0.5279
+Checkpoint periódico guardado (epoch 54)
+Ep  55/80 | loss=0.0015 mIoU=0.9568 | val_loss=0.0132 val_mIoU=0.8238 | rock=0.5122
+Ep  56/80 | loss=0.0014 mIoU=0.9568 | val_loss=0.0128 val_mIoU=0.8285 | rock=0.5275
+  Early stopping en epoch 56 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.8313 (epoch 46) | tiempo=3485s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.8440
+ Progreso guardado (1/3 seeds)
+
+───────────────────────────────────────────────────────
+  Seed 123 | TerSeg
+  Entrenamiento desde cero
+
+============================================================
+  TerSeg_seed123 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.0437 mIoU=0.5934 | val_loss=0.0166 val_mIoU=0.7155 | rock=0.1713
+Ep   2/80 | loss=0.0209 mIoU=0.6978 | val_loss=0.0149 val_mIoU=0.7064 | rock=0.1539
+Ep   3/80 | loss=0.0166 mIoU=0.7403 | val_loss=0.0145 val_mIoU=0.7646 | rock=0.3618
+Checkpoint periódico guardado (epoch 3)
+Ep   4/80 | loss=0.0130 mIoU=0.7694 | val_loss=0.0132 val_mIoU=0.7738 | rock=0.3674
+Ep   5/80 | loss=0.0124 mIoU=0.7824 | val_loss=0.0113 val_mIoU=0.7718 | rock=0.3576
+Ep   6/80 | loss=0.0118 mIoU=0.7784 | val_loss=0.0104 val_mIoU=0.7676 | rock=0.3417
+Checkpoint periódico guardado (epoch 6)
+Ep   7/80 | loss=0.0105 mIoU=0.8015 | val_loss=0.0126 val_mIoU=0.7674 | rock=0.4230
+Ep   8/80 | loss=0.0107 mIoU=0.8041 | val_loss=0.0123 val_mIoU=0.7828 | rock=0.4060
+Ep   9/80 | loss=0.0087 mIoU=0.8209 | val_loss=0.0107 val_mIoU=0.8087 | rock=0.5134
+Checkpoint periódico guardado (epoch 9)
+Ep  10/80 | loss=0.0082 mIoU=0.8249 | val_loss=0.0091 val_mIoU=0.8144 | rock=0.4987
+Ep  11/80 | loss=0.0074 mIoU=0.8463 | val_loss=0.0106 val_mIoU=0.8058 | rock=0.4728
+Ep  12/80 | loss=0.0076 mIoU=0.8464 | val_loss=0.0104 val_mIoU=0.7917 | rock=0.4313
+Checkpoint periódico guardado (epoch 12)
+Ep  13/80 | loss=0.0069 mIoU=0.8441 | val_loss=0.0101 val_mIoU=0.7928 | rock=0.4183
+Ep  14/80 | loss=0.0070 mIoU=0.8556 | val_loss=0.0087 val_mIoU=0.8135 | rock=0.4825
+Ep  15/80 | loss=0.0066 mIoU=0.8614 | val_loss=0.0111 val_mIoU=0.8067 | rock=0.5112
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.0062 mIoU=0.8569 | val_loss=0.0093 val_mIoU=0.8065 | rock=0.4683
+Ep  17/80 | loss=0.0052 mIoU=0.8771 | val_loss=0.0084 val_mIoU=0.8270 | rock=0.5235
+Ep  18/80 | loss=0.0047 mIoU=0.8905 | val_loss=0.0084 val_mIoU=0.8270 | rock=0.5204
+Checkpoint periódico guardado (epoch 18)
+Ep  19/80 | loss=0.0041 mIoU=0.9021 | val_loss=0.0110 val_mIoU=0.8075 | rock=0.4723
+Ep  20/80 | loss=0.0039 mIoU=0.9023 | val_loss=0.0087 val_mIoU=0.8315 | rock=0.5400
+Ep  21/80 | loss=0.0036 mIoU=0.9078 | val_loss=0.0085 val_mIoU=0.8333 | rock=0.5451
+Checkpoint periódico guardado (epoch 21)
+Ep  22/80 | loss=0.0035 mIoU=0.9118 | val_loss=0.0089 val_mIoU=0.8332 | rock=0.5437
+Ep  23/80 | loss=0.0036 mIoU=0.9112 | val_loss=0.0091 val_mIoU=0.8275 | rock=0.5311
+Ep  24/80 | loss=0.0033 mIoU=0.9165 | val_loss=0.0091 val_mIoU=0.8181 | rock=0.4876
+Checkpoint periódico guardado (epoch 24)
+Ep  25/80 | loss=0.0031 mIoU=0.9213 | val_loss=0.0092 val_mIoU=0.8215 | rock=0.4979
+Ep  26/80 | loss=0.0033 mIoU=0.9182 | val_loss=0.0096 val_mIoU=0.8075 | rock=0.4614
+Ep  27/80 | loss=0.0034 mIoU=0.9140 | val_loss=0.0089 val_mIoU=0.8265 | rock=0.5276
+Checkpoint periódico guardado (epoch 27)
+Ep  28/80 | loss=0.0030 mIoU=0.9226 | val_loss=0.0097 val_mIoU=0.8265 | rock=0.5201
+Ep  29/80 | loss=0.0026 mIoU=0.9315 | val_loss=0.0098 val_mIoU=0.8306 | rock=0.5365
+Ep  30/80 | loss=0.0026 mIoU=0.9337 | val_loss=0.0103 val_mIoU=0.8303 | rock=0.5454
+Checkpoint periódico guardado (epoch 30)
+Ep  31/80 | loss=0.0024 mIoU=0.9366 | val_loss=0.0100 val_mIoU=0.8347 | rock=0.5570
+Ep  32/80 | loss=0.0024 mIoU=0.9358 | val_loss=0.0093 val_mIoU=0.8339 | rock=0.5421
+Ep  33/80 | loss=0.0022 mIoU=0.9411 | val_loss=0.0104 val_mIoU=0.8297 | rock=0.5360
+Checkpoint periódico guardado (epoch 33)
+Ep  34/80 | loss=0.0023 mIoU=0.9383 | val_loss=0.0098 val_mIoU=0.8265 | rock=0.5230
+Ep  35/80 | loss=0.0022 mIoU=0.9410 | val_loss=0.0106 val_mIoU=0.8200 | rock=0.4991
+Ep  36/80 | loss=0.0021 mIoU=0.9440 | val_loss=0.0104 val_mIoU=0.8319 | rock=0.5491
+Checkpoint periódico guardado (epoch 36)
+Ep  37/80 | loss=0.0021 mIoU=0.9414 | val_loss=0.0100 val_mIoU=0.8250 | rock=0.5086
+Ep  38/80 | loss=0.0019 mIoU=0.9477 | val_loss=0.0112 val_mIoU=0.8302 | rock=0.5359
+Ep  39/80 | loss=0.0019 mIoU=0.9467 | val_loss=0.0106 val_mIoU=0.8319 | rock=0.5421
+Checkpoint periódico guardado (epoch 39)
+Ep  40/80 | loss=0.0018 mIoU=0.9509 | val_loss=0.0105 val_mIoU=0.8309 | rock=0.5321
+Ep  41/80 | loss=0.0019 mIoU=0.9494 | val_loss=0.0118 val_mIoU=0.8359 | rock=0.5608
+Ep  42/80 | loss=0.0018 mIoU=0.9501 | val_loss=0.0106 val_mIoU=0.8289 | rock=0.5251
+Checkpoint periódico guardado (epoch 42)
+Ep  43/80 | loss=0.0018 mIoU=0.9508 | val_loss=0.0115 val_mIoU=0.8264 | rock=0.5169
+Ep  44/80 | loss=0.0017 mIoU=0.9531 | val_loss=0.0117 val_mIoU=0.8249 | rock=0.5142
+Ep  45/80 | loss=0.0016 mIoU=0.9528 | val_loss=0.0116 val_mIoU=0.8307 | rock=0.5350
+Checkpoint periódico guardado (epoch 45)
+Ep  46/80 | loss=0.0017 mIoU=0.9541 | val_loss=0.0106 val_mIoU=0.8339 | rock=0.5432
+Ep  47/80 | loss=0.0017 mIoU=0.9538 | val_loss=0.0126 val_mIoU=0.8252 | rock=0.5242
+Ep  48/80 | loss=0.0016 mIoU=0.9559 | val_loss=0.0114 val_mIoU=0.8265 | rock=0.5192
+Checkpoint periódico guardado (epoch 48)
+Ep  49/80 | loss=0.0016 mIoU=0.9542 | val_loss=0.0117 val_mIoU=0.8294 | rock=0.5351
+Ep  50/80 | loss=0.0015 mIoU=0.9572 | val_loss=0.0117 val_mIoU=0.8283 | rock=0.5285
+Ep  51/80 | loss=0.0015 mIoU=0.9549 | val_loss=0.0109 val_mIoU=0.8299 | rock=0.5305
+  Early stopping en epoch 51 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.8359 (epoch 41) | tiempo=3174s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.8711
+ Progreso guardado (2/3 seeds)
+
+───────────────────────────────────────────────────────
+  Seed 7 | TerSeg
+  Entrenamiento desde cero
+
+============================================================
+  TerSeg_seed7 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.0424 mIoU=0.5949 | val_loss=0.0176 val_mIoU=0.7061 | rock=0.1594
+Ep   2/80 | loss=0.0192 mIoU=0.7075 | val_loss=0.0162 val_mIoU=0.7330 | rock=0.2990
+Ep   3/80 | loss=0.0162 mIoU=0.7381 | val_loss=0.0115 val_mIoU=0.7747 | rock=0.3662
+Checkpoint periódico guardado (epoch 3)
+Ep   4/80 | loss=0.0134 mIoU=0.7680 | val_loss=0.0123 val_mIoU=0.7293 | rock=0.2248
+Ep   5/80 | loss=0.0121 mIoU=0.7854 | val_loss=0.0102 val_mIoU=0.7918 | rock=0.4304
+Ep   6/80 | loss=0.0116 mIoU=0.7782 | val_loss=0.0112 val_mIoU=0.7996 | rock=0.4591
+Checkpoint periódico guardado (epoch 6)
+Ep   7/80 | loss=0.0100 mIoU=0.8003 | val_loss=0.0100 val_mIoU=0.7881 | rock=0.4089
+Ep   8/80 | loss=0.0113 mIoU=0.7996 | val_loss=0.0153 val_mIoU=0.7692 | rock=0.4117
+Ep   9/80 | loss=0.0095 mIoU=0.8115 | val_loss=0.0095 val_mIoU=0.7910 | rock=0.4112
+Checkpoint periódico guardado (epoch 9)
+Ep  10/80 | loss=0.0093 mIoU=0.8093 | val_loss=0.0112 val_mIoU=0.7954 | rock=0.4676
+Ep  11/80 | loss=0.0082 mIoU=0.8325 | val_loss=0.0092 val_mIoU=0.8049 | rock=0.4708
+Ep  12/80 | loss=0.0075 mIoU=0.8512 | val_loss=0.0108 val_mIoU=0.8065 | rock=0.4825
+Checkpoint periódico guardado (epoch 12)
+Ep  13/80 | loss=0.0068 mIoU=0.8473 | val_loss=0.0086 val_mIoU=0.8236 | rock=0.5105
+Ep  14/80 | loss=0.0062 mIoU=0.8575 | val_loss=0.0100 val_mIoU=0.8248 | rock=0.5362
+Ep  15/80 | loss=0.0054 mIoU=0.8759 | val_loss=0.0104 val_mIoU=0.8044 | rock=0.4674
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.0059 mIoU=0.8793 | val_loss=0.0123 val_mIoU=0.7684 | rock=0.4493
+Ep  17/80 | loss=0.0069 mIoU=0.8561 | val_loss=0.0109 val_mIoU=0.8131 | rock=0.5353
+Ep  18/80 | loss=0.0071 mIoU=0.8527 | val_loss=0.0097 val_mIoU=0.8207 | rock=0.5172
+Checkpoint periódico guardado (epoch 18)
+Ep  19/80 | loss=0.0055 mIoU=0.8731 | val_loss=0.0090 val_mIoU=0.8313 | rock=0.5464
+Ep  20/80 | loss=0.0047 mIoU=0.8886 | val_loss=0.0098 val_mIoU=0.8210 | rock=0.5123
+Ep  21/80 | loss=0.0055 mIoU=0.8817 | val_loss=0.0107 val_mIoU=0.8178 | rock=0.5241
+Checkpoint periódico guardado (epoch 21)
+Ep  22/80 | loss=0.0052 mIoU=0.8759 | val_loss=0.0092 val_mIoU=0.8269 | rock=0.5366
+Ep  23/80 | loss=0.0043 mIoU=0.8897 | val_loss=0.0101 val_mIoU=0.7930 | rock=0.3959
+Ep  24/80 | loss=0.0039 mIoU=0.9040 | val_loss=0.0098 val_mIoU=0.8270 | rock=0.5209
+Checkpoint periódico guardado (epoch 24)
+Ep  25/80 | loss=0.0036 mIoU=0.9025 | val_loss=0.0104 val_mIoU=0.8248 | rock=0.5406
+Ep  26/80 | loss=0.0030 mIoU=0.9145 | val_loss=0.0095 val_mIoU=0.8341 | rock=0.5489
+Ep  27/80 | loss=0.0029 mIoU=0.9257 | val_loss=0.0097 val_mIoU=0.8354 | rock=0.5604
+Checkpoint periódico guardado (epoch 27)
+Ep  28/80 | loss=0.0028 mIoU=0.9236 | val_loss=0.0111 val_mIoU=0.8315 | rock=0.5464
+Ep  29/80 | loss=0.0027 mIoU=0.9279 | val_loss=0.0096 val_mIoU=0.8328 | rock=0.5454
+Ep  30/80 | loss=0.0025 mIoU=0.9356 | val_loss=0.0110 val_mIoU=0.8306 | rock=0.5399
+Checkpoint periódico guardado (epoch 30)
+Ep  31/80 | loss=0.0027 mIoU=0.9312 | val_loss=0.0109 val_mIoU=0.8226 | rock=0.5239
+Ep  32/80 | loss=0.0040 mIoU=0.9058 | val_loss=0.0104 val_mIoU=0.8315 | rock=0.5448
+Ep  33/80 | loss=0.0027 mIoU=0.9296 | val_loss=0.0101 val_mIoU=0.8300 | rock=0.5276
+Checkpoint periódico guardado (epoch 33)
+Ep  34/80 | loss=0.0023 mIoU=0.9377 | val_loss=0.0104 val_mIoU=0.8253 | rock=0.5080
+Ep  35/80 | loss=0.0022 mIoU=0.9400 | val_loss=0.0108 val_mIoU=0.8255 | rock=0.5150
+Ep  36/80 | loss=0.0020 mIoU=0.9426 | val_loss=0.0115 val_mIoU=0.8265 | rock=0.5213
+Checkpoint periódico guardado (epoch 36)
+Ep  37/80 | loss=0.0021 mIoU=0.9408 | val_loss=0.0110 val_mIoU=0.8298 | rock=0.5215
+  Early stopping en epoch 37 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.8354 (epoch 27) | tiempo=2317s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.7991
+ Progreso guardado (3/3 seeds)
+
+============================================================
+  TerSeg: mIoU=0.8381 ± 0.0297  IC95=±0.0336
+  IoU(soil      )=0.9805 ± 0.0033
+  IoU(bedrock   )=0.9188 ± 0.0087
+  IoU(sand      )=0.9433 ± 0.0061
+  IoU(big_rock  )=0.5097 ± 0.1134
+============================================================
+ Archivo de progreso eliminado (todos los seeds completados)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="resultados-agregados">
+<h2>6. Resultados Agregados<a class="headerlink" href="#resultados-agregados" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">print_summary_table</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>============================================================
+  RESUMEN — TerSeg
+============================================================
+  Métrica                 Media       Std      IC95
+  ------------------------------------------------
+  mIoU                   0.8381    0.0297  ± 0.0336
+  Pixel Accuracy         0.9775
+  ------------------------------------------------
+  IoU soil               0.9805    0.0033
+  IoU bedrock            0.9188    0.0087
+  IoU sand               0.9433    0.0061
+  IoU big_rock           0.5097    0.1134
+  ------------------------------------------------
+  Params (M)           —
+  Tiempo medio (s)         2992
+  Epoch mejor (mean)       38.0
+============================================================
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_best_seed_curves</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/8fd472f1c5a6840412c9154e0222373099294702c9f96f5feb66b8ef6e8a1f66.png" src="../_images/8fd472f1c5a6840412c9154e0222373099294702c9f96f5feb66b8ef6e8a1f66.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Bug 9 fix: limpiar fila anterior del mismo modelo ──</span>
+<span class="k">if</span> <span class="n">BENCHMARK_CSV</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="n">df_csv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">BENCHMARK_CSV</span><span class="p">)</span>
+    <span class="n">df_csv</span> <span class="o">=</span> <span class="n">df_csv</span><span class="p">[</span><span class="n">df_csv</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">MODEL_NAME</span><span class="p">]</span>
+    <span class="n">df_csv</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">BENCHMARK_CSV</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">params_M</span> <span class="o">=</span> <span class="n">count_parameters</span><span class="p">(</span><span class="n">build_model</span><span class="p">())</span>
+<span class="n">append_benchmark_results</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">params_M</span><span class="o">=</span><span class="n">params_M</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;✅ Resultados guardados en results/benchmark_results.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Resultados guardados en C:\Users\Hp\Documents\GitHub\ai4mars_DL-v3\results\benchmark_results.csv
+✅ Resultados guardados en results/benchmark_results.csv
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualizacion-cualitativa">
+<h2>7. Visualización Cualitativa<a class="headerlink" href="#visualizacion-cualitativa" title="Permalink to this heading">#</a></h2>
+<p>⚠️ <strong>Bug 8 fix</strong>: summary NO tiene ‘best_seed’ ni ‘checkpoints’. Calcular manualmente.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Bug 8 fix: derivar best_seed manualmente ──</span>
+<span class="n">best_seed</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s2">&quot;per_seed&quot;</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;mIoU&quot;</span><span class="p">])[</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span>
+<span class="n">best_miou</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;per_seed&#39;</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;mIoU&#39;</span><span class="p">])[</span><span class="s1">&#39;mIoU&#39;</span><span class="p">]</span>
+<span class="n">ckpt_path</span> <span class="o">=</span> <span class="n">CHECKPOINTS_DIR</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s2">_seed</span><span class="si">{</span><span class="n">best_seed</span><span class="si">}</span><span class="s2">_best.pth&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mejor seed: </span><span class="si">{</span><span class="n">best_seed</span><span class="si">}</span><span class="s2"> | mIoU gold: </span><span class="si">{</span><span class="n">best_miou</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">best_model</span> <span class="o">=</span> <span class="n">build_model</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+<span class="n">ckpt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">DEVICE</span><span class="p">)</span>
+<span class="n">best_model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">ckpt</span><span class="p">[</span><span class="s2">&quot;model_state&quot;</span><span class="p">])</span>
+<span class="n">best_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+<span class="n">visualize_predictions</span><span class="p">(</span><span class="n">best_model</span><span class="p">,</span> <span class="n">df_gold</span><span class="p">,</span> <span class="n">DEVICE</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">std</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mejor seed: 123 | mIoU gold: 0.8711
+</pre></div>
+</div>
+<img alt="../_images/610ae86043fb841a90461d730c45105b734b58393905286ba7404b9206ee1467.png" src="../_images/610ae86043fb841a90461d730c45105b734b58393905286ba7404b9206ee1467.png" />
+</div>
+</div>
+</section>
+<section id="resumen-final">
+<h2>8. Resumen Final<a class="headerlink" href="#resumen-final" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Campo</p></th>
+<th class="head"><p>Valor</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Modelo</p></td>
+<td><p>TerSeg</p></td>
+</tr>
+<tr class="row-odd"><td><p>Paper</p></td>
+<td><p>Fan et al., Expert Systems with Applications 270 (2025)</p></td>
+</tr>
+<tr class="row-even"><td><p>Branch CNN</p></td>
+<td><p>ResNet-34 pretrained</p></td>
+</tr>
+<tr class="row-odd"><td><p>Branch Transformer</p></td>
+<td><p>Swin-Tiny (timm)</p></td>
+</tr>
+<tr class="row-even"><td><p>Fusión</p></td>
+<td><p>FL (stages 1-2) + FG (stages 3-4)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Decoder</p></td>
+<td><p>FLGA multi-escala</p></td>
+</tr>
+<tr class="row-even"><td><p>Loss</p></td>
+<td><p>FocalLoss (α=0.25, γ=2.0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Optimizer</p></td>
+<td><p>Adam (lr=1e-4)</p></td>
+</tr>
+<tr class="row-even"><td><p>Scheduler</p></td>
+<td><p>ReduceLROnPlateau (patience=5, factor=0.5)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Swin input</p></td>
+<td><p>Interpolado a 224×224 internamente</p></td>
+</tr>
+<tr class="row-even"><td><p>Referencia histórica (2.1k imgs)</p></td>
+<td><p>mIoU = 0.7498 ± 0.0089</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+<p><em>Resultados del gold set exportados a <code class="docutils literal notranslate"><span class="pre">results/benchmark_results.csv</span></code>.</em></p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="05c_model_marsseg.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="05e_model_depthformer.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">0. Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion">1. Configuración</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos">2. Datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arquitectura-terseg">3. Arquitectura — TerSeg</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-optimizer-y-scheduler">4. Loss, Optimizer y Scheduler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entrenamiento-multi-seed">5. Entrenamiento Multi-Seed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-agregados">6. Resultados Agregados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizacion-cualitativa">7. Visualización Cualitativa</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-final">8. Resumen Final</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Entregable 3 - Deep Learning
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

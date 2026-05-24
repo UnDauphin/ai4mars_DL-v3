@@ -1,0 +1,601 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Segmentacion semantica de terreno marciano &#8212; Segmentacion Semantica de Terreno Marciano</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'intro';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="01 — EDA Exploratorio: Dataset AI4MARS Completo" href="notebooks/01_eda_exploratorio.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/Wall-e.jpg" class="logo__image only-light" alt="Segmentacion Semantica de Terreno Marciano - Home"/>
+    <script>document.write(`<img src="_static/Wall-e.jpg" class="logo__image only-dark" alt="Segmentacion Semantica de Terreno Marciano - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1 current active">
+                <a class="reference internal" href="#">
+                    Segmentacion semantica de terreno marciano
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Analisis de datos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/01_eda_exploratorio.html">01 — EDA Exploratorio: Dataset AI4MARS Completo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/02_preprocessing.html">02 — Preprocesamiento: Resize, Split y Estadísticas de Normalización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/03_eda_msl.html">03 — EDA Profundo: Subconjunto MSL Procesado</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Estado del arte</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/04_marco_teorico.html">04 — Revisión del Estado del Arte</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos benchmark</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05a_model_deeplabv3plus.html">05a — DeepLabV3+ (ResNet-50)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05b_model_segformer.html">05b — SegFormer-B2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05c_model_marsseg.html">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05d_model_terseg.html">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05e_model_depthformer.html">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/06_benchmark_estadistico.html">06 - Benchmark estadistico y resultados finales</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/UnDauphin/ai4mars_DL-v3" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/intro.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Segmentacion semantica de terreno marciano</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrantes-del-grupo">Integrantes del grupo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diseno-experimental">Diseno experimental</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelos-benchmark">Modelos benchmark</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="segmentacion-semantica-de-terreno-marciano">
+<h1>Segmentacion semantica de terreno marciano<a class="headerlink" href="#segmentacion-semantica-de-terreno-marciano" title="Permalink to this heading">#</a></h1>
+<p><strong>Entregable 2 - Proyecto de Deep Learning</strong></p>
+<section id="integrantes-del-grupo">
+<h2>Integrantes del grupo<a class="headerlink" href="#integrantes-del-grupo" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Nombre</p></th>
+<th class="head"><p>Codigo</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Alejandro David Moya Nieves</p></td>
+<td><p>200196366</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mateo Jose Gomez Rojas</p></td>
+<td><p>200193297</p></td>
+</tr>
+<tr class="row-even"><td><p>Mateo Andres Molinares Tellez</p></td>
+<td><p>200196955</p></td>
+</tr>
+<tr class="row-odd"><td><p>David Alejandro Ibanez Barrios</p></td>
+<td><p>200195861</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Este Jupyter Book presenta el entregable de Deep Learning para segmentacion semantica de terreno marciano sobre el dataset AI4MARS de NASA/JPL. El objetivo es comparar modelos de referencia capaces de clasificar cada pixel de imagenes de rovers en cuatro clases de terreno: <code class="docutils literal notranslate"><span class="pre">soil</span></code>, <code class="docutils literal notranslate"><span class="pre">bedrock</span></code>, <code class="docutils literal notranslate"><span class="pre">sand</span></code> y <code class="docutils literal notranslate"><span class="pre">big_rock</span></code>, ignorando pixeles sin etiqueta (<code class="docutils literal notranslate"><span class="pre">255</span></code>).</p>
+<p>El proyecto sigue un pipeline reproducible:</p>
+<ul class="simple">
+<li><p>Analisis exploratorio general del dataset y sus misiones.</p></li>
+<li><p>Seleccion justificada del subconjunto MSL Curiosity NavCam.</p></li>
+<li><p>Preprocesamiento comun a 256x256 px, normalizacion calculada solo con train y split fijo.</p></li>
+<li><p>Revision de literatura y seleccion de cinco modelos benchmark.</p></li>
+<li><p>Entrenamiento multi-seed con evaluacion en un gold test set fijo.</p></li>
+<li><p>Benchmark final con metricas por clase, intervalos de confianza y pruebas estadisticas.</p></li>
+</ul>
+</section>
+<section id="diseno-experimental">
+<h2>Diseno experimental<a class="headerlink" href="#diseno-experimental" title="Permalink to this heading">#</a></h2>
+<p>Todos los modelos se comparan bajo las mismas condiciones:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Elemento</p></th>
+<th class="head"><p>Configuracion</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Dataset de entrenamiento</p></td>
+<td><p>AI4MARS MSL Curiosity NavCam</p></td>
+</tr>
+<tr class="row-odd"><td><p>Split</p></td>
+<td><p>70% train / 30% validation sobre subset MSL 6k</p></td>
+</tr>
+<tr class="row-even"><td><p>Test</p></td>
+<td><p>Gold set MSL min3-100agree, 322 imagenes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Resolucion</p></td>
+<td><p>256x256 px</p></td>
+</tr>
+<tr class="row-even"><td><p>Clases</p></td>
+<td><p>soil, bedrock, sand, big_rock</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ignore index</p></td>
+<td><p>255</p></td>
+</tr>
+<tr class="row-even"><td><p>Seeds</p></td>
+<td><p>42, 123, 7</p></td>
+</tr>
+<tr class="row-odd"><td><p>Metrica principal</p></td>
+<td><p>mean IoU sobre gold test</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="modelos-benchmark">
+<h2>Modelos benchmark<a class="headerlink" href="#modelos-benchmark" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Modelo</p></th>
+<th class="head"><p>Familia</p></th>
+<th class="head"><p>Notebook</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>DeepLabV3+</p></td>
+<td><p>CNN + ASPP</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">05a_model_deeplabv3plus.ipynb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>SegFormer-B2</p></td>
+<td><p>Transformer</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">05b_model_segformer.ipynb</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>MarsSeg</p></td>
+<td><p>CNN avanzado para terreno marciano</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">05c_model_marsseg.ipynb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>TerSeg</p></td>
+<td><p>Hibrido CNN + Transformer</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">05d_model_terseg.ipynb</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>DepthFormer-RGB</p></td>
+<td><p>Swin Transformer + UPerNet</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">05e_model_depthformer.ipynb</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>La metrica principal es mIoU, complementada con pixel accuracy, IoU por clase, tiempo de entrenamiento, numero de parametros y pruebas estadisticas para comparar diferencias entre modelos.</p>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="notebooks/01_eda_exploratorio.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">01 — EDA Exploratorio: Dataset AI4MARS Completo</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrantes-del-grupo">Integrantes del grupo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diseno-experimental">Diseno experimental</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelos-benchmark">Modelos benchmark</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Entregable 3 - Deep Learning
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

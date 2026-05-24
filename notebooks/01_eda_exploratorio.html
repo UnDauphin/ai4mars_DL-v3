@@ -1,0 +1,1753 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>01 — EDA Exploratorio: Dataset AI4MARS Completo &#8212; Segmentacion Semantica de Terreno Marciano</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/01_eda_exploratorio';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="02 — Preprocesamiento: Resize, Split y Estadísticas de Normalización" href="02_preprocessing.html" />
+    <link rel="prev" title="Segmentacion semantica de terreno marciano" href="../intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Wall-e.jpg" class="logo__image only-light" alt="Segmentacion Semantica de Terreno Marciano - Home"/>
+    <script>document.write(`<img src="../_static/Wall-e.jpg" class="logo__image only-dark" alt="Segmentacion Semantica de Terreno Marciano - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Segmentacion semantica de terreno marciano
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Analisis de datos</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">01 — EDA Exploratorio: Dataset AI4MARS Completo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_preprocessing.html">02 — Preprocesamiento: Resize, Split y Estadísticas de Normalización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_eda_msl.html">03 — EDA Profundo: Subconjunto MSL Procesado</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Estado del arte</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04_marco_teorico.html">04 — Revisión del Estado del Arte</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos benchmark</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="05a_model_deeplabv3plus.html">05a — DeepLabV3+ (ResNet-50)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05b_model_segformer.html">05b — SegFormer-B2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05c_model_marsseg.html">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05d_model_terseg.html">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05e_model_depthformer.html">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_benchmark_estadistico.html">06 - Benchmark estadistico y resultados finales</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/UnDauphin/ai4mars_DL-v3" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/01_eda_exploratorio.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>01 — EDA Exploratorio: Dataset AI4MARS Completo</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion-e-importaciones-a-id-setup-a">1. Configuración e importaciones <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-del-manifest-a-id-manifest-a">2. Construcción del manifest <a id="manifest"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limpieza-de-mascaras-invalidas-a-id-limpieza-a">3. Limpieza de máscaras inválidas <a id="limpieza"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distribucion-global-del-dataset-a-id-distribucion-a">4. Distribución global del dataset <a id="distribucion"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspeccion-visual-comparativa-por-mision-a-id-visual-a">5. Inspección visual comparativa por misión <a id="visual"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distribucion-de-clases-por-mision-domain-shift-a-id-clases-a">6. Distribución de clases por misión (domain shift) <a id="clases"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimensionalidad-y-formato-por-mision-a-id-dimensiones-a">7. Dimensionalidad y formato por misión <a id="dimensiones"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distribucion-de-intensidades-por-mision-a-id-intensidades-a">8. Distribución de intensidades por misión <a id="intensidades"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#divergencia-jensen-shannon-entre-misiones-a-id-js-a">9. Divergencia Jensen-Shannon entre misiones <a id="js"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decision-justificada-usar-solo-msl-a-id-decision-a">10. Decisión justificada: usar solo MSL <a id="decision"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definicion-del-gold-set-de-test-msl-min3-a-id-goldset-a">11. Definición del gold set de test (MSL min3) <a id="goldset"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#archivos-generados-por-este-notebook">Archivos generados por este notebook</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="eda-exploratorio-dataset-ai4mars-completo">
+<h1>01 — EDA Exploratorio: Dataset AI4MARS Completo<a class="headerlink" href="#eda-exploratorio-dataset-ai4mars-completo" title="Permalink to this heading">#</a></h1>
+<p><strong>Entregable 2 – Deep Learning</strong><br />
+Estado del Arte, EDA Mejorado e Implementación de Modelos Benchmark</p>
+<hr class="docutils" />
+<blockquote>
+<div><p><strong>Objetivo de este notebook</strong><br />
+Realizar un análisis exploratorio sobre el <strong>dataset completo AI4MARS</strong> (las tres misiones: MSL, MER y M2020)<br />
+con las imágenes originales sin preprocesar. El análisis tiene dos propósitos:</p>
+<ol class="arabic simple">
+<li><p>Comprender la estructura global del dataset.</p></li>
+<li><p><strong>Justificar empíricamente</strong> la decisión de restringir el entrenamiento a imágenes de la misión MSL.</p></li>
+</ol>
+<p>Cada sección termina con una caja de implicaciones estructurada en:<br />
+<code class="docutils literal notranslate"><span class="pre">[D]</span> <span class="pre">Decisión</span> <span class="pre">de</span> <span class="pre">diseño</span> <span class="pre">|</span> <span class="pre">[A]</span> <span class="pre">Impacto</span> <span class="pre">en</span> <span class="pre">arquitectura</span> <span class="pre">|</span> <span class="pre">[R]</span> <span class="pre">Riesgo</span> <span class="pre">/</span> <span class="pre">data</span> <span class="pre">leakage</span></code></p>
+</div></blockquote>
+<hr class="docutils" />
+<p><strong>Índice</strong></p>
+<ol class="arabic simple">
+<li><p><span class="xref myst">Configuración e importaciones</span></p></li>
+<li><p><span class="xref myst">Construcción del manifest</span></p></li>
+<li><p><span class="xref myst">Limpieza de máscaras inválidas</span></p></li>
+<li><p><span class="xref myst">Distribución global del dataset</span></p></li>
+<li><p><span class="xref myst">Inspección visual comparativa por misión</span></p></li>
+<li><p><span class="xref myst">Distribución de clases por misión (domain shift)</span></p></li>
+<li><p><span class="xref myst">Dimensionalidad y formato por misión</span></p></li>
+<li><p><span class="xref myst">Distribución de intensidades por misión</span></p></li>
+<li><p><span class="xref myst">Divergencia Jensen-Shannon entre misiones</span></p></li>
+<li><p><span class="xref myst">Decisión justificada: usar solo MSL</span></p></li>
+<li><p><span class="xref myst">Definición del gold set de test (MSL min3)</span></p></li>
+</ol>
+<section id="configuracion-e-importaciones-a-id-setup-a">
+<h2>1. Configuración e importaciones <a id="setup"></a><a class="headerlink" href="#configuracion-e-importaciones-a-id-setup-a" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">jensenshannon</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+<span class="c1"># ── Raíz del proyecto: un nivel arriba de notebooks/ ────────────────────────</span>
+<span class="n">NOTEBOOK_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="n">ROOT</span>         <span class="o">=</span> <span class="n">NOTEBOOK_DIR</span><span class="o">.</span><span class="n">parent</span>
+
+<span class="c1"># ── Directorios de datos (rutas relativas a la raíz) ────────────────────────</span>
+<span class="n">MSL_IMG_TRAIN</span>  <span class="o">=</span> <span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;msl&quot;</span>   <span class="o">/</span> <span class="s2">&quot;ncam&quot;</span> <span class="o">/</span> <span class="s2">&quot;images&quot;</span> <span class="o">/</span> <span class="s2">&quot;edr&quot;</span>
+<span class="n">MSL_LBL_TRAIN</span>  <span class="o">=</span> <span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;msl&quot;</span>   <span class="o">/</span> <span class="s2">&quot;ncam&quot;</span> <span class="o">/</span> <span class="s2">&quot;labels&quot;</span> <span class="o">/</span> <span class="s2">&quot;train&quot;</span>
+<span class="n">MSL_LBL_TEST</span>   <span class="o">=</span> <span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;msl&quot;</span>   <span class="o">/</span> <span class="s2">&quot;ncam&quot;</span> <span class="o">/</span> <span class="s2">&quot;labels&quot;</span> <span class="o">/</span> <span class="s2">&quot;test&quot;</span> <span class="o">/</span> <span class="s2">&quot;masked-gold-min3-100agree&quot;</span>
+
+<span class="n">MER_IMG_TRAIN</span>  <span class="o">=</span> <span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;mer&quot;</span>   <span class="o">/</span> <span class="s2">&quot;images&quot;</span> <span class="o">/</span> <span class="s2">&quot;eff&quot;</span>
+<span class="n">MER_LBL_TRAIN</span>  <span class="o">=</span> <span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;mer&quot;</span>   <span class="o">/</span> <span class="s2">&quot;labels&quot;</span> <span class="o">/</span> <span class="s2">&quot;train&quot;</span> <span class="o">/</span> <span class="s2">&quot;merged-unmasked&quot;</span>
+
+<span class="n">M2020_IMG</span>      <span class="o">=</span> <span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;m2020&quot;</span> <span class="o">/</span> <span class="s2">&quot;images&quot;</span> <span class="o">/</span> <span class="s2">&quot;ncam&quot;</span>
+<span class="n">M2020_LBL</span>      <span class="o">=</span> <span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;m2020&quot;</span> <span class="o">/</span> <span class="s2">&quot;labels&quot;</span> <span class="o">/</span> <span class="s2">&quot;NAV&quot;</span>
+
+<span class="c1"># ── Directorio de salida (dentro de notebooks/) ──────────────────────────────</span>
+<span class="n">PROCESSED_DIR</span> <span class="o">=</span> <span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;processed&quot;</span>
+<span class="n">PROCESSED_DIR</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># ── Semilla para reproducibilidad ────────────────────────────────────────────</span>
+<span class="n">EDA_SEED</span> <span class="o">=</span> <span class="mi">42</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Raíz del proyecto : </span><span class="si">{</span><span class="n">ROOT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processed dir     : </span><span class="si">{</span><span class="n">PROCESSED_DIR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Verificando rutas de datos:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;MSL images train&quot;</span><span class="p">,</span> <span class="n">MSL_IMG_TRAIN</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;MSL labels train&quot;</span><span class="p">,</span> <span class="n">MSL_LBL_TRAIN</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;MSL labels test (gold)&quot;</span><span class="p">,</span> <span class="n">MSL_LBL_TEST</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;MER images&quot;</span><span class="p">,</span>      <span class="n">MER_IMG_TRAIN</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;MER labels&quot;</span><span class="p">,</span>      <span class="n">MER_LBL_TRAIN</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;M2020 images&quot;</span><span class="p">,</span>    <span class="n">M2020_IMG</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;M2020 labels&quot;</span><span class="p">,</span>    <span class="n">M2020_LBL</span><span class="p">),</span>
+<span class="p">]:</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;✓&quot;</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;✗ NO ENCONTRADO&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">ROOT</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Raíz del proyecto : C:\Users\User\Documents\DeepLearning\ai4mars_DL-v3
+Processed dir     : C:\Users\User\Documents\DeepLearning\ai4mars_DL-v3\notebooks\processed
+
+Verificando rutas de datos:
+  [✓] MSL images train: msl\ncam\images\edr
+  [✓] MSL labels train: msl\ncam\labels\train
+  [✓] MSL labels test (gold): msl\ncam\labels\test\masked-gold-min3-100agree
+  [✓] MER images: mer\images\eff
+  [✓] MER labels: mer\labels\train\merged-unmasked
+  [✓] M2020 images: m2020\images\ncam
+  [✓] M2020 labels: m2020\labels\NAV
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Paleta de colores por clase (colorblind-friendly) ───────────────────────</span>
+<span class="n">CLASS_COLORS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span>   <span class="p">(</span><span class="s2">&quot;#E69F00&quot;</span><span class="p">,</span> <span class="s2">&quot;soil&quot;</span><span class="p">),</span>
+    <span class="mi">1</span><span class="p">:</span>   <span class="p">(</span><span class="s2">&quot;#56B4E9&quot;</span><span class="p">,</span> <span class="s2">&quot;bedrock&quot;</span><span class="p">),</span>
+    <span class="mi">2</span><span class="p">:</span>   <span class="p">(</span><span class="s2">&quot;#009E73&quot;</span><span class="p">,</span> <span class="s2">&quot;sand&quot;</span><span class="p">),</span>
+    <span class="mi">3</span><span class="p">:</span>   <span class="p">(</span><span class="s2">&quot;#D55E00&quot;</span><span class="p">,</span> <span class="s2">&quot;big_rock&quot;</span><span class="p">),</span>
+    <span class="mi">255</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;#999999&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="n">CLASS_NAMES</span>  <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">CLASS_COLORS</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]}</span>
+
+<span class="c1"># ── Paleta por misión ────────────────────────────────────────────────────────</span>
+<span class="n">MISSION_COLORS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;MSL&quot;</span><span class="p">:</span> <span class="s2">&quot;#0072B2&quot;</span><span class="p">,</span> <span class="s2">&quot;MER&quot;</span><span class="p">:</span> <span class="s2">&quot;#CC79A7&quot;</span><span class="p">,</span> <span class="s2">&quot;M2020&quot;</span><span class="p">:</span> <span class="s2">&quot;#F0E442&quot;</span><span class="p">}</span>
+
+<span class="n">NUM_CLASSES</span>  <span class="o">=</span> <span class="mi">4</span>
+<span class="n">IGNORE_INDEX</span> <span class="o">=</span> <span class="mi">255</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constantes y paletas definidas.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clases   : </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">CLASS_NAMES</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Misiones : </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">MISSION_COLORS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Constantes y paletas definidas.
+Clases   : [&#39;soil&#39;, &#39;bedrock&#39;, &#39;sand&#39;, &#39;big_rock&#39;]
+Misiones : [&#39;MSL&#39;, &#39;MER&#39;, &#39;M2020&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="construccion-del-manifest-a-id-manifest-a">
+<h2>2. Construcción del manifest <a id="manifest"></a><a class="headerlink" href="#construccion-del-manifest-a-id-manifest-a" title="Permalink to this heading">#</a></h2>
+<p>Se construye un CSV con todas las parejas imagen-máscara del dataset completo.<br />
+Las rutas se guardan <strong>relativas a la raíz del proyecto</strong> para garantizar portabilidad entre máquinas.</p>
+<p>La función <code class="docutils literal notranslate"><span class="pre">canonical_name</span></code> elimina los sufijos <code class="docutils literal notranslate"><span class="pre">_merged</span></code> y <code class="docutils literal notranslate"><span class="pre">_0LLJ</span></code> que aparecen en algunos nombres
+de archivo de las máscaras, permitiendo el match con los nombres de las imágenes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">canonical_name</span><span class="p">(</span><span class="n">stem</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normaliza el stem de un archivo eliminando sufijos variables.&quot;&quot;&quot;</span>
+    <span class="n">stem</span> <span class="o">=</span> <span class="n">stem</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_0LLJ&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="n">stem</span> <span class="o">=</span> <span class="n">stem</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_merged</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">stem</span> <span class="o">=</span> <span class="n">stem</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_merged&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>   <span class="c1"># sin número</span>
+    <span class="k">return</span> <span class="n">stem</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_manifest</span><span class="p">(</span>
+    <span class="n">image_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">label_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">mission</span><span class="p">:</span>   <span class="nb">str</span><span class="p">,</span>
+    <span class="n">camera</span><span class="p">:</span>    <span class="nb">str</span><span class="p">,</span>
+    <span class="n">root</span><span class="p">:</span>      <span class="n">Path</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construye un manifest emparejando imágenes y máscaras por canonical_name.</span>
+<span class="sd">    Las rutas se almacenan relativas a `root`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">img_extensions</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;.jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">}</span>
+
+    <span class="n">images</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">image_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">img_extensions</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">canonical_name</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
+            <span class="n">images</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">img</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">label_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">lbl</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.png&quot;</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">canonical_name</span><span class="p">(</span><span class="n">lbl</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
+            <span class="n">labels</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">lbl</span>
+
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;mission&quot;</span><span class="p">:</span>    <span class="n">mission</span><span class="p">,</span>
+            <span class="s2">&quot;camera&quot;</span><span class="p">:</span>     <span class="n">camera</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span>         <span class="n">k</span><span class="p">,</span>
+            <span class="s2">&quot;image_path&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">root</span><span class="p">)),</span>
+            <span class="s2">&quot;mask_path&quot;</span><span class="p">:</span>  <span class="nb">str</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">root</span><span class="p">)),</span>
+            <span class="s2">&quot;split&quot;</span><span class="p">:</span>      <span class="s2">&quot;train&quot;</span><span class="p">,</span>   <span class="c1"># se actualizará para el gold set</span>
+        <span class="p">})</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">mission</span><span class="si">:</span><span class="s2">5s</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">camera</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;5,</span><span class="si">}</span><span class="s2"> pares imagen-máscara encontrados&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Construyendo manifest por misión...&quot;</span><span class="p">)</span>
+<span class="n">msl_train_df</span> <span class="o">=</span> <span class="n">build_manifest</span><span class="p">(</span><span class="n">MSL_IMG_TRAIN</span><span class="p">,</span> <span class="n">MSL_LBL_TRAIN</span><span class="p">,</span> <span class="s2">&quot;MSL&quot;</span><span class="p">,</span>  <span class="s2">&quot;ncam&quot;</span><span class="p">,</span> <span class="n">ROOT</span><span class="p">)</span>
+<span class="n">mer_df</span>       <span class="o">=</span> <span class="n">build_manifest</span><span class="p">(</span><span class="n">MER_IMG_TRAIN</span><span class="p">,</span> <span class="n">MER_LBL_TRAIN</span><span class="p">,</span> <span class="s2">&quot;MER&quot;</span><span class="p">,</span>  <span class="s2">&quot;eff&quot;</span><span class="p">,</span>  <span class="n">ROOT</span><span class="p">)</span>
+<span class="n">m2020_df</span>     <span class="o">=</span> <span class="n">build_manifest</span><span class="p">(</span><span class="n">M2020_IMG</span><span class="p">,</span>     <span class="n">M2020_LBL</span><span class="p">,</span>     <span class="s2">&quot;M2020&quot;</span><span class="p">,</span><span class="s2">&quot;ncam&quot;</span><span class="p">,</span> <span class="n">ROOT</span><span class="p">)</span>
+
+<span class="c1"># Gold set MSL: split=&quot;test&quot;, no entra al pool de entrenamiento</span>
+<span class="n">msl_gold_df</span> <span class="o">=</span> <span class="n">build_manifest</span><span class="p">(</span><span class="n">MSL_IMG_TRAIN</span><span class="p">,</span> <span class="n">MSL_LBL_TEST</span><span class="p">,</span> <span class="s2">&quot;MSL&quot;</span><span class="p">,</span> <span class="s2">&quot;ncam&quot;</span><span class="p">,</span> <span class="n">ROOT</span><span class="p">)</span>
+<span class="n">msl_gold_df</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;test_gold&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  MSL gold set (min3): </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">msl_gold_df</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;5,</span><span class="si">}</span><span class="s2"> imágenes de test fijo&quot;</span><span class="p">)</span>
+
+<span class="c1"># Manifest completo (incluye gold set con split marcado)</span>
+<span class="n">df_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">msl_train_df</span><span class="p">,</span> <span class="n">mer_df</span><span class="p">,</span> <span class="n">m2020_df</span><span class="p">,</span> <span class="n">msl_gold_df</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Total pares encontrados: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_all</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Distribución por misión:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_all</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;mission&quot;</span><span class="p">,</span> <span class="s2">&quot;split&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Construyendo manifest por misión...
+  MSL   (ncam): 16,064 pares imagen-máscara encontrados
+  MER   (eff): 7,391 pares imagen-máscara encontrados
+  M2020 (ncam):   473 pares imagen-máscara encontrados
+  MSL   (ncam):   322 pares imagen-máscara encontrados
+  MSL gold set (min3):   322 imágenes de test fijo
+
+Total pares encontrados: 24,250
+
+Distribución por misión:
+mission  split    
+M2020    train          473
+MER      train         7391
+MSL      test_gold      322
+         train        16064
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="limpieza-de-mascaras-invalidas-a-id-limpieza-a">
+<h2>3. Limpieza de máscaras inválidas <a id="limpieza"></a><a class="headerlink" href="#limpieza-de-mascaras-invalidas-a-id-limpieza-a" title="Permalink to this heading">#</a></h2>
+<p>Se eliminan las máscaras que no aportan información útil al entrenamiento:</p>
+<ul class="simple">
+<li><p>Máscaras con un único valor (vacías).</p></li>
+<li><p>Máscaras compuestas únicamente por píxeles <code class="docutils literal notranslate"><span class="pre">ignore</span></code> (255).</p></li>
+</ul>
+<blockquote>
+<div><p><strong>Nota</strong>: el gold set de test NO se filtra — se mantiene intacto para preservar la comparabilidad con la literatura.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">is_valid_mask</span><span class="p">(</span><span class="n">mask_rel_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Devuelve (es_válida, razón_de_rechazo).</span>
+<span class="sd">    Una máscara es inválida si tiene un único valor o si ese valor es 255.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="n">mask_rel_path</span><span class="p">))</span>
+    <span class="n">unique</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;single_value&quot;</span>
+    <span class="k">if</span> <span class="n">unique</span> <span class="o">==</span> <span class="p">{</span><span class="mi">255</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;only_ignore&quot;</span>
+    <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+
+
+<span class="c1"># Filtrar solo el pool de train (no el gold set)</span>
+<span class="n">train_pool</span> <span class="o">=</span> <span class="n">df_all</span><span class="p">[</span><span class="n">df_all</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">gold_set</span>   <span class="o">=</span> <span class="n">df_all</span><span class="p">[</span><span class="n">df_all</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test_gold&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Verificando </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_pool</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> máscaras del pool de entrenamiento...&quot;</span><span class="p">)</span>
+<span class="n">valid_flags</span><span class="p">,</span> <span class="n">reasons</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">train_pool</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">train_pool</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Limpieza&quot;</span><span class="p">):</span>
+    <span class="n">ok</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">is_valid_mask</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;mask_path&quot;</span><span class="p">],</span> <span class="n">ROOT</span><span class="p">)</span>
+    <span class="n">valid_flags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ok</span><span class="p">)</span>
+    <span class="n">reasons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span>
+
+<span class="n">train_pool</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">valid_flags</span>
+<span class="n">train_pool</span><span class="p">[</span><span class="s2">&quot;reason&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reasons</span>
+
+<span class="c1"># Reporte de eliminaciones</span>
+<span class="n">removed</span> <span class="o">=</span> <span class="n">train_pool</span><span class="p">[</span><span class="o">~</span><span class="n">train_pool</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Máscaras eliminadas: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">removed</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">removed</span><span class="p">[</span><span class="s2">&quot;reason&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Por misión:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">removed</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;mission&quot;</span><span class="p">,</span> <span class="s2">&quot;reason&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+
+<span class="c1"># Dataset limpio</span>
+<span class="n">train_clean</span> <span class="o">=</span> <span class="n">train_pool</span><span class="p">[</span><span class="n">train_pool</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="s2">&quot;reason&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Pool de entrenamiento limpio: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_clean</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> muestras&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">train_clean</span><span class="p">[</span><span class="s2">&quot;mission&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Verificando 23,928 máscaras del pool de entrenamiento...
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Limpieza: 100%|██████████| 23928/23928 [03:04&lt;00:00, 129.66it/s]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Máscaras eliminadas: 963
+reason
+single_value    963
+
+Por misión:
+mission  reason      
+M2020    single_value      2
+MER      single_value    798
+MSL      single_value    163
+
+Pool de entrenamiento limpio: 22,965 muestras
+mission
+MSL      15901
+MER       6593
+M2020      471
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Guardar manifest completo limpio (train pool + gold set)</span>
+<span class="n">df_clean</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">train_clean</span><span class="p">,</span> <span class="n">gold_set</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_clean</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s2">&quot;manifest_clean.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;manifest_clean.csv guardado: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_clean</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> muestras totales&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Desglose final:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_clean</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;mission&quot;</span><span class="p">,</span> <span class="s2">&quot;split&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>manifest_clean.csv guardado: 23,287 muestras totales
+
+Desglose final:
+mission  split    
+M2020    train          471
+MER      train         6593
+MSL      test_gold      322
+         train        15901
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Implicaciones – Limpieza de máscaras</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>[D] Decisión</strong></p></td>
+<td><p>Eliminar máscaras vacías o de solo-ignore del pool de entrenamiento. El gold set se mantiene íntegro.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>[A] Arquitectura</strong></p></td>
+<td><p>No aplica directamente.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>[R] Riesgo</strong></p></td>
+<td><p>Si la proporción de eliminaciones es desigual entre misiones, puede sesgar la representación relativa. Se verifica en la sección siguiente.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="distribucion-global-del-dataset-a-id-distribucion-a">
+<h2>4. Distribución global del dataset <a id="distribucion"></a><a class="headerlink" href="#distribucion-global-del-dataset-a-id-distribucion-a" title="Permalink to this heading">#</a></h2>
+<p>Análisis de la composición del dataset por misión, cámara y tamaño relativo.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;4 – Distribución Global del Dataset AI4MARS&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+
+<span class="c1"># Conteo por misión (solo train pool)</span>
+<span class="n">mission_counts</span> <span class="o">=</span> <span class="n">train_clean</span><span class="p">[</span><span class="s2">&quot;mission&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<span class="n">colors_m</span> <span class="o">=</span> <span class="p">[</span><span class="n">MISSION_COLORS</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mission_counts</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+
+<span class="n">bars</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">mission_counts</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">mission_counts</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors_m</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">bar</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bars</span><span class="p">,</span> <span class="n">mission_counts</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+        <span class="n">bar</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">bar</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">bar</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span> <span class="o">+</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span>
+    <span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;N° de imágenes&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Imágenes por misión (pool de entrenamiento)&quot;</span><span class="p">)</span>
+
+<span class="c1"># Pie: distribución relativa</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span>
+    <span class="n">mission_counts</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+    <span class="n">labels</span><span class="o">=</span><span class="n">mission_counts</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+    <span class="n">colors</span><span class="o">=</span><span class="n">colors_m</span><span class="p">,</span>
+    <span class="n">autopct</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%1.1f%%</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">startangle</span><span class="o">=</span><span class="mi">140</span><span class="p">,</span>
+    <span class="n">wedgeprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Proporción relativa por misión&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Distribución por misión:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">mission</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">mission_counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">pct</span> <span class="o">=</span> <span class="n">count</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_clean</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">mission</span><span class="si">:</span><span class="s2">5s</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">:</span><span class="s2">&gt;6,</span><span class="si">}</span><span class="s2"> imágenes  (</span><span class="si">{</span><span class="n">pct</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  Gold set MSL (test fijo): </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">gold_set</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;6,</span><span class="si">}</span><span class="s2"> imágenes&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/9eb91b0050ccacaddb62359dd03a71c3db9734abb896d4ca4bfd167eb2c1f85f.png" src="../_images/9eb91b0050ccacaddb62359dd03a71c3db9734abb896d4ca4bfd167eb2c1f85f.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Distribución por misión:
+  MSL  : 15,901 imágenes  (69.2%)
+  MER  :  6,593 imágenes  (28.7%)
+  M2020:    471 imágenes  (2.1%)
+
+  Gold set MSL (test fijo):    322 imágenes
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Implicaciones – Distribución global</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>[D] Decisión</strong></p></td>
+<td><p>MSL domina el dataset (~70%). M2020 es fuertemente minoritaria. Cualquier split aleatorio sin estratificación dejaría M2020 sub o sobrerepresentada.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>[A] Arquitectura</strong></p></td>
+<td><p>La dominancia de MSL justifica su uso como conjunto principal de entrenamiento.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>[R] Riesgo</strong></p></td>
+<td><p>Si se mezclan misiones sin control, el modelo puede aprender características específicas de sensor (cámara NavCam MSL vs EFF MER) en lugar de características de terreno.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="inspeccion-visual-comparativa-por-mision-a-id-visual-a">
+<h2>5. Inspección visual comparativa por misión <a id="visual"></a><a class="headerlink" href="#inspeccion-visual-comparativa-por-mision-a-id-visual-a" title="Permalink to this heading">#</a></h2>
+<p>Se visualizan muestras aleatorias de cada misión para identificar diferencias
+visuales sistemáticas: iluminación, resolución, ángulo de cámara y ruido.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">show_mission_samples</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">root</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">n_per_mission</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">EDA_SEED</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Visualiza n muestras por misión con su máscara superpuesta.&quot;&quot;&quot;</span>
+    <span class="n">missions</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;mission&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">missions</span><span class="p">),</span> <span class="n">n_per_mission</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">n_per_mission</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">missions</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
+        <span class="s2">&quot;5 – Inspección Visual Comparativa por Misión</span><span class="se">\n</span><span class="s2">(imagen original | overlay de máscara)&quot;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">mission</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missions</span><span class="p">):</span>
+        <span class="n">subset</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;mission&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">mission</span><span class="p">]</span>
+        <span class="n">chosen</span> <span class="o">=</span> <span class="n">subset</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">n_per_mission</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">subset</span><span class="p">)),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">col_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">sample</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chosen</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+            <span class="n">img</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="n">sample</span><span class="p">[</span><span class="s2">&quot;image_path&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">))</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="n">sample</span><span class="p">[</span><span class="s2">&quot;mask_path&quot;</span><span class="p">]))</span>
+
+            <span class="n">ax_img</span>  <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">row_idx</span><span class="p">][</span><span class="n">col_idx</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">ax_mask</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">row_idx</span><span class="p">][</span><span class="n">col_idx</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">ax_img</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+            <span class="n">ax_img</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span>
+                             <span class="n">color</span><span class="o">=</span><span class="n">MISSION_COLORS</span><span class="p">[</span><span class="n">mission</span><span class="p">])</span>
+            <span class="n">ax_img</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Overlay con colores por clase</span>
+            <span class="n">overlay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="o">*</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">cls_id</span><span class="p">,</span> <span class="p">(</span><span class="n">hex_color</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">CLASS_COLORS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">cls_id</span> <span class="o">==</span> <span class="mi">255</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">rgb</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">hex_color</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+                <span class="n">overlay</span><span class="p">[</span><span class="n">mask</span> <span class="o">==</span> <span class="n">cls_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">rgb</span><span class="p">,</span> <span class="mi">180</span><span class="p">]</span>
+            <span class="n">overlay</span><span class="p">[</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">255</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">60</span><span class="p">]</span>
+
+            <span class="n">ax_mask</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+            <span class="n">ax_mask</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">overlay</span><span class="p">)</span>
+            <span class="n">ax_mask</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Máscara&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+            <span class="n">ax_mask</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Leyenda global</span>
+    <span class="n">patches</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">CLASS_COLORS</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">CLASS_COLORS</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="p">]</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">patches</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower center&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+               <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.02</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="n">show_mission_samples</span><span class="p">(</span><span class="n">train_clean</span><span class="p">,</span> <span class="n">ROOT</span><span class="p">,</span> <span class="n">n_per_mission</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/cad46e6273f2aeb3f683eaf6f77d0c92aab3dfc48c1569e26063eec3dd1a6e6e.png" src="../_images/cad46e6273f2aeb3f683eaf6f77d0c92aab3dfc48c1569e26063eec3dd1a6e6e.png" />
+</div>
+</div>
+<p><strong>Implicaciones – Inspección visual</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>[D] Decisión</strong></p></td>
+<td><p>Las diferencias visuales entre misiones (contraste, granularidad, ángulo) son observables a simple vista. Un modelo entrenado en MSL probablemente no generalizará directamente a MER sin domain adaptation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>[A] Arquitectura</strong></p></td>
+<td><p>Justifica mantener las misiones separadas y no mezclarlas de forma ingenua en el set de entrenamiento.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>[R] Riesgo</strong></p></td>
+<td><p>El etiquetado por crowdsourcing puede ser menos consistente en MER y M2020. Las máscaras con ruido estructural en los bordes son inherentes al dataset.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="distribucion-de-clases-por-mision-domain-shift-a-id-clases-a">
+<h2>6. Distribución de clases por misión (domain shift) <a id="clases"></a><a class="headerlink" href="#distribucion-de-clases-por-mision-domain-shift-a-id-clases-a" title="Permalink to this heading">#</a></h2>
+<p>Se mide la distribución de píxeles por clase en cada misión usando muestreo estratificado.
+Diferencias sistemáticas en esta distribución son evidencia directa de <strong>domain shift</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">pixel_counts_by_mission</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">root</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">sample_per_mission</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">EDA_SEED</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Distribución de píxeles por clase para cada misión (fracción del total).&quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">mission</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;mission&quot;</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">sample_per_mission</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">))</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+                           <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;  Contando píxeles </span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;mask_path&quot;</span><span class="p">]))</span>
+            <span class="n">vals</span><span class="p">,</span> <span class="n">cnts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">cnts</span><span class="p">):</span>
+                <span class="n">counts</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">mission</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="o">/</span> <span class="n">total</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">results</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calculando distribución de clases por misión...&quot;</span><span class="p">)</span>
+<span class="n">dist_mission</span> <span class="o">=</span> <span class="n">pixel_counts_by_mission</span><span class="p">(</span><span class="n">train_clean</span><span class="p">,</span> <span class="n">ROOT</span><span class="p">,</span> <span class="n">sample_per_mission</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="n">missions</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dist_mission</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">cls_order</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
+<span class="n">x</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cls_order</span><span class="p">))</span>
+<span class="n">width</span> <span class="o">=</span> <span class="mf">0.25</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;6 – Distribución de Clases por Misión&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+
+<span class="c1"># Barras agrupadas</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mission</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missions</span><span class="p">):</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">dist_mission</span><span class="p">[</span><span class="n">mission</span><span class="p">]</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">dist</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cls_order</span><span class="p">]</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">width</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="n">mission</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">MISSION_COLORS</span><span class="p">[</span><span class="n">mission</span><span class="p">],</span>
+                <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">width</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="n">CLASS_COLORS</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cls_order</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Fracción de píxeles&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Misión&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Todas las clases (incluyendo ignore=255)&quot;</span><span class="p">)</span>
+
+<span class="c1"># Solo clases válidas, normalizado</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mission</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missions</span><span class="p">):</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">dist_mission</span><span class="p">[</span><span class="n">mission</span><span class="p">]</span>
+    <span class="n">valid_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">valid_total</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">dist</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">valid_total</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">width</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="n">mission</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">MISSION_COLORS</span><span class="p">[</span><span class="n">mission</span><span class="p">],</span>
+                <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">width</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="n">CLASS_COLORS</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Fracción de píxeles válidos&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Misión&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Solo clases válidas (sin ignore=255)&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Distribución detallada por misión (clases válidas):&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">mission</span><span class="p">,</span> <span class="n">dist</span> <span class="ow">in</span> <span class="n">dist_mission</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">valid_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">valid_total</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">CLASS_COLORS</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">10s</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">dist</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">valid_total</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calculando distribución de clases por misión...
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                                                                            
+</pre></div>
+</div>
+<img alt="../_images/0451ed39e290cb907f19db4571db6ab9a8fdccd8bbd45133d0351d2274572e9c.png" src="../_images/0451ed39e290cb907f19db4571db6ab9a8fdccd8bbd45133d0351d2274572e9c.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Distribución detallada por misión (clases válidas):
+  M2020:
+    soil      : 0.536
+    bedrock   : 0.275
+    sand      : 0.140
+    big_rock  : 0.049
+  MER:
+    soil      : 0.442
+    bedrock   : 0.246
+    sand      : 0.303
+    big_rock  : 0.009
+  MSL:
+    soil      : 0.379
+    bedrock   : 0.492
+    sand      : 0.121
+    big_rock  : 0.008
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Implicaciones – Distribución de clases por misión</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>[D] Decisión</strong></p></td>
+<td><p>Diferencias en la distribución de clases entre misiones confirman domain shift. No es apropiado mezclar misiones sin técnicas de domain adaptation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>[A] Arquitectura</strong></p></td>
+<td><p>La distribución de clases dentro de MSL (la misión elegida) determina los pesos de la función de pérdida.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>[R] Riesgo</strong></p></td>
+<td><p>Un modelo entrenado en MSL verá distribuciones de clase distintas en MER/M2020. Documentar como limitación de generalización.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="dimensionalidad-y-formato-por-mision-a-id-dimensiones-a">
+<h2>7. Dimensionalidad y formato por misión <a id="dimensiones"></a><a class="headerlink" href="#dimensionalidad-y-formato-por-mision-a-id-dimensiones-a" title="Permalink to this heading">#</a></h2>
+<p>Se analiza la distribución de resoluciones de imagen en cada misión.
+Diferencias en el aspect ratio y resolución entre misiones son indicadores adicionales de domain shift.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_image_sizes</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">root</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">sample_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">EDA_SEED</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mide ancho, alto y canales de una muestra de imágenes.&quot;&quot;&quot;</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">sample_n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Midiendo imágenes&quot;</span><span class="p">):</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;image_path&quot;</span><span class="p">])</span>
+        <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;mission&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;mission&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;width&quot;</span><span class="p">:</span>   <span class="n">w</span><span class="p">,</span>
+            <span class="s2">&quot;height&quot;</span><span class="p">:</span>  <span class="n">h</span><span class="p">,</span>
+            <span class="s2">&quot;channels&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">getbands</span><span class="p">()),</span>
+            <span class="s2">&quot;aspect&quot;</span><span class="p">:</span>  <span class="n">w</span> <span class="o">/</span> <span class="n">h</span><span class="p">,</span>
+        <span class="p">})</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Analizando dimensiones de imagen por misión...&quot;</span><span class="p">)</span>
+<span class="n">sizes_df</span> <span class="o">=</span> <span class="n">get_image_sizes</span><span class="p">(</span><span class="n">train_clean</span><span class="p">,</span> <span class="n">ROOT</span><span class="p">,</span> <span class="n">sample_n</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;7 – Dimensionalidad y Formato por Misión&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+
+<span class="c1"># Scatter width vs height por misión</span>
+<span class="k">for</span> <span class="n">mission</span> <span class="ow">in</span> <span class="n">missions</span><span class="p">:</span>
+    <span class="n">sub</span> <span class="o">=</span> <span class="n">sizes_df</span><span class="p">[</span><span class="n">sizes_df</span><span class="p">[</span><span class="s2">&quot;mission&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">mission</span><span class="p">]</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">],</span>
+                       <span class="n">label</span><span class="o">=</span><span class="n">mission</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                       <span class="n">color</span><span class="o">=</span><span class="n">MISSION_COLORS</span><span class="p">[</span><span class="n">mission</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Ancho (px)&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Alto (px)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Resolución: ancho vs alto&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="c1"># Histograma de ancho por misión</span>
+<span class="k">for</span> <span class="n">mission</span> <span class="ow">in</span> <span class="n">missions</span><span class="p">:</span>
+    <span class="n">sub</span> <span class="o">=</span> <span class="n">sizes_df</span><span class="p">[</span><span class="n">sizes_df</span><span class="p">[</span><span class="s2">&quot;mission&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">mission</span><span class="p">]</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">MISSION_COLORS</span><span class="p">[</span><span class="n">mission</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">mission</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Ancho (px)&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;N° imágenes&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Distribución de ancho&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="c1"># Boxplot de aspect ratio por misión</span>
+<span class="n">sizes_df</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s2">&quot;aspect&quot;</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">&quot;mission&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                 <span class="n">medianprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Aspect ratio (ancho/alto)&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]);</span> <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Aspect ratio por misión&quot;</span><span class="p">)</span>
+
+<span class="c1"># Canales</span>
+<span class="n">ch_counts</span> <span class="o">=</span> <span class="n">sizes_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;mission&quot;</span><span class="p">,</span> <span class="s2">&quot;channels&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ch_counts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;N° de canales por misión&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Misión&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;N° imágenes&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Resumen de dimensiones por misión:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sizes_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;mission&quot;</span><span class="p">)[[</span><span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="s2">&quot;aspect&quot;</span><span class="p">,</span> <span class="s2">&quot;channels&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">]</span>
+<span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Analizando dimensiones de imagen por misión...
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Midiendo imágenes: 100%|██████████| 300/300 [00:00&lt;00:00, 1362.42it/s]
+</pre></div>
+</div>
+<img alt="../_images/2d7434a13d49f0aa5c05826b6ebb500bb3e2d1cf0aa3a9c1b8877f92d8c75f2e.png" src="../_images/2d7434a13d49f0aa5c05826b6ebb500bb3e2d1cf0aa3a9c1b8877f92d8c75f2e.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Resumen de dimensiones por misión:
+          width              height             aspect           channels        
+         median   min   max  median   min   max median  min  max   median min max
+mission                                                                          
+M2020    1280.0  1280  1288   600.0   240   968    3.3  1.3  5.3      3.0   3   3
+MER      1024.0  1024  1024  1024.0  1024  1024    1.0  1.0  1.0      1.0   1   1
+MSL      1024.0  1024  1024  1024.0  1024  1024    1.0  1.0  1.0      1.0   1   1
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Implicaciones – Dimensionalidad y formato</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>[D] Decisión</strong></p></td>
+<td><p>Las resoluciones varían entre misiones. Se aplicará resize a <strong>256×256</strong> con interpolación BILINEAR para imágenes y NEAREST para máscaras.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>[A] Arquitectura</strong></p></td>
+<td><p>Todos los modelos recibirán input fijo <code class="docutils literal notranslate"><span class="pre">[B,</span> <span class="pre">3,</span> <span class="pre">256,</span> <span class="pre">256]</span></code>. El canal grayscale se replica ×3 para compatibilidad con encoders preentrenados en ImageNet.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>[R] Riesgo</strong></p></td>
+<td><p>Imágenes con aspect ratio muy distinto de 1:1 pierden información geométrica al hacer resize cuadrado. Documentar como limitación estructural del preprocesamiento.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="distribucion-de-intensidades-por-mision-a-id-intensidades-a">
+<h2>8. Distribución de intensidades por misión <a id="intensidades"></a><a class="headerlink" href="#distribucion-de-intensidades-por-mision-a-id-intensidades-a" title="Permalink to this heading">#</a></h2>
+<p>Diferencias en la distribución de intensidades de píxeles entre misiones
+indican condiciones de iluminación distintas y características de sensor diferentes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">pixel_intensity_by_mission</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">root</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">sample_per_mission</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">150</span><span class="p">,</span>
+    <span class="n">px_per_img</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">EDA_SEED</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extrae muestras de intensidad de píxeles por misión.&quot;&quot;&quot;</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">mission</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;mission&quot;</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">sample_per_mission</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">))</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">pixels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+                           <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;  Intensidades </span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;image_path&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">chosen</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">img</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">px_per_img</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">img</span><span class="p">)),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">pixels</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">mission</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pixels</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Analizando distribución de intensidades por misión...&quot;</span><span class="p">)</span>
+<span class="n">intensities</span> <span class="o">=</span> <span class="n">pixel_intensity_by_mission</span><span class="p">(</span><span class="n">train_clean</span><span class="p">,</span> <span class="n">ROOT</span><span class="p">,</span> <span class="n">sample_per_mission</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;8 – Distribución de Intensidades de Píxeles por Misión&quot;</span><span class="p">,</span>
+             <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+
+<span class="c1"># Histogramas superpuestos</span>
+<span class="k">for</span> <span class="n">mission</span><span class="p">,</span> <span class="n">px</span> <span class="ow">in</span> <span class="n">intensities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">MISSION_COLORS</span><span class="p">[</span><span class="n">mission</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">mission</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Intensidad (0–255)&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Densidad&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Histogramas superpuestos&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="c1"># Boxplot</span>
+<span class="n">bp_data</span>   <span class="o">=</span> <span class="p">[</span><span class="n">intensities</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">missions</span><span class="p">]</span>
+<span class="n">bp_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">MISSION_COLORS</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">missions</span><span class="p">]</span>
+<span class="n">bp</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">bp_data</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">missions</span><span class="p">,</span> <span class="n">patch_artist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                     <span class="n">medianprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">patch</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bp</span><span class="p">[</span><span class="s2">&quot;boxes&quot;</span><span class="p">],</span> <span class="n">bp_colors</span><span class="p">):</span>
+    <span class="n">patch</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">color</span><span class="p">);</span> <span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Intensidad&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Boxplot por misión&quot;</span><span class="p">)</span>
+
+<span class="c1"># Media y std</span>
+<span class="n">means</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">intensities</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">missions</span><span class="p">]</span>
+<span class="n">stds</span>  <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">intensities</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>  <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">missions</span><span class="p">]</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="n">missions</span><span class="p">,</span> <span class="n">means</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="n">stds</span><span class="p">,</span>
+             <span class="n">color</span><span class="o">=</span><span class="n">bp_colors</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">capsize</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Intensidad media ± std&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Media ± std por misión&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Estadísticas de intensidad por misión:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">mission</span><span class="p">,</span> <span class="n">px</span> <span class="ow">in</span> <span class="n">intensities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">mission</span><span class="si">:</span><span class="s2">5s</span><span class="si">}</span><span class="s2">: media=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">px</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">  std=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">px</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">  &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;p5=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">  p95=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="w"> </span><span class="mi">95</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Analizando distribución de intensidades por misión...
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                                                                        
+</pre></div>
+</div>
+<img alt="../_images/78447f02dbde6d021af32b41de9e866abf919bbaca7e967cfb8dcddfa905751f.png" src="../_images/78447f02dbde6d021af32b41de9e866abf919bbaca7e967cfb8dcddfa905751f.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Estadísticas de intensidad por misión:
+  M2020: media=97.5  std=63.3  p5=13  p95=224
+  MER  : media=67.6  std=27.9  p5=20  p95=112
+  MSL  : media=57.7  std=28.7  p5=14  p95=105
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Implicaciones – Intensidades por misión</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>[D] Decisión</strong></p></td>
+<td><p>Diferencias en media/std entre misiones confirman que los sensores tienen características distintas. La normalización debe calcularse <strong>solo sobre el train set de MSL</strong> para no contaminar val/test.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>[A] Arquitectura</strong></p></td>
+<td><p>Si se mezclaran misiones, sería necesario usar batch normalization por misión o técnicas de domain adaptation.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>[R] Riesgo CRÍTICO</strong></p></td>
+<td><p>Calcular estadísticas de normalización sobre el dataset completo (incluyendo val/test) constituye <strong>data leakage</strong>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="divergencia-jensen-shannon-entre-misiones-a-id-js-a">
+<h2>9. Divergencia Jensen-Shannon entre misiones <a id="js"></a><a class="headerlink" href="#divergencia-jensen-shannon-entre-misiones-a-id-js-a" title="Permalink to this heading">#</a></h2>
+<p>La divergencia JS cuantifica formalmente el <strong>domain shift</strong> entre pares de misiones.
+Un valor JS &gt; 0.15 indica diferencias distribucionales significativas que requieren atención experimental.
+Este es el argumento cuantitativo central para justificar la decisión de usar solo MSL.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_dist_vector</span><span class="p">(</span><span class="n">dist</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">classes</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convierte dict de distribución a vector de probabilidad normalizado.&quot;&quot;&quot;</span>
+    <span class="n">vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dist</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">vec</span> <span class="o">/</span> <span class="n">vec</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+
+<span class="n">missions_js</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dist_mission</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">missions_js</span><span class="p">)</span>
+<span class="n">js_full</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+<span class="n">js_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missions_js</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">m2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missions_js</span><span class="p">):</span>
+        <span class="n">v_full1</span>  <span class="o">=</span> <span class="n">get_dist_vector</span><span class="p">(</span><span class="n">dist_mission</span><span class="p">[</span><span class="n">m1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">255</span><span class="p">])</span>
+        <span class="n">v_full2</span>  <span class="o">=</span> <span class="n">get_dist_vector</span><span class="p">(</span><span class="n">dist_mission</span><span class="p">[</span><span class="n">m2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">255</span><span class="p">])</span>
+        <span class="n">js_full</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">jensenshannon</span><span class="p">(</span><span class="n">v_full1</span><span class="p">,</span> <span class="n">v_full2</span><span class="p">)</span>
+
+        <span class="n">v_valid1</span> <span class="o">=</span> <span class="n">get_dist_vector</span><span class="p">(</span><span class="n">dist_mission</span><span class="p">[</span><span class="n">m1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        <span class="n">v_valid2</span> <span class="o">=</span> <span class="n">get_dist_vector</span><span class="p">(</span><span class="n">dist_mission</span><span class="p">[</span><span class="n">m2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        <span class="n">js_valid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">jensenshannon</span><span class="p">(</span><span class="n">v_valid1</span><span class="p">,</span> <span class="n">v_valid2</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
+    <span class="s2">&quot;9 – Divergencia Jensen-Shannon entre Misiones</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;(0 = distribuciones idénticas, 1 = completamente distintas)&quot;</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+    <span class="n">axes</span><span class="p">,</span>
+    <span class="p">[</span><span class="n">js_full</span><span class="p">,</span> <span class="n">js_valid</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;Incluyendo ignore (255)&quot;</span><span class="p">,</span> <span class="s2">&quot;Solo clases válidas (0–3)&quot;</span><span class="p">]</span>
+<span class="p">):</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span>
+        <span class="n">matrix</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;.3f&quot;</span><span class="p">,</span>
+        <span class="n">xticklabels</span><span class="o">=</span><span class="n">missions_js</span><span class="p">,</span> <span class="n">yticklabels</span><span class="o">=</span><span class="n">missions_js</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Reds&quot;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">linewidths</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">square</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Divergencia Jensen-Shannon entre misiones (clases válidas 0–3):&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missions_js</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">m2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missions_js</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">:</span>
+            <span class="n">js</span> <span class="o">=</span> <span class="n">js_valid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+            <span class="n">level</span> <span class="o">=</span> <span class="s2">&quot;ALTO domain shift&quot;</span> <span class="k">if</span> <span class="n">js</span> <span class="o">&gt;</span> <span class="mf">0.15</span> <span class="k">else</span> <span class="s2">&quot;moderado&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: JS = </span><span class="si">{</span><span class="n">js</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  → </span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6ee92ce7bf309ec482cfbbd369950e28e5f9c68b39f4e04682ebfaf0b9eedee4.png" src="../_images/6ee92ce7bf309ec482cfbbd369950e28e5f9c68b39f4e04682ebfaf0b9eedee4.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Divergencia Jensen-Shannon entre misiones (clases válidas 0–3):
+  M2020 vs MER: JS = 0.1592  → ALTO domain shift
+  M2020 vs MSL: JS = 0.1744  → ALTO domain shift
+  MER vs MSL: JS = 0.2056  → ALTO domain shift
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Implicaciones – Divergencia Jensen-Shannon</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>[D] Decisión</strong></p></td>
+<td><p>JS &gt; 0.15 entre misiones justifica formalmente <strong>no mezclar misiones</strong> en el entrenamiento sin domain adaptation explícita.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>[A] Arquitectura</strong></p></td>
+<td><p>Un experimento cross-mission (train MSL → test MER/M2020) sería la prueba de generalización OOD natural. Se documenta como trabajo futuro.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>[R] Riesgo</strong></p></td>
+<td><p>Mezclar MSL y MER en train sin control puede hacer que el modelo aprenda features de sensor en lugar de features de terreno.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="decision-justificada-usar-solo-msl-a-id-decision-a">
+<h2>10. Decisión justificada: usar solo MSL <a id="decision"></a><a class="headerlink" href="#decision-justificada-usar-solo-msl-a-id-decision-a" title="Permalink to this heading">#</a></h2>
+<p>Con base en los análisis anteriores, se consolida la decisión de restringir el entrenamiento
+a imágenes de la misión MSL (rover Curiosity, cámara NavCam).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla resumen de justificación</span>
+<span class="n">justificacion</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Criterio&quot;</span><span class="p">:</span> <span class="s2">&quot;Tamaño del conjunto&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MSL&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;~</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_clean</span><span class="p">[</span><span class="n">train_clean</span><span class="o">.</span><span class="n">mission</span><span class="o">==</span><span class="s1">&#39;MSL&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> imágenes (&gt;70% del dataset)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MER&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;~</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_clean</span><span class="p">[</span><span class="n">train_clean</span><span class="o">.</span><span class="n">mission</span><span class="o">==</span><span class="s1">&#39;MER&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> imágenes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;M2020&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;~</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_clean</span><span class="p">[</span><span class="n">train_clean</span><span class="o">.</span><span class="n">mission</span><span class="o">==</span><span class="s1">&#39;M2020&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> imágenes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Decisión&quot;</span><span class="p">:</span> <span class="s2">&quot;MSL es el conjunto más grande y representativo&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Criterio&quot;</span><span class="p">:</span> <span class="s2">&quot;Domain shift (JS vs MSL)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MSL&quot;</span><span class="p">:</span> <span class="s2">&quot;0.000 (referencia)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MER&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">js_valid</span><span class="p">[</span><span class="n">missions_js</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;MSL&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">missions_js</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;MER&#39;</span><span class="p">)]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;M2020&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">js_valid</span><span class="p">[</span><span class="n">missions_js</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;MSL&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">missions_js</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;M2020&#39;</span><span class="p">)]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Decisión&quot;</span><span class="p">:</span> <span class="s2">&quot;JS &gt; 0.15 → mezcla sin domain adaptation es inapropiada&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Criterio&quot;</span><span class="p">:</span> <span class="s2">&quot;Consistencia de sensor&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MSL&quot;</span><span class="p">:</span> <span class="s2">&quot;NavCam (homogéneo)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MER&quot;</span><span class="p">:</span> <span class="s2">&quot;EFF (resolución y ángulo distintos)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;M2020&quot;</span><span class="p">:</span> <span class="s2">&quot;NavCam (similar a MSL pero pocos datos)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Decisión&quot;</span><span class="p">:</span> <span class="s2">&quot;MSL tiene el sensor más consistente con más datos&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Criterio&quot;</span><span class="p">:</span> <span class="s2">&quot;Gold set estándar&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MSL&quot;</span><span class="p">:</span> <span class="s2">&quot;322 imágenes validadas por JPL (min3)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MER&quot;</span><span class="p">:</span> <span class="s2">&quot;Test set disponible pero distinto dominio&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;M2020&quot;</span><span class="p">:</span> <span class="s2">&quot;Sin gold set público&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Decisión&quot;</span><span class="p">:</span> <span class="s2">&quot;Solo MSL tiene gold set comparable con la literatura&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Criterio&quot;</span><span class="p">:</span> <span class="s2">&quot;Precedente en literatura&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MSL&quot;</span><span class="p">:</span> <span class="s2">&quot;Li et al. (2024), Mohammad et al. (2024)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MER&quot;</span><span class="p">:</span> <span class="s2">&quot;No usado como conjunto principal&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;M2020&quot;</span><span class="p">:</span> <span class="s2">&quot;No usado como conjunto principal&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Decisión&quot;</span><span class="p">:</span> <span class="s2">&quot;MSL permite comparabilidad directa con el estado del arte&quot;</span>
+    <span class="p">},</span>
+<span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resumen de justificación para el uso exclusivo de MSL:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">justificacion</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">► </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Criterio&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  MSL   : </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MSL&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  MER   : </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MER&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  M2020 : </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;M2020&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  → </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Decisión&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Guardar manifest solo MSL</span>
+<span class="n">msl_train_clean</span> <span class="o">=</span> <span class="n">train_clean</span><span class="p">[</span><span class="n">train_clean</span><span class="p">[</span><span class="s2">&quot;mission&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;MSL&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">msl_train_clean</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s2">&quot;manifest_msl_train.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">manifest_msl_train.csv guardado: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">msl_train_clean</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> imágenes MSL limpias&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Resumen de justificación para el uso exclusivo de MSL:
+================================================================================
+
+► Tamaño del conjunto
+  MSL   : ~15,901 imágenes (&gt;70% del dataset)
+  MER   : ~6,593 imágenes
+  M2020 : ~471 imágenes
+  → MSL es el conjunto más grande y representativo
+
+► Domain shift (JS vs MSL)
+  MSL   : 0.000 (referencia)
+  MER   : 0.206
+  M2020 : 0.174
+  → JS &gt; 0.15 → mezcla sin domain adaptation es inapropiada
+
+► Consistencia de sensor
+  MSL   : NavCam (homogéneo)
+  MER   : EFF (resolución y ángulo distintos)
+  M2020 : NavCam (similar a MSL pero pocos datos)
+  → MSL tiene el sensor más consistente con más datos
+
+► Gold set estándar
+  MSL   : 322 imágenes validadas por JPL (min3)
+  MER   : Test set disponible pero distinto dominio
+  M2020 : Sin gold set público
+  → Solo MSL tiene gold set comparable con la literatura
+
+► Precedente en literatura
+  MSL   : Li et al. (2024), Mohammad et al. (2024)
+  MER   : No usado como conjunto principal
+  M2020 : No usado como conjunto principal
+  → MSL permite comparabilidad directa con el estado del arte
+
+manifest_msl_train.csv guardado: 15,901 imágenes MSL limpias
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Implicaciones – Decisión MSL</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>[D] Decisión</strong></p></td>
+<td><p>Se usa <strong>exclusivamente el subconjunto MSL</strong> para entrenamiento y validación. El gold set MSL min3 es el test fijo.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>[A] Arquitectura</strong></p></td>
+<td><p>No se requieren técnicas de domain adaptation en los modelos benchmark. Se documenta como extensión futura.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>[R] Riesgo</strong></p></td>
+<td><p>Al restringir a MSL, el modelo no verá variabilidad de sensor de MER/M2020. La generalización a otras misiones queda fuera del alcance del entregable.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="definicion-del-gold-set-de-test-msl-min3-a-id-goldset-a">
+<h2>11. Definición del gold set de test (MSL min3) <a id="goldset"></a><a class="headerlink" href="#definicion-del-gold-set-de-test-msl-min3-a-id-goldset-a" title="Permalink to this heading">#</a></h2>
+<p>El gold set corresponde a 322 imágenes MSL con máscaras validadas por científicos del JPL
+con mínimo 3 etiquetadores en acuerdo al 100% (<code class="docutils literal notranslate"><span class="pre">masked-gold-min3-100agree</span></code>).<br />
+Este conjunto se usa como <strong>test fijo</strong>, completamente separado del pool de entrenamiento.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gold set MSL (min3): </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">gold_set</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> imágenes&quot;</span><span class="p">)</span>
+
+<span class="c1"># Verificar que no haya overlap entre el pool de train y el gold set</span>
+<span class="n">train_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">msl_train_clean</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="n">gold_ids</span>  <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">gold_set</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="n">overlap</span>   <span class="o">=</span> <span class="n">train_ids</span> <span class="o">&amp;</span> <span class="n">gold_ids</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Verificación de data leakage:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  IDs en train MSL   : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_ids</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  IDs en gold set    : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">gold_ids</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Overlap (leakage)  : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;DATA LEAKAGE: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span><span class="si">}</span><span class="s2"> imágenes aparecen en train Y en el gold set de test.&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  ✓ Sin overlap — gold set completamente separado del pool de entrenamiento&quot;</span><span class="p">)</span>
+
+<span class="c1"># Guardar gold set</span>
+<span class="n">gold_set</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s2">&quot;manifest_msl_gold_test.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">manifest_msl_gold_test.csv guardado.&quot;</span><span class="p">)</span>
+
+<span class="c1"># Inspección visual del gold set</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;11 – Inspección Visual del Gold Set MSL (min3)&quot;</span><span class="p">,</span>
+             <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+
+<span class="n">sample_gold</span> <span class="o">=</span> <span class="n">gold_set</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">EDA_SEED</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">col_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sample_gold</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+    <span class="n">img</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ROOT</span> <span class="o">/</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;image_path&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">))</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ROOT</span> <span class="o">/</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;mask_path&quot;</span><span class="p">]))</span>
+
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">col_idx</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">col_idx</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gold img </span><span class="si">{</span><span class="n">col_idx</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">col_idx</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+    <span class="n">overlay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="o">*</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">cls_id</span><span class="p">,</span> <span class="p">(</span><span class="n">hex_color</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">CLASS_COLORS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">cls_id</span> <span class="o">==</span> <span class="mi">255</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">hex_color</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+        <span class="n">overlay</span><span class="p">[</span><span class="n">mask</span> <span class="o">==</span> <span class="n">cls_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">rgb</span><span class="p">,</span> <span class="mi">180</span><span class="p">]</span>
+    <span class="n">overlay</span><span class="p">[</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">255</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">60</span><span class="p">]</span>
+
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">col_idx</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">col_idx</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">overlay</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">col_idx</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Máscara gold </span><span class="si">{</span><span class="n">col_idx</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">col_idx</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+<span class="n">patches</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">CLASS_COLORS</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">CLASS_COLORS</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="p">]</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">patches</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower center&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+           <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.02</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Gold set MSL (min3): 322 imágenes
+
+Verificación de data leakage:
+  IDs en train MSL   : 15,901
+  IDs en gold set    : 322
+  Overlap (leakage)  : 0
+  ✓ Sin overlap — gold set completamente separado del pool de entrenamiento
+
+manifest_msl_gold_test.csv guardado.
+</pre></div>
+</div>
+<img alt="../_images/c190cfeb36c8686517f2f74b7e832a6dd933db8ab85e25f7fc3a8b377982d62f.png" src="../_images/c190cfeb36c8686517f2f74b7e832a6dd933db8ab85e25f7fc3a8b377982d62f.png" />
+</div>
+</div>
+<p><strong>Implicaciones – Gold set de test</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>[D] Decisión</strong></p></td>
+<td><p>El gold set MSL min3 es el <strong>test set fijo</strong> para todos los modelos. Nunca se usa en entrenamiento ni validación. Los resultados sobre este set son los reportados en el benchmark final.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>[A] Arquitectura</strong></p></td>
+<td><p>Las métricas del gold set son comparables directamente con Li et al. (2024) y Mohammad et al. (2024).</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>[R] Riesgo CRÍTICO</strong></p></td>
+<td><p>Cualquier inspección de las máscaras gold durante el diseño del modelo constituye data leakage. Este notebook solo verifica el conteo y la separación — no analiza la distribución de clases del gold set.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="archivos-generados-por-este-notebook">
+<h2>Archivos generados por este notebook<a class="headerlink" href="#archivos-generados-por-este-notebook" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Archivo</p></th>
+<th class="head"><p>Descripción</p></th>
+<th class="head"><p>Usado en</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">processed/manifest_clean.csv</span></code></p></td>
+<td><p>Todas las muestras válidas (train pool + gold set)</p></td>
+<td><p>Referencia general</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">processed/manifest_msl_train.csv</span></code></p></td>
+<td><p>Solo imágenes MSL limpias para entrenamiento</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">02_preprocessing.ipynb</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">processed/manifest_msl_gold_test.csv</span></code></p></td>
+<td><p>Gold set MSL min3 (test fijo)</p></td>
+<td><p>Notebooks de evaluación</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">figures/eda_01/*.png</span></code></p></td>
+<td><p>Todas las figuras de este notebook</p></td>
+<td><p>Jupyter Book</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>Próximo paso</strong>: <code class="docutils literal notranslate"><span class="pre">02_preprocessing.ipynb</span></code> — Resize a 256×256, generación del split train/val
+sobre el pool MSL, y cálculo de estadísticas de normalización solo sobre train.</p>
+</div></blockquote>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Segmentacion semantica de terreno marciano</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="02_preprocessing.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">02 — Preprocesamiento: Resize, Split y Estadísticas de Normalización</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion-e-importaciones-a-id-setup-a">1. Configuración e importaciones <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-del-manifest-a-id-manifest-a">2. Construcción del manifest <a id="manifest"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limpieza-de-mascaras-invalidas-a-id-limpieza-a">3. Limpieza de máscaras inválidas <a id="limpieza"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distribucion-global-del-dataset-a-id-distribucion-a">4. Distribución global del dataset <a id="distribucion"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspeccion-visual-comparativa-por-mision-a-id-visual-a">5. Inspección visual comparativa por misión <a id="visual"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distribucion-de-clases-por-mision-domain-shift-a-id-clases-a">6. Distribución de clases por misión (domain shift) <a id="clases"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimensionalidad-y-formato-por-mision-a-id-dimensiones-a">7. Dimensionalidad y formato por misión <a id="dimensiones"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distribucion-de-intensidades-por-mision-a-id-intensidades-a">8. Distribución de intensidades por misión <a id="intensidades"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#divergencia-jensen-shannon-entre-misiones-a-id-js-a">9. Divergencia Jensen-Shannon entre misiones <a id="js"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decision-justificada-usar-solo-msl-a-id-decision-a">10. Decisión justificada: usar solo MSL <a id="decision"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definicion-del-gold-set-de-test-msl-min3-a-id-goldset-a">11. Definición del gold set de test (MSL min3) <a id="goldset"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#archivos-generados-por-este-notebook">Archivos generados por este notebook</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Entregable 3 - Deep Learning
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
