@@ -17,7 +17,7 @@ parts:
     chapters:
       - file: notebooks/05a_model_deeplabv3plus
       - file: notebooks/05b_model_transunet
-        title: "05b - IC-TransUNet benchmark"
+        title: "05b — IC-TransUNet benchmark"
       - file: notebooks/05c_model_marsseg
       - file: notebooks/05d_model_terseg
       - file: notebooks/05e_model_depthformer
@@ -27,3 +27,7 @@ parts:
     chapters:
       - file: notebooks/06_benchmark_estadistico
       - file: notebooks/07_discusion_discrepancia_visual
+  
+  - caption: Anexos
+    chapters:
+      - file: anexo_pipeline
