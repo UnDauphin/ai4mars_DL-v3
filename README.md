@@ -23,7 +23,8 @@ El objetivo es clasificar a nivel de pixel el tipo de terreno en imagenes captur
 | Notebook | Modelo | Backbone | Maquina |
 |----------|--------|----------|---------|
 | 05a | DeepLabV3+ | ResNet-50 | Google Colab Pro |
-| 05b | SegFormer-B2 | MiT-B2 | Laptop principal |
+| 05b | IC-TransUNet-AI4MARS | InceptionNeXt + CSWin dual branch | Google Colab Pro / recuperacion checkpoints |
+| 05f | SegFormer-B2 | MiT-B2 | Laptop principal |
 | 05c | MarsSeg | ResNet-50 + MiniASPP + PSA + SPPM | Laptop principal |
 | 05d | TerSeg | ResNet-34 + Swin-Tiny | Companero 1 |
 | 05e | DepthFormer-RGB | Swin-Tiny + UPerNet + PPM | Companero 2 |
@@ -50,10 +51,11 @@ ai4mars_DL-v3/
 │   ├── 03_eda_msl.ipynb              — EDA especifico MSL (ya ejecutado)
 │   ├── 04_marco_teorico.md           — revision de literatura
 │   ├── 05a_model_deeplabv3plus.ipynb
-│   ├── 05b_model_segformer.ipynb
+│   ├── 05b_model_transunet.ipynb
 │   ├── 05c_model_marsseg.ipynb
 │   ├── 05d_model_terseg.ipynb
-│   └── 05e_model_depthformer.ipynb
+│   ├── 05e_model_depthformer.ipynb
+│   └── 05f_model_segformer.ipynb
 ├── results/
 │   └── benchmark_results.csv         — metricas agregadas de todos los modelos
 ├── requirements.txt

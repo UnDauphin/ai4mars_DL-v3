@@ -1,0 +1,4 @@
+model,seed,mIoU,pixel_accuracy,best_epoch,train_time_s,source,iou_soil,iou_bedrock,iou_sand,iou_big_rock
+IC-TransUNet-AI4MARS_mars_compact,42,0.6984,0.9453,149.0,,05b_model_transunet.ipynb:checkpoint_recovery,0.931,0.8803,0.86,0.1223
+IC-TransUNet-AI4MARS_mars_compact,123,0.6869,0.9352,149.0,,05b_model_transunet.ipynb:checkpoint_recovery,0.9112,0.8613,0.8455,0.1297
+IC-TransUNet-AI4MARS_mars_compact,7,0.7106,0.9506,140.0,,05b_model_transunet.ipynb:checkpoint_recovery,0.9426,0.8679,0.8815,0.1503

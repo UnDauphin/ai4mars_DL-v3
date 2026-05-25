@@ -11,15 +11,19 @@ parts:
   - caption: Estado del arte
     chapters:
       - file: notebooks/04_marco_teorico
+      - file: notebooks/04b_justificacion_segformer
 
   - caption: Modelos benchmark
     chapters:
       - file: notebooks/05a_model_deeplabv3plus
-      - file: notebooks/05b_model_segformer
+      - file: notebooks/05b_model_transunet
+        title: "05b - IC-TransUNet benchmark"
       - file: notebooks/05c_model_marsseg
       - file: notebooks/05d_model_terseg
       - file: notebooks/05e_model_depthformer
+      - file: notebooks/05f_model_segformer
 
   - caption: Resultados
     chapters:
       - file: notebooks/06_benchmark_estadistico
+      - file: notebooks/07_discusion_discrepancia_visual

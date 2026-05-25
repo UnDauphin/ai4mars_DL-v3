@@ -86,10 +86,11 @@ ai4mars_DL-v3/                              ← ROOT del proyecto
 │   ├── 03_eda_msl.ipynb                    ✅ ejecutado
 │   ├── 04_marco_teorico.md                 ✅ completado (v3 corregida)
 │   ├── 05a_model_deeplabv3plus.ipynb       ✅ entrenamiento completo reportado por compañero (pendiente validar/mergear resultados finales)
-│   ├── 05b_model_segformer.ipynb           ✅ generado — pendiente entrenamiento completo
+│   ├── 05b_model_transunet.ipynb            ✅ benchmark IC-TransUNet recuperado desde checkpoints
 │   ├── 05c_model_marsseg.ipynb             ⚠️ debugueado manualmente — pendiente entrenamiento completo
 │   ├── 05d_model_terseg.ipynb              ⚠️ optimizado: arquitectura ligera v2, FAST_SUBSET=False, batch_size=32 — pendiente/validar resultados completos
 │   ├── 05e_model_depthformer.ipynb         ⚠️ debugueado y validado fast_subset=True — pendiente entrenamiento completo
+│   ├── 05f_model_segformer.ipynb           ✅ propuesta original SegFormer-B2
 │   ├── 06_benchmark_estadistico.ipynb      ❌ pendiente
 │   └── mars_utils.py                       ✅ reescrito v4
 │
@@ -522,7 +523,7 @@ visualize_predictions(mejor_modelo, df_gold, DEVICE, mean=mean, std=std, n=5)
 | 4 | 05e | DepthFormer-RGB | Compañero 2 | ~12h |
 | 5 | 05a | DeepLabV3+ | Colab Pro / compañero | completado por compañero (pendiente validar/mergear resultados) |
 
-> **Nota**: El orden de implementación empieza por SegFormer (no DeepLabV3+) porque es el modelo de la laptop principal y permite verificar el pipeline antes de distribuir a los compañeros. DeepLabV3+ va en Colab y puede correr en paralelo.
+> **Nota**: SegFormer-B2 queda documentado como `05f_model_segformer.ipynb` para separarlo de los benchmarks `05a`-`05e`; IC-TransUNet ocupa `05b_model_transunet.ipynb` como benchmark hibrido adicional.
 
 ### Arquitecturas — decisiones clave por modelo
 
@@ -558,7 +559,15 @@ Todas las arquitecturas están definidas. No hay ambigüedad pendiente.
 mIoU = 0.6806 ± 0.0107   seed: 0.6655 | 0.6893 | 0.6869
 ```
 
-### 9.2 SegFormer-B2 — `05b_model_segformer.ipynb`
+### 9.2 IC-TransUNet-AI4MARS — `05b_model_transunet.ipynb`
+
+**Paper**: Zhu et al., 2025.
+
+**Estado**: benchmark adicional recuperable desde checkpoints de Fase 1.
+
+**Implementación**: arquitectura CNN-Transformer dual branch adaptada a AI4MARS, evaluada sobre el gold test fijo y registrada en `results/benchmark_results.csv`.
+
+### 9.3 SegFormer-B2 — `05f_model_segformer.ipynb`
 
 **Paper**: Xie et al., NeurIPS 2021. arXiv:2105.15203
 
@@ -581,7 +590,7 @@ mIoU = 0.6806 ± 0.0107   seed: 0.6655 | 0.6893 | 0.6869
 mIoU = 0.7592 ± 0.0078   seed: 0.7547 | 0.7701 | 0.7526
 ```
 
-### 9.3 MarsSeg — `05c_model_marsseg.ipynb`
+### 9.4 MarsSeg — `05c_model_marsseg.ipynb`
 
 **Paper**: Li et al., arXiv:2404.04155, Beihang University 2024.
 
@@ -718,7 +727,7 @@ mIoU = 0.7609 ± 0.0123   seed: 0.7777 | 0.7564 | 0.7485
 |----------|------|--------|
 | EDA Mejorado | 25% | ✅ Completo — notebooks 01, 02 y 03 ejecutados y verificados |
 | Revisión de literatura | 25% | ✅ `04_marco_teorico.md` completado y corregido |
-| Implementación modelos | 30% | ⚠️ En progreso — `05b_model_segformer.ipynb` ejecutado completo; `05a_model_deeplabv3plus.ipynb` reportado como terminado por compañero; `05d_model_terseg.ipynb` optimizado para corrida completa; 05c y 05e pendientes/por validar |
+| Implementación modelos | 30% | ⚠️ En progreso — `05f_model_segformer.ipynb` ejecutado completo; `05a_model_deeplabv3plus.ipynb` reportado como terminado por compañero; `05d_model_terseg.ipynb` optimizado para corrida completa; 05c y 05e pendientes/por validar |
 | Benchmark y análisis estadístico | 20% | ❌ Pendiente — requiere resultados completos y validados de los 5 modelos |
 
 ### Benchmark estadístico — requisitos no negociables
@@ -774,7 +783,7 @@ resultados = {
 
 ## 16. Bugs Encontrados y Fixes Aplicados (sesión v5)
 
-Todos los bugs encontrados durante la primera ejecución real de `05b_model_segformer.ipynb`.
+Todos los bugs encontrados durante la primera ejecución real de `05f_model_segformer.ipynb`.
 
 ### Bug 1 — `KeyError: 'train'` en `load_split()`
 **Causa**: el pickle `split_indices_msl6k.pkl` usa claves `'train_ids'` y `'val_ids'`, no `'train'` y `'val'` como asumía el código original.
@@ -836,7 +845,7 @@ Pipeline validado de punta a punta. Listo para `fast_subset=False`.
 
 ## 17. Bugs Encontrados y Fixes Aplicados (sesión v6 — debug `05c_model_marsseg.ipynb`)
 
-Estos bugs aplican a **todos los notebooks de modelos restantes** (`05a`, `05c`, `05d`, `05e`). El patrón correcto ya está en `05b_model_segformer.ipynb` — usarlo como referencia.
+Estos bugs aplican a **todos los notebooks de modelos restantes** (`05a`, `05c`, `05d`, `05e`). El patrón correcto ya está en `05f_model_segformer.ipynb` — usarlo como referencia.
 
 ---
 
@@ -1243,7 +1252,7 @@ Ejecutar `!git pull` desde una celda falla si el directorio de trabajo no es el 
 ### Progreso de entrenamientos
 
 - **DeepLabV3+ (`05a`)**: un compañero reportó que terminó el entrenamiento completo. Pendiente validar el notebook ejecutado y/o integrar la fila final en `results/benchmark_results.csv` antes del benchmark estadístico.
-- **SegFormer-B2 (`05b`)**: entrenamiento completo ya disponible localmente y fila en CSV.
+- **SegFormer-B2 (`05f`)**: entrenamiento completo ya disponible localmente y fila en CSV.
 - **TerSeg (`05d`)**: se corrigió la causa principal de lentitud antes de considerar resultados finales. La fila anterior en CSV correspondía a debug/fast subset y fue eliminada.
 
 ### Bug 14 — TerSeg demasiado lento por arquitectura pesada accidental

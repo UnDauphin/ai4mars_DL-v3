@@ -814,7 +814,7 @@ def run_multi_seed(model_fn, df_train, df_val, df_gold,
 # ─────────────────────────────────────────────────────────────────────────────
 def append_benchmark_results(summary: dict, params_M: float):
     """
-    Agrega una fila al CSV de benchmark con los resultados del modelo.
+    Inserta o actualiza una fila del CSV de benchmark con los resultados del modelo.
 
     Parameters
     ----------
@@ -848,13 +848,19 @@ def append_benchmark_results(summary: dict, params_M: float):
         "train_time_mean_s":  round(summary["train_time_mean"], 0),
         "best_epoch_mean":    round(summary["best_epoch_mean"], 1),
     }
-    write_header = not BENCHMARK_CSV.exists()
-    with open(BENCHMARK_CSV, "a", newline="") as f:
+    rows = []
+    if BENCHMARK_CSV.exists():
+        with open(BENCHMARK_CSV, newline="") as f:
+            reader = csv.DictReader(f)
+            rows = [r for r in reader if r.get("model") != row["model"]]
+
+    rows.append(row)
+
+    with open(BENCHMARK_CSV, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)
-        if write_header:
-            w.writeheader()
-        w.writerow(row)
-    print(f"Resultados guardados en {BENCHMARK_CSV}")
+        w.writeheader()
+        w.writerows(rows)
+    print(f"Resultados actualizados en {BENCHMARK_CSV}")
 
 
 # ─────────────────────────────────────────────────────────────────────────────

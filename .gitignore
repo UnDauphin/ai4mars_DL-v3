@@ -28,6 +28,9 @@ env/
 *.ipynb_checkpoints
 _build/
 
+# Resultados auxiliares regenerables por modelo
+results/IC-TransUNet-AI4MARS_mars_compact/
+
 # ── Archivos del sistema ──────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
