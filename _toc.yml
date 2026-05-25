@@ -1,0 +1,25 @@
+format: jb-book
+root: intro
+
+parts:
+  - caption: Analisis de datos
+    chapters:
+      - file: notebooks/01_eda_exploratorio
+      - file: notebooks/02_preprocessing
+      - file: notebooks/03_eda_msl
+
+  - caption: Estado del arte
+    chapters:
+      - file: notebooks/04_marco_teorico
+
+  - caption: Modelos benchmark
+    chapters:
+      - file: notebooks/05a_model_deeplabv3plus
+      - file: notebooks/05b_model_segformer
+      - file: notebooks/05c_model_marsseg
+      - file: notebooks/05d_model_terseg
+      - file: notebooks/05e_model_depthformer
+
+  - caption: Resultados
+    chapters:
+      - file: notebooks/06_benchmark_estadistico

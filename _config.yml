@@ -1,0 +1,32 @@
+title: Segmentacion Semantica de Terreno Marciano
+author: Entregable 3 - Deep Learning
+copyright: "2026"
+
+repository:
+  url: https://github.com/UnDauphin/ai4mars_DL-v3
+  path_to_book: .
+  branch: main
+
+html:
+  use_repository_button: true
+  use_issues_button: false
+  use_edit_page_button: false
+  home_page_in_navbar: true
+
+sphinx:
+  config:
+    html_logo: Wall-e.jpg
+    html_show_copyright: false
+    nb_execution_show_tb: true
+
+execute:
+  execute_notebooks: "off"
+
+only_build_toc_files: true
+
+parse:
+  myst_enable_extensions:
+    - dollarmath
+    - amsmath
+    - colon_fence
+    - deflist
