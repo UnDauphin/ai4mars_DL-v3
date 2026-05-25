@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS &#8212; Segmentacion Semantica de Terreno Marciano</title>
+    <title>07 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS &#8212; Segmentacion Semantica de Terreno Marciano</title>
   
   
   
@@ -65,6 +65,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/07_discusion_discrepancia_visual';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Anexo: Pipeline end-to-end del proyecto" href="../anexo_pipeline.html" />
     <link rel="prev" title="06 - Benchmark estadistico y resultados finales" href="06_benchmark_estadistico.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -181,12 +182,12 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Estado del arte</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="04_marco_teorico.html">04 — Revisión del Estado del Arte</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04b_justificacion_segformer.html">01 — Justificación de SegFormer-B2 como Modelo Original del Proyecto AI4MARS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04b_justificacion_segformer.html">04b — Justificación de SegFormer-B2 como Modelo Original del Proyecto AI4MARS</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos benchmark</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="05a_model_deeplabv3plus.html">05a — DeepLabV3+ (ResNet-50)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="05b_model_transunet.html">05b - IC-TransUNet benchmark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05b_model_transunet.html">05b — IC-TransUNet benchmark</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05c_model_marsseg.html">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05d_model_terseg.html">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05e_model_depthformer.html">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</a></li>
@@ -195,7 +196,11 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Resultados</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="06_benchmark_estadistico.html">06 - Benchmark estadistico y resultados finales</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">07 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Anexos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../anexo_pipeline.html">Anexo: Pipeline end-to-end del proyecto</a></li>
 </ul>
 
     </div>
@@ -349,7 +354,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS</h1>
+    <h1>07 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -395,7 +400,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="analisis-de-la-discrepancia-visual-entre-prediccion-y-ground-truth-en-ai4mars">
-<h1>02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS<a class="headerlink" href="#analisis-de-la-discrepancia-visual-entre-prediccion-y-ground-truth-en-ai4mars" title="Permalink to this heading">#</a></h1>
+<h1>07 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS<a class="headerlink" href="#analisis-de-la-discrepancia-visual-entre-prediccion-y-ground-truth-en-ai4mars" title="Permalink to this heading">#</a></h1>
 <section id="el-problema-de-la-inspeccion-visual-como-criterio-de-evaluacion">
 <h2>1. El problema de la inspección visual como criterio de evaluación<a class="headerlink" href="#el-problema-de-la-inspeccion-visual-como-criterio-de-evaluacion" title="Permalink to this heading">#</a></h2>
 <p>Una de las primeras reacciones al examinar las salidas de un modelo de segmentación es compararlas visualmente con la máscara ground truth (GT). Si la predicción “se ve diferente”, la intuición inmediata es que el modelo ha fallado. Esta intuición, aunque comprensible, es técnicamente incorrecta como criterio de evaluación y puede llevar a conclusiones equivocadas.</p>
@@ -568,6 +573,15 @@ document.write(`
         <p class="prev-next-title">06 - Benchmark estadistico y resultados finales</p>
       </div>
     </a>
+    <a class="right-next"
+       href="../anexo_pipeline.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Anexo: Pipeline end-to-end del proyecto</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -622,7 +636,7 @@ document.write(`
   <div class="footer-item">
     
 <p class="component-author">
-By Entregable 3 - Deep Learning
+By Alejandro Moya
 </p>
 
   </div>

@@ -1,4 +1,4 @@
-# 02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS
+# 07 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS
 
 
 ## 1. El problema de la inspección visual como criterio de evaluación
