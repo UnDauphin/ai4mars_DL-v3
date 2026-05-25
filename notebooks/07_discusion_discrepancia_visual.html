@@ -1,0 +1,658 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS &#8212; Segmentacion Semantica de Terreno Marciano</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/07_discusion_discrepancia_visual';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="06 - Benchmark estadistico y resultados finales" href="06_benchmark_estadistico.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Wall-e.jpg" class="logo__image only-light" alt="Segmentacion Semantica de Terreno Marciano - Home"/>
+    <script>document.write(`<img src="../_static/Wall-e.jpg" class="logo__image only-dark" alt="Segmentacion Semantica de Terreno Marciano - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Segmentacion semantica de terreno marciano
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Analisis de datos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_eda_exploratorio.html">01 — EDA Exploratorio: Dataset AI4MARS Completo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_preprocessing.html">02 — Preprocesamiento: Resize, Split y Estadísticas de Normalización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_eda_msl.html">03 — EDA Profundo: Subconjunto MSL Procesado</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Estado del arte</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04_marco_teorico.html">04 — Revisión del Estado del Arte</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04b_justificacion_segformer.html">01 — Justificación de SegFormer-B2 como Modelo Original del Proyecto AI4MARS</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos benchmark</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="05a_model_deeplabv3plus.html">05a — DeepLabV3+ (ResNet-50)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05b_model_transunet.html">05b - IC-TransUNet benchmark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05c_model_marsseg.html">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05d_model_terseg.html">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05e_model_depthformer.html">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05f_model_segformer.html">05f - SegFormer-B2</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Resultados</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_benchmark_estadistico.html">06 - Benchmark estadistico y resultados finales</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/UnDauphin/ai4mars_DL-v3" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/07_discusion_discrepancia_visual.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#el-problema-de-la-inspeccion-visual-como-criterio-de-evaluacion">1. El problema de la inspección visual como criterio de evaluación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factores-que-producen-divergencia-visual-sin-implicar-mal-desempeno">2. Factores que producen divergencia visual sin implicar mal desempeño</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#desbalance-extremo-de-clases">2.1 Desbalance extremo de clases</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ambiguedad-en-bordes-y-zonas-de-transicion">2.2 Ambigüedad en bordes y zonas de transición</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#etiquetas-ruidosas-por-crowdsourcing">2.3 Etiquetas ruidosas por crowdsourcing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resolucion-reducida-y-perdida-de-detalle-fino">2.4 Resolución reducida y pérdida de detalle fino</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#efecto-de-suavizado-de-la-funcion-de-perdida">2.5 Efecto de suavizado de la función de pérdida</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#el-papel-de-ignore-index-255">2.6 El papel de <code class="docutils literal notranslate"><span class="pre">ignore_index=255</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trade-off-entre-precision-global-y-iou-por-clase">2.7 Trade-off entre precisión global y IoU por clase</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#que-significa-y-que-no-significa-que-una-prediccion-se-vea-diferente">3. Qué significa y qué no significa que una predicción “se vea diferente”</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lo-que-no-implica-automaticamente">Lo que NO implica automáticamente:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lo-que-si-puede-implicar-en-funcion-del-contexto">Lo que SÍ puede implicar, en función del contexto:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuando-si-seria-una-senal-de-problema-real">Cuándo sí sería una señal de problema real:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretacion-de-ejemplos-visuales-del-proyecto">4. Interpretación de ejemplos visuales del proyecto</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seccion-de-interpretacion-para-defensa-oral">5. Sección de interpretación para defensa oral</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pregunta-por-que-las-predicciones-no-calcan-la-mascara-de-referencia">Pregunta: “¿Por qué las predicciones no calcan la máscara de referencia?”</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pregunta-como-sabe-que-el-resultado-sigue-siendo-valido-si-visualmente-se-ve-mal">Pregunta: “¿Cómo sabe que el resultado sigue siendo válido si visualmente se ve mal?”</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Cuándo sí sería una señal de problema real:</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="analisis-de-la-discrepancia-visual-entre-prediccion-y-ground-truth-en-ai4mars">
+<h1>02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS<a class="headerlink" href="#analisis-de-la-discrepancia-visual-entre-prediccion-y-ground-truth-en-ai4mars" title="Permalink to this heading">#</a></h1>
+<section id="el-problema-de-la-inspeccion-visual-como-criterio-de-evaluacion">
+<h2>1. El problema de la inspección visual como criterio de evaluación<a class="headerlink" href="#el-problema-de-la-inspeccion-visual-como-criterio-de-evaluacion" title="Permalink to this heading">#</a></h2>
+<p>Una de las primeras reacciones al examinar las salidas de un modelo de segmentación es compararlas visualmente con la máscara ground truth (GT). Si la predicción “se ve diferente”, la intuición inmediata es que el modelo ha fallado. Esta intuición, aunque comprensible, es técnicamente incorrecta como criterio de evaluación y puede llevar a conclusiones equivocadas.</p>
+<p>En el caso de AI4MARS, la discrepancia visual entre la máscara predicha y la GT puede coexistir perfectamente con métricas cuantitativas sólidas, y esta coexistencia no es un defecto del modelo sino una consecuencia de fenómenos bien documentados en el campo de la segmentación semántica. A continuación se explican con fundamento técnico.</p>
+</section>
+<hr class="docutils" />
+<section id="factores-que-producen-divergencia-visual-sin-implicar-mal-desempeno">
+<h2>2. Factores que producen divergencia visual sin implicar mal desempeño<a class="headerlink" href="#factores-que-producen-divergencia-visual-sin-implicar-mal-desempeno" title="Permalink to this heading">#</a></h2>
+<section id="desbalance-extremo-de-clases">
+<h3>2.1 Desbalance extremo de clases<a class="headerlink" href="#desbalance-extremo-de-clases" title="Permalink to this heading">#</a></h3>
+<p>En el conjunto de entrenamiento de este proyecto, la distribución de píxeles es marcadamente asimétrica:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Clase</p></th>
+<th class="head"><p>Frecuencia real</p></th>
+<th class="head"><p>Peso compensatorio</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>soil</p></td>
+<td><p>36.98%</p></td>
+<td><p>0.086×</p></td>
+</tr>
+<tr class="row-odd"><td><p>bedrock</p></td>
+<td><p>50.32%</p></td>
+<td><p>0.063×</p></td>
+</tr>
+<tr class="row-even"><td><p>sand</p></td>
+<td><p>11.81%</p></td>
+<td><p>0.269×</p></td>
+</tr>
+<tr class="row-odd"><td><p>big_rock</p></td>
+<td><p><strong>0.89%</strong></p></td>
+<td><p><strong>3.58×</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Incluso con pesos por clase aplicados a la función de pérdida, el modelo recibe señal de gradiente mayoritariamente de las clases dominantes (soil y bedrock ocupan el 87.3% de los píxeles). Un modelo que clasifique correctamente toda la región de soil y bedrock y cometa errores en los fragmentos dispersos de <code class="docutils literal notranslate"><span class="pre">big_rock</span></code> puede tener una pixel accuracy superior al 97%, pero su máscara predicha parecerá visualmente muy diferente de la GT en las zonas donde las rocas fueron erróneamente omitidas o desplazadas. La métrica global no lo penaliza proporcionalmente porque esas regiones son una fracción minúscula del total de píxeles.</p>
+<p>Esto no significa que el modelo esté mal: significa que el desbalance del dataset limita estructuralmente la detectabilidad de la clase minoritaria, independientemente de la arquitectura empleada.</p>
+</section>
+<section id="ambiguedad-en-bordes-y-zonas-de-transicion">
+<h3>2.2 Ambigüedad en bordes y zonas de transición<a class="headerlink" href="#ambiguedad-en-bordes-y-zonas-de-transicion" title="Permalink to this heading">#</a></h3>
+<p>Las imágenes NavCam del rover Curiosity capturan superficies con iluminación lateral variable y sin color en muchos casos (las imágenes del proyecto tienen media ≈ 0.23 en los tres canales, lo que evidencia que son efectivamente grises convertidas a RGB). En estas condiciones, los límites entre clases adyacentes —por ejemplo, entre bedrock y soil, o entre sand y soil— son gradientes continuos, no fronteras nítidas.</p>
+<p>El modelo aprende a trazar un límite binario donde existe una transición continua. Inevitablemente, ese límite difiere en algunos píxeles del que trazó el anotador. A nivel visual, un borde desplazado 5-10 píxeles produce una diferencia perceptible, pero su impacto sobre el IoU depende del tamaño relativo de la región: en regiones grandes (soil, bedrock), un error de borde afecta marginalmente al IoU; en regiones pequeñas (<code class="docutils literal notranslate"><span class="pre">big_rock</span></code>), un borde desplazado puede cambiar drásticamente la métrica.</p>
+</section>
+<section id="etiquetas-ruidosas-por-crowdsourcing">
+<h3>2.3 Etiquetas ruidosas por crowdsourcing<a class="headerlink" href="#etiquetas-ruidosas-por-crowdsourcing" title="Permalink to this heading">#</a></h3>
+<p>El dataset AI4MARS fue etiquetado mediante crowdsourcing, con más de 326.000 etiquetas aportadas por voluntarios. Incluso el gold test set —322 imágenes validadas por científicos del JPL con acuerdo mínimo del 100% entre 3 anotadores— no está exento de subjetividad: la definición de qué píxel pertenece a <code class="docutils literal notranslate"><span class="pre">big_rock</span></code> vs. <code class="docutils literal notranslate"><span class="pre">bedrock</span></code>, o a <code class="docutils literal notranslate"><span class="pre">sand</span></code> vs. <code class="docutils literal notranslate"><span class="pre">soil</span></code>, tiene una componente interpretativa.</p>
+<p>Cuando el modelo produce una predicción que difiere de la GT en zonas ambiguas, puede que el modelo no esté equivocado: puede estar reproduciendo la decisión que otro anotador igualmente calificado habría tomado. Esta es la razón por la cual el nivel de acuerdo entre anotadores (min3 vs. min1, min2) cambia sustancialmente las métricas de todos los modelos, sin que la capacidad del modelo haya variado. Una predicción visualmente discrepante respecto a una GT con ruido de etiquetado no es automáticamente una predicción errónea.</p>
+</section>
+<section id="resolucion-reducida-y-perdida-de-detalle-fino">
+<h3>2.4 Resolución reducida y pérdida de detalle fino<a class="headerlink" href="#resolucion-reducida-y-perdida-de-detalle-fino" title="Permalink to this heading">#</a></h3>
+<p>Todas las imágenes del proyecto fueron redimensionadas a 256×256 píxeles mediante interpolación bilineal (imágenes) y nearest-neighbor (máscaras). Las imágenes originales del dataset AI4MARS tienen resoluciones variables y en muchos casos superiores. Este redimensionamiento comprime estructuras finas —como bordes de rocas pequeñas o fragmentos dispersos de arena— en pocos píxeles, aumentando la ambigüedad inherente.</p>
+<p>Un modelo que predice una región de <code class="docutils literal notranslate"><span class="pre">big_rock</span></code> como una mancha ligeramente más pequeña o desplazada respecto a la GT puede estar operando dentro del margen de incertidumbre introducido por el propio proceso de preprocesamiento. La discrepancia visual en ese caso no es un fallo del modelo sino un artefacto del redimensionamiento.</p>
+</section>
+<section id="efecto-de-suavizado-de-la-funcion-de-perdida">
+<h3>2.5 Efecto de suavizado de la función de pérdida<a class="headerlink" href="#efecto-de-suavizado-de-la-funcion-de-perdida" title="Permalink to this heading">#</a></h3>
+<p>La función de pérdida empleada —cross-entropy ponderada— penaliza la predicción incorrecta de cada píxel de forma independiente, pero optimiza el promedio sobre todo el batch. El resultado es que el modelo aprende a estar “correctamente calibrado en promedio”, lo que en la práctica puede manifestarse como bordes ligeramente suavizados y regiones minoritarias con contornos más difusos que la GT.</p>
+<p>Este fenómeno es estructural en cualquier segmentación supervisada con cross-entropy: el modelo minimiza la pérdida esperada, no maximiza la coincidencia exacta de cada píxel. Las máscaras predichas tienden a ser más “continuas” y menos ruidosas que las GT generadas por humanos, lo que produce diferencias visuales aunque la métrica sea alta.</p>
+</section>
+<section id="el-papel-de-ignore-index-255">
+<h3>2.6 El papel de <code class="docutils literal notranslate"><span class="pre">ignore_index=255</span></code><a class="headerlink" href="#el-papel-de-ignore-index-255" title="Permalink to this heading">#</a></h3>
+<p>En AI4MARS, los píxeles con valor 255 corresponden a zonas no etiquetadas que son <strong>excluidas de la loss y de las métricas</strong>. Esto tiene dos consecuencias visuales que pueden sorprender:</p>
+<p>Primero, la GT que el anotador validó puede tener franjas completas en negro (ignore) donde el modelo simplemente no tiene ninguna señal de entrenamiento. Lo que el modelo predice en esas zonas es irrelevante para la métrica, pero es plenamente visible en la imagen. Una comparación visual sin distinguir qué píxeles son <code class="docutils literal notranslate"><span class="pre">ignore</span></code> lleva a juzgar como errores predicciones que el protocolo de evaluación ignora explícitamente.</p>
+<p>Segundo, regiones de la imagen que visualmente parecen pertenecer a una clase (por ejemplo, suelo al fondo de la imagen) pueden estar marcadas como 255 porque el anotador consideró que la profundidad o el ángulo hacían la etiqueta incierta. El modelo puede predecir esa región con una clase razonable —y esa predicción se vería “diferente” de la GT— sin que ello afecte en absoluto a ninguna métrica.</p>
+</section>
+<section id="trade-off-entre-precision-global-y-iou-por-clase">
+<h3>2.7 Trade-off entre precisión global y IoU por clase<a class="headerlink" href="#trade-off-entre-precision-global-y-iou-por-clase" title="Permalink to this heading">#</a></h3>
+<p>El IoU de una clase se define como la intersección entre píxeles predichos y píxeles verdaderos de esa clase, dividida entre su unión. Una máscara que visualmente “se parece mucho” a la GT puede tener un IoU bajo si el modelo erró sistemáticamente en la clase correcta de pequeñas regiones (falsos negativos concentrados en <code class="docutils literal notranslate"><span class="pre">big_rock</span></code>). Por el contrario, una máscara que luce diferente puede tener un IoU alto si los errores son píxeles aislados en bordes, que afectan marginalmente al numerador y denominador del cociente.</p>
+<p>En otras palabras: <strong>IoU no es percepción visual</strong>. Mide solapamiento geométrico relativo, no similitud estética.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="que-significa-y-que-no-significa-que-una-prediccion-se-vea-diferente">
+<h2>3. Qué significa y qué no significa que una predicción “se vea diferente”<a class="headerlink" href="#que-significa-y-que-no-significa-que-una-prediccion-se-vea-diferente" title="Permalink to this heading">#</a></h2>
+<section id="lo-que-no-implica-automaticamente">
+<h3>Lo que NO implica automáticamente:<a class="headerlink" href="#lo-que-no-implica-automaticamente" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Que el modelo esté aprendiendo mal o esté mal entrenado.</p></li>
+<li><p>Que la métrica sea incorrecta o esté inflada artificialmente.</p></li>
+<li><p>Que el modelo sea menos útil que uno cuya máscara se vea más parecida visualmente.</p></li>
+<li><p>Que exista un error de implementación o de preprocesamiento.</p></li>
+</ul>
+</section>
+<section id="lo-que-si-puede-implicar-en-funcion-del-contexto">
+<h3>Lo que SÍ puede implicar, en función del contexto:<a class="headerlink" href="#lo-que-si-puede-implicar-en-funcion-del-contexto" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Que el desbalance de clases está limitando la detección de <code class="docutils literal notranslate"><span class="pre">big_rock</span></code>, lo cual es un problema estructural del dataset, no del modelo.</p></li>
+<li><p>Que los bordes predichos son más suavizados que los anotados manualmente, lo cual es inherente a los modelos de segmentación supervisados.</p></li>
+<li><p>Que el modelo produce predicciones razonables en zonas que el anotador marcó como <code class="docutils literal notranslate"><span class="pre">ignore</span></code>, lo cual es invisible a las métricas pero visible a la inspección.</p></li>
+</ul>
+</section>
+<section id="cuando-si-seria-una-senal-de-problema-real">
+<h3>Cuándo sí sería una señal de problema real:<a class="headerlink" href="#cuando-si-seria-una-senal-de-problema-real" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Si el modelo predice sistemáticamente <strong>una sola clase</strong> para toda la imagen (colapso de clases). Esto se detecta inspeccionando la distribución de predicciones por clase.</p></li>
+<li><p>Si las métricas por clase muestran IoU ≈ 0 para clases que deberían ser detectables (por ejemplo, bedrock con IoU &lt; 0.5 cuando ocupa el 50% de los píxeles).</p></li>
+<li><p>Si la máscara predicha es completamente aleatoria o no coincide con ninguna estructura visual de la imagen de entrada.</p></li>
+<li><p>Si existe evidencia de fuga de datos entre train y test (violación del split fijo), lo que inflaría artificialmente las métricas.</p></li>
+<li><p>Si la varianza entre seeds es extremadamente alta (σ &gt; 0.05 en mIoU), lo que sugeriría inestabilidad en el entrenamiento o en el protocolo de evaluación.</p></li>
+</ul>
+<p>En el proyecto AI4MARS, ninguno de estos indicadores de problema real está presente en SegFormer-B2: el modelo detecta las cuatro clases, su varianza entre seeds es σ = 0.0063 (la más baja de todos los modelos), y las métricas por clase son consistentes con el grado de dificultad esperado según la distribución del dataset.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="interpretacion-de-ejemplos-visuales-del-proyecto">
+<h2>4. Interpretación de ejemplos visuales del proyecto<a class="headerlink" href="#interpretacion-de-ejemplos-visuales-del-proyecto" title="Permalink to this heading">#</a></h2>
+<p>Al inspeccionar comparaciones imagen–GT–predicción en el notebook <code class="docutils literal notranslate"><span class="pre">05f_model_segformer.ipynb</span></code>, es frecuente observar los siguientes patrones, que se interpretan como sigue:</p>
+<p><strong>Patrón 1 — Regiones de <code class="docutils literal notranslate"><span class="pre">big_rock</span></code> no detectadas o parciales.</strong> El modelo predice bedrock o soil donde la GT indica big_rock. Explicación principal: <code class="docutils literal notranslate"><span class="pre">big_rock</span></code> representa solo el 0.89% de los píxeles; incluso con peso 3.58× en la pérdida, la señal de gradiente es escasa. Modelos sin mecanismo de atención global (campo receptivo limitado) tienen mayor dificultad aún. El IoU resultante (0.459 para SegFormer-B2) confirma que el modelo detecta casi la mitad del área real de big_rock, que es el mejor resultado comparable entre modelos CNN puros.</p>
+<p><strong>Patrón 2 — Bordes ligeramente desplazados entre bedrock y soil.</strong> Las fronteras predichas pueden diferir 5–15 píxeles de la GT, produciendo una diferencia visual notable aunque el IoU global permanezca alto. Esto es consecuencia directa de la ambigüedad de borde en imágenes de baja textura y la naturaleza continua de la pérdida.</p>
+<p><strong>Patrón 3 — Zonas <code class="docutils literal notranslate"><span class="pre">ignore</span></code> (255) con predicción visible.</strong> El modelo predice una clase en píxeles que la GT marca como 255. Visualmente produce una región coloreada donde la GT es neutra. Estas predicciones son completamente ignoradas por la loss y las métricas, por lo que no deben interpretarse como errores.</p>
+<p><strong>Patrón 4 — Máscara predicha más “limpia” que la GT.</strong> La GT puede contener regiones fragmentadas o ruidosas (resultado del proceso de crowdsourcing con múltiples anotadores). El modelo tiende a producir regiones más coherentes espacialmente, lo que puede verse “diferente” pero no necesariamente “peor”.</p>
+</section>
+<hr class="docutils" />
+<section id="seccion-de-interpretacion-para-defensa-oral">
+<h2>5. Sección de interpretación para defensa oral<a class="headerlink" href="#seccion-de-interpretacion-para-defensa-oral" title="Permalink to this heading">#</a></h2>
+<section id="pregunta-por-que-las-predicciones-no-calcan-la-mascara-de-referencia">
+<h3>Pregunta: “¿Por qué las predicciones no calcan la máscara de referencia?”<a class="headerlink" href="#pregunta-por-que-las-predicciones-no-calcan-la-mascara-de-referencia" title="Permalink to this heading">#</a></h3>
+<p><strong>Respuesta directa:</strong> Porque la coincidencia visual exacta no es ni el objetivo ni el criterio de evaluación. El modelo se entrena para minimizar una función de pérdida definida sobre la distribución de píxeles observada, y se evalúa mediante métricas de solapamiento geométrico (IoU) que son independientes de la apariencia visual de la máscara. Una predicción puede diferir visualmente de la GT por cuatro razones no problemáticas: desbalance extremo de clases, ambigüedad inherente en bordes, ruido en las etiquetas de referencia, y píxeles marcados como <code class="docutils literal notranslate"><span class="pre">ignore</span></code> que son visibles en la imagen pero invisibles para la métrica.</p>
+<p><strong>Cómo seguir:</strong> “Lo que importa es si el modelo identifica correctamente el tipo de terreno donde existen etiquetas válidas. Para SegFormer-B2, el mIoU en el gold test es 0.8337 con desviación estándar de 0.0063 entre tres entrenamientos independientes. Las métricas por clase muestran que el modelo detecta correctamente bedrock con IoU de 0.940, sand con 0.958, y soil con 0.978. La clase más difícil, <code class="docutils literal notranslate"><span class="pre">big_rock</span></code>, alcanza IoU de 0.459, resultado consistente con su representación de menos del 1% de los píxeles en el dataset.”</p>
+</section>
+<section id="pregunta-como-sabe-que-el-resultado-sigue-siendo-valido-si-visualmente-se-ve-mal">
+<h3>Pregunta: “¿Cómo sabe que el resultado sigue siendo válido si visualmente se ve mal?”<a class="headerlink" href="#pregunta-como-sabe-que-el-resultado-sigue-siendo-valido-si-visualmente-se-ve-mal" title="Permalink to this heading">#</a></h3>
+<p><strong>Respuesta:</strong> El gold test set fue construido con 322 imágenes cuyas máscaras fueron validadas por científicos del JPL con acuerdo del 100% entre al menos 3 anotadores especializados. Las métricas se calculan exclusivamente sobre los píxeles con etiqueta válida (excluyendo ignore=255), usando el mismo split fijo para todos los modelos. La validez del resultado está garantizada por el protocolo experimental, no por la apariencia de la máscara. Adicionalmente, la baja varianza entre seeds (σ = 0.0063) indica que los resultados son reproducibles y no dependientes de la inicialización aleatoria.</p>
+</section>
+<section id="id1">
+<h3>Cuándo sí sería una señal de problema real:<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<p>Si el jurado pregunta cómo se distingue una discrepancia “normal” de una problemática, la respuesta es: se diagnostica con métricas, no con inspección visual. Una predicción que colapsa en una sola clase para toda la imagen tiene IoU ≈ 0 en las clases ausentes. Un modelo que no generaliza tiene alta varianza entre seeds. Un dataset con fuga de datos produce un gap grande entre métricas de validación y test. Ninguno de estos indicadores está presente en los resultados del proyecto.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="06_benchmark_estadistico.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">06 - Benchmark estadistico y resultados finales</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#el-problema-de-la-inspeccion-visual-como-criterio-de-evaluacion">1. El problema de la inspección visual como criterio de evaluación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factores-que-producen-divergencia-visual-sin-implicar-mal-desempeno">2. Factores que producen divergencia visual sin implicar mal desempeño</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#desbalance-extremo-de-clases">2.1 Desbalance extremo de clases</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ambiguedad-en-bordes-y-zonas-de-transicion">2.2 Ambigüedad en bordes y zonas de transición</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#etiquetas-ruidosas-por-crowdsourcing">2.3 Etiquetas ruidosas por crowdsourcing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resolucion-reducida-y-perdida-de-detalle-fino">2.4 Resolución reducida y pérdida de detalle fino</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#efecto-de-suavizado-de-la-funcion-de-perdida">2.5 Efecto de suavizado de la función de pérdida</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#el-papel-de-ignore-index-255">2.6 El papel de <code class="docutils literal notranslate"><span class="pre">ignore_index=255</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trade-off-entre-precision-global-y-iou-por-clase">2.7 Trade-off entre precisión global y IoU por clase</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#que-significa-y-que-no-significa-que-una-prediccion-se-vea-diferente">3. Qué significa y qué no significa que una predicción “se vea diferente”</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lo-que-no-implica-automaticamente">Lo que NO implica automáticamente:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lo-que-si-puede-implicar-en-funcion-del-contexto">Lo que SÍ puede implicar, en función del contexto:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuando-si-seria-una-senal-de-problema-real">Cuándo sí sería una señal de problema real:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretacion-de-ejemplos-visuales-del-proyecto">4. Interpretación de ejemplos visuales del proyecto</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seccion-de-interpretacion-para-defensa-oral">5. Sección de interpretación para defensa oral</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pregunta-por-que-las-predicciones-no-calcan-la-mascara-de-referencia">Pregunta: “¿Por qué las predicciones no calcan la máscara de referencia?”</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pregunta-como-sabe-que-el-resultado-sigue-siendo-valido-si-visualmente-se-ve-mal">Pregunta: “¿Cómo sabe que el resultado sigue siendo válido si visualmente se ve mal?”</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Cuándo sí sería una señal de problema real:</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Entregable 3 - Deep Learning
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

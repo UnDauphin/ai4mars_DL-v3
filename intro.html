@@ -183,18 +183,21 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Estado del arte</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="notebooks/04_marco_teorico.html">04 — Revisión del Estado del Arte</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/04b_justificacion_segformer.html">01 — Justificación de SegFormer-B2 como Modelo Original del Proyecto AI4MARS</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos benchmark</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="notebooks/05a_model_deeplabv3plus.html">05a — DeepLabV3+ (ResNet-50)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/05b_model_segformer.html">05b — SegFormer-B2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05b_model_transunet.html">05b - IC-TransUNet benchmark</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/05c_model_marsseg.html">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/05d_model_terseg.html">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/05e_model_depthformer.html">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05f_model_segformer.html">05f - SegFormer-B2</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Resultados</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="notebooks/06_benchmark_estadistico.html">06 - Benchmark estadistico y resultados finales</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/07_discusion_discrepancia_visual.html">02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS</a></li>
 </ul>
 
     </div>
@@ -359,8 +362,10 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrantes-del-grupo">Integrantes del grupo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#propuesta-original">Propuesta original</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-experimental">Pipeline experimental</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diseno-experimental">Diseno experimental</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelos-benchmark">Modelos benchmark</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelos-evaluados">Modelos evaluados</a></li>
 </ul>
             </nav>
         </div>
@@ -374,7 +379,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="segmentacion-semantica-de-terreno-marciano">
 <h1>Segmentacion semantica de terreno marciano<a class="headerlink" href="#segmentacion-semantica-de-terreno-marciano" title="Permalink to this heading">#</a></h1>
-<p><strong>Entregable 2 - Proyecto de Deep Learning</strong></p>
+<p><strong>Entregable 3 - Proyecto de Deep Learning</strong></p>
 <section id="integrantes-del-grupo">
 <h2>Integrantes del grupo<a class="headerlink" href="#integrantes-del-grupo" title="Permalink to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -399,15 +404,25 @@ document.write(`
 </tbody>
 </table>
 </div>
-<p>Este Jupyter Book presenta el entregable de Deep Learning para segmentacion semantica de terreno marciano sobre el dataset AI4MARS de NASA/JPL. El objetivo es comparar modelos de referencia capaces de clasificar cada pixel de imagenes de rovers en cuatro clases de terreno: <code class="docutils literal notranslate"><span class="pre">soil</span></code>, <code class="docutils literal notranslate"><span class="pre">bedrock</span></code>, <code class="docutils literal notranslate"><span class="pre">sand</span></code> y <code class="docutils literal notranslate"><span class="pre">big_rock</span></code>, ignorando pixeles sin etiqueta (<code class="docutils literal notranslate"><span class="pre">255</span></code>).</p>
+<p>Este Jupyter Book presenta un sistema de segmentacion semantica de terreno marciano sobre el dataset AI4MARS de NASA/JPL. El objetivo es clasificar cada pixel de imagenes NavCam del rover Curiosity en cuatro clases de terreno: <code class="docutils literal notranslate"><span class="pre">soil</span></code>, <code class="docutils literal notranslate"><span class="pre">bedrock</span></code>, <code class="docutils literal notranslate"><span class="pre">sand</span></code> y <code class="docutils literal notranslate"><span class="pre">big_rock</span></code>, ignorando los pixeles sin etiqueta valida (<code class="docutils literal notranslate"><span class="pre">255</span></code>).</p>
+<p>El problema es relevante para navegacion autonoma de rovers y analisis geologico: un rover necesita distinguir suelo firme, arena suelta, roca base y rocas individuales para planear rutas seguras sin depender de control humano en tiempo real. AI4MARS es especialmente dificil porque combina imagenes de bajo contraste, clases visualmente parecidas, etiquetas con incertidumbre por crowdsourcing, redimensionamiento a 256x256 px y un desbalance extremo donde <code class="docutils literal notranslate"><span class="pre">big_rock</span></code> representa menos del 1% de los pixeles.</p>
+</section>
+<section id="propuesta-original">
+<h2>Propuesta original<a class="headerlink" href="#propuesta-original" title="Permalink to this heading">#</a></h2>
+<p>La propuesta original del proyecto es la adaptacion y evaluacion de <strong>SegFormer-B2</strong> al dominio AI4MARS. La originalidad no consiste en inventar una arquitectura desde cero, sino en aplicar una arquitectura Transformer jerarquica de referencia a un dominio planetario no cubierto por la revision bibliografica del proyecto, con un protocolo reproducible y comparacion contra benchmarks fuertes.</p>
+<p>SegFormer-B2 se defiende como modelo central por su encoder multiescala MiT-B2, su decoder MLP ligero, su robustez a cambios de resolucion y su buen balance entre rendimiento, estabilidad y complejidad. En los resultados del proyecto obtiene la mayor pixel accuracy, la menor varianza entre seeds y resultados competitivos en mIoU frente a modelos mas pesados.</p>
+</section>
+<section id="pipeline-experimental">
+<h2>Pipeline experimental<a class="headerlink" href="#pipeline-experimental" title="Permalink to this heading">#</a></h2>
 <p>El proyecto sigue un pipeline reproducible:</p>
 <ul class="simple">
 <li><p>Analisis exploratorio general del dataset y sus misiones.</p></li>
 <li><p>Seleccion justificada del subconjunto MSL Curiosity NavCam.</p></li>
 <li><p>Preprocesamiento comun a 256x256 px, normalizacion calculada solo con train y split fijo.</p></li>
-<li><p>Revision de literatura y seleccion de cinco modelos benchmark.</p></li>
+<li><p>Revision de literatura para elegir la propuesta original y los modelos benchmark.</p></li>
 <li><p>Entrenamiento multi-seed con evaluacion en un gold test set fijo.</p></li>
 <li><p>Benchmark final con metricas por clase, intervalos de confianza y pruebas estadisticas.</p></li>
+<li><p>Discusion critica de discrepancias visuales entre mascaras predichas y ground truth.</p></li>
 </ul>
 </section>
 <section id="diseno-experimental">
@@ -448,40 +463,51 @@ document.write(`
 </table>
 </div>
 </section>
-<section id="modelos-benchmark">
-<h2>Modelos benchmark<a class="headerlink" href="#modelos-benchmark" title="Permalink to this heading">#</a></h2>
+<section id="modelos-evaluados">
+<h2>Modelos evaluados<a class="headerlink" href="#modelos-evaluados" title="Permalink to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>Modelo</p></th>
+<tr class="row-odd"><th class="head"><p>Rol</p></th>
+<th class="head"><p>Modelo</p></th>
 <th class="head"><p>Familia</p></th>
 <th class="head"><p>Notebook</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>DeepLabV3+</p></td>
+<tr class="row-even"><td><p>Propuesta original</p></td>
+<td><p>SegFormer-B2</p></td>
+<td><p>Transformer jerarquico</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">05f_model_segformer.ipynb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Benchmark</p></td>
+<td><p>DeepLabV3+</p></td>
 <td><p>CNN + ASPP</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">05a_model_deeplabv3plus.ipynb</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>SegFormer-B2</p></td>
-<td><p>Transformer</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">05b_model_segformer.ipynb</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>MarsSeg</p></td>
+<tr class="row-even"><td><p>Benchmark</p></td>
+<td><p>MarsSeg</p></td>
 <td><p>CNN avanzado para terreno marciano</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">05c_model_marsseg.ipynb</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>TerSeg</p></td>
+<tr class="row-odd"><td><p>Benchmark</p></td>
+<td><p>TerSeg</p></td>
 <td><p>Hibrido CNN + Transformer</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">05d_model_terseg.ipynb</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>DepthFormer-RGB</p></td>
+<tr class="row-even"><td><p>Benchmark</p></td>
+<td><p>DepthFormer-RGB</p></td>
 <td><p>Swin Transformer + UPerNet</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">05e_model_depthformer.ipynb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Benchmark</p></td>
+<td><p>IC-TransUNet-AI4MARS</p></td>
+<td><p>CNN + Transformer dual branch</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">05b_model_transunet.ipynb</span></code></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>La metrica principal es mIoU, complementada con pixel accuracy, IoU por clase, tiempo de entrenamiento, numero de parametros y pruebas estadisticas para comparar diferencias entre modelos.</p>
+<p>La metrica principal es mIoU, complementada con pixel accuracy, IoU por clase, tiempo de entrenamiento, numero de parametros y pruebas estadisticas. La lectura final prioriza el balance entre precision, estabilidad y costo computacional, no una unica cifra aislada.</p>
 </section>
 <div class="toctree-wrapper compound">
 </div>
@@ -549,8 +575,10 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrantes-del-grupo">Integrantes del grupo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#propuesta-original">Propuesta original</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-experimental">Pipeline experimental</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diseno-experimental">Diseno experimental</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelos-benchmark">Modelos benchmark</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelos-evaluados">Modelos evaluados</a></li>
 </ul>
   </nav></div>
 

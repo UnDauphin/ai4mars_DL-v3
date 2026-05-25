@@ -182,18 +182,21 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Estado del arte</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="04_marco_teorico.html">04 — Revisión del Estado del Arte</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04b_justificacion_segformer.html">01 — Justificación de SegFormer-B2 como Modelo Original del Proyecto AI4MARS</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos benchmark</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="05a_model_deeplabv3plus.html">05a — DeepLabV3+ (ResNet-50)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="05b_model_segformer.html">05b — SegFormer-B2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05b_model_transunet.html">05b - IC-TransUNet benchmark</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05c_model_marsseg.html">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05d_model_terseg.html">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05e_model_depthformer.html">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05f_model_segformer.html">05f - SegFormer-B2</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Resultados</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="06_benchmark_estadistico.html">06 - Benchmark estadistico y resultados finales</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_discusion_discrepancia_visual.html">02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS</a></li>
 </ul>
 
     </div>
@@ -399,16 +402,16 @@ Los archivos <code class="docutils literal notranslate"><span class="pre">proces
 <hr class="docutils" />
 <p><strong>Índice</strong></p>
 <ol class="arabic simple">
-<li><p><span class="xref myst">Configuración e importaciones</span></p></li>
-<li><p><span class="xref myst">Carga del manifest MSL</span></p></li>
-<li><p><span class="xref myst">Selección estratificada de 6.000 imágenes</span></p></li>
-<li><p><span class="xref myst">Generación y persistencia del split train/val</span></p></li>
-<li><p><span class="xref myst">Resize y guardado de imágenes y máscaras</span></p></li>
-<li><p><span class="xref myst">Verificación de integridad del resize</span></p></li>
-<li><p><span class="xref myst">Estadísticas de normalización (solo train)</span></p></li>
-<li><p><span class="xref myst">Pesos de clase (solo train)</span></p></li>
-<li><p><span class="xref myst">Verificación final: no data leakage</span></p></li>
-<li><p><span class="xref myst">Resumen de artefactos generados</span></p></li>
+<li><p>Configuración e importaciones</p></li>
+<li><p>Carga del manifest MSL</p></li>
+<li><p>Selección estratificada de 6.000 imágenes</p></li>
+<li><p>Generación y persistencia del split train/val</p></li>
+<li><p>Resize y guardado de imágenes y máscaras</p></li>
+<li><p>Verificación de integridad del resize</p></li>
+<li><p>Estadísticas de normalización (solo train)</p></li>
+<li><p>Pesos de clase (solo train)</p></li>
+<li><p>Verificación final: no data leakage</p></li>
+<li><p>Resumen de artefactos generados</p></li>
 </ol>
 <section id="configuracion-e-importaciones-a-id-setup-a">
 <h2>1. Configuración e importaciones <a id="setup"></a><a class="headerlink" href="#configuracion-e-importaciones-a-id-setup-a" title="Permalink to this heading">#</a></h2>

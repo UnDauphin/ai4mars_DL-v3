@@ -1,0 +1,1231 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>05f - SegFormer-B2 &#8212; Segmentacion Semantica de Terreno Marciano</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/05f_model_segformer';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="06 - Benchmark estadistico y resultados finales" href="06_benchmark_estadistico.html" />
+    <link rel="prev" title="05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)" href="05e_model_depthformer.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Wall-e.jpg" class="logo__image only-light" alt="Segmentacion Semantica de Terreno Marciano - Home"/>
+    <script>document.write(`<img src="../_static/Wall-e.jpg" class="logo__image only-dark" alt="Segmentacion Semantica de Terreno Marciano - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Segmentacion semantica de terreno marciano
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Analisis de datos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_eda_exploratorio.html">01 — EDA Exploratorio: Dataset AI4MARS Completo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_preprocessing.html">02 — Preprocesamiento: Resize, Split y Estadísticas de Normalización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_eda_msl.html">03 — EDA Profundo: Subconjunto MSL Procesado</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Estado del arte</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04_marco_teorico.html">04 — Revisión del Estado del Arte</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04b_justificacion_segformer.html">01 — Justificación de SegFormer-B2 como Modelo Original del Proyecto AI4MARS</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos benchmark</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="05a_model_deeplabv3plus.html">05a — DeepLabV3+ (ResNet-50)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05b_model_transunet.html">05b - IC-TransUNet benchmark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05c_model_marsseg.html">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05d_model_terseg.html">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05e_model_depthformer.html">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">05f - SegFormer-B2</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_benchmark_estadistico.html">06 - Benchmark estadistico y resultados finales</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_discusion_discrepancia_visual.html">02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/UnDauphin/ai4mars_DL-v3" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/05f_model_segformer.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>05f - SegFormer-B2</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports-y-configuracion">0. Imports y configuración</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#carga-de-datos">1. Carga de datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definicion-del-modelo">2. Definición del modelo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion-de-hiperparametros">3. Configuración de hiperparámetros</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entrenamiento-multi-seed">4. Entrenamiento multi-seed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados">5. Resultados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-cualitativo">6. Análisis cualitativo</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="f-segformer-b2">
+<h1>05f - SegFormer-B2<a class="headerlink" href="#f-segformer-b2" title="Permalink to this heading">#</a></h1>
+<p><strong>Paper</strong>: Xie et al., <em>SegFormer: Simple and Efficient Design for Semantic Segmentation with Transformers</em>, NeurIPS 2021. arXiv:2105.15203</p>
+<p><strong>Arquitectura</strong>: MiT-B2 encoder (HuggingFace <code class="docutils literal notranslate"><span class="pre">nvidia/mit-b2</span></code>) + decoder MLP ligero. La salida del decoder es H/4×W/4 y se upsamplea bilinearmente a 256×256.</p>
+<p><strong>Hiperparámetros</strong>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parámetro</p></th>
+<th class="head"><p>Valor</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Backbone</p></td>
+<td><p>MiT-B2 (pretrained, HuggingFace)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parámetros</p></td>
+<td><p>~27.35M</p></td>
+</tr>
+<tr class="row-even"><td><p>Loss</p></td>
+<td><p>CrossEntropyLoss (ignore_index=255)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Optimizer</p></td>
+<td><p>AdamW (lr=6e-5, wd=0.01, betas=(0.9, 0.999))</p></td>
+</tr>
+<tr class="row-even"><td><p>Scheduler</p></td>
+<td><p>CosineAnnealingLR (T_max=30, eta_min=1e-6)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Batch size</p></td>
+<td><p>16</p></td>
+</tr>
+<tr class="row-even"><td><p>Max epochs</p></td>
+<td><p>80</p></td>
+</tr>
+<tr class="row-odd"><td><p>Early stopping</p></td>
+<td><p>patience=7 sobre val mIoU</p></td>
+</tr>
+<tr class="row-even"><td><p>Seeds</p></td>
+<td><p>[42, 123, 7]</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Referencia histórica</strong> (subset 2.100 imgs — DEPRECADO):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mIoU = 0.7592 ± 0.0078   seed: 0.7547 | 0.7701 | 0.7526
+</pre></div>
+</div>
+<section id="imports-y-configuracion">
+<h2>0. Imports y configuración<a class="headerlink" href="#imports-y-configuracion" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># ── Compatibilidad local / Google Colab ──────────────────────────────────────</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">drive</span>
+    <span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive&#39;</span><span class="p">)</span>
+    <span class="n">NOTEBOOKS_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/content/drive/MyDrive/ai4mars_DL-v3/notebooks&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">NOTEBOOKS_DIR</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Entorno: Google Colab&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Entorno: local&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SegformerForSemanticSegmentation</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mars_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="c1"># Rutas y constantes</span>
+    <span class="n">NUM_CLASSES</span><span class="p">,</span> <span class="n">IGNORE_INDEX</span><span class="p">,</span> <span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">SEEDS</span><span class="p">,</span>
+    <span class="n">PROCESSED_DIR</span><span class="p">,</span> <span class="n">BENCHMARK_CSV</span>
+    <span class="c1"># Datos</span>
+    <span class="n">load_split</span><span class="p">,</span> <span class="n">load_norm_stats</span><span class="p">,</span>
+    <span class="c1"># Entrenamiento</span>
+    <span class="n">run_multi_seed</span><span class="p">,</span>
+    <span class="c1"># Resultados</span>
+    <span class="n">append_benchmark_results</span><span class="p">,</span> <span class="n">print_summary_table</span><span class="p">,</span> <span class="n">plot_best_seed_curves</span><span class="p">,</span>
+    <span class="c1"># Visualización</span>
+    <span class="n">visualize_predictions</span><span class="p">,</span>
+    <span class="c1"># Utilidades</span>
+    <span class="n">count_parameters</span><span class="p">,</span> <span class="n">set_seed</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device: </span><span class="si">{</span><span class="n">DEVICE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">DEVICE</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;cuda&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GPU: </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_name</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;VRAM: </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_properties</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">total_memory</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> GB&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Entorno: local
+Device: cuda
+GPU: NVIDIA GeForce RTX 4050 Laptop GPU
+VRAM: 6.4 GB
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="carga-de-datos">
+<h2>1. Carga de datos<a class="headerlink" href="#carga-de-datos" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_val</span><span class="p">,</span> <span class="n">df_gold</span> <span class="o">=</span> <span class="n">load_split</span><span class="p">()</span>
+<span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="n">load_norm_stats</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Train: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span><span class="si">}</span><span class="s2"> imágenes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Val:   </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_val</span><span class="p">)</span><span class="si">}</span><span class="s2"> imágenes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gold:  </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_gold</span><span class="p">)</span><span class="si">}</span><span class="s2"> imágenes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Normalización — mean: </span><span class="si">{</span><span class="n">mean</span><span class="si">}</span><span class="s2"> | std: </span><span class="si">{</span><span class="n">std</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Split cargado — train: 4200 | val: 1800 | gold test: 322
+Train: 4200 imágenes
+Val:   1800 imágenes
+Gold:  322 imágenes
+Normalización — mean: [0.2303263779898021, 0.2303263779898021, 0.2303263779898021] | std: [0.10591342097577364, 0.10591342097577364, 0.10591342097577364]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="definicion-del-modelo">
+<h2>2. Definición del modelo<a class="headerlink" href="#definicion-del-modelo" title="Permalink to this heading">#</a></h2>
+<p>Se carga <code class="docutils literal notranslate"><span class="pre">nvidia/mit-b2</span></code> desde HuggingFace con pesos preentrenados en ImageNet-1k.
+El decoder MLP interno de SegFormer se adapta a <code class="docutils literal notranslate"><span class="pre">NUM_CLASSES=4</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MODEL_ID</span> <span class="o">=</span> <span class="s2">&quot;nvidia/mit-b2&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_segformer</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Devuelve una instancia de SegFormer-B2 preentrenada adaptada a 4 clases.</span>
+<span class="sd">    La salida del forward es un tensor [B, 4, H/4, W/4] que se upsamplea</span>
+<span class="sd">    bilinearmente a [B, 4, 256, 256] en el wrapper.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">SegformerForSemanticSegmentation</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+        <span class="n">MODEL_ID</span><span class="p">,</span>
+        <span class="n">num_labels</span><span class="o">=</span><span class="n">NUM_CLASSES</span><span class="p">,</span>
+        <span class="n">ignore_mismatched_sizes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>   <span class="c1"># reemplaza la cabeza clasificadora</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">SegFormerWrapper</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SegFormerWrapper</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper que adapta la salida de HuggingFace SegFormer al formato</span>
+<span class="sd">    esperado por mars_utils: tensor [B, C, H, W] a resolución completa.</span>
+
+<span class="sd">    HuggingFace devuelve logits en H/4×W/4. Los upsampleamos bilinearmente</span>
+<span class="sd">    a IMG_SIZE×IMG_SIZE (256×256) para que MetricsAccumulator y las losses</span>
+<span class="sd">    trabajen a la misma resolución que las máscaras.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hf_model</span><span class="p">,</span> <span class="n">img_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span>    <span class="o">=</span> <span class="n">hf_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">img_size</span> <span class="o">=</span> <span class="n">img_size</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixel_values</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">out</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">pixel_values</span><span class="o">=</span><span class="n">pixel_values</span><span class="p">)</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">logits</span>                          <span class="c1"># [B, 4, H/4, W/4]</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span>
+            <span class="n">logits</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">img_size</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span>
+            <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>                                            <span class="c1"># [B, 4, 256, 256]</span>
+        <span class="k">return</span> <span class="n">logits</span>
+
+
+<span class="c1"># Verificación rápida de la arquitectura</span>
+<span class="n">set_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">_model</span> <span class="o">=</span> <span class="n">build_segformer</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parámetros totales: </span><span class="si">{</span><span class="n">count_parameters</span><span class="p">(</span><span class="n">_model</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">M&quot;</span><span class="p">)</span>
+
+<span class="n">_dummy</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+<span class="n">_out</span>   <span class="o">=</span> <span class="n">_model</span><span class="p">(</span><span class="n">_dummy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input shape:  </span><span class="si">{</span><span class="n">_dummy</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output shape: </span><span class="si">{</span><span class="n">_out</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">   (esperado: [2, 4, 256, 256])&quot;</span><span class="p">)</span>
+<span class="k">del</span> <span class="n">_model</span><span class="p">,</span> <span class="n">_dummy</span><span class="p">,</span> <span class="n">_out</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] You passed `num_labels=4` which is incompatible to the `id2label` map of length `1000`.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "8295435ba8b448a4951e399302fba04d", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] <span class=" -Color -Color-Bold">SegformerForSemanticSegmentation LOAD REPORT</span> from: nvidia/mit-b2
+Key                                                     | Status     | 
+--------------------------------------------------------+------------+-
+classifier.weight                                       | UNEXPECTED | 
+classifier.bias                                         | UNEXPECTED | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.bias   | MISSING    | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.weight | MISSING    | 
+decode_head.classifier.weight                           | MISSING    | 
+decode_head.batch_norm.num_batches_tracked              | MISSING    | 
+decode_head.batch_norm.weight                           | MISSING    | 
+decode_head.batch_norm.running_var                      | MISSING    | 
+decode_head.batch_norm.bias                             | MISSING    | 
+decode_head.classifier.bias                             | MISSING    | 
+decode_head.linear_fuse.weight                          | MISSING    | 
+decode_head.batch_norm.running_mean                     | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Parámetros totales: 27.35M
+Input shape:  torch.Size([2, 3, 256, 256])
+Output shape: torch.Size([2, 4, 256, 256])   (esperado: [2, 4, 256, 256])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mars_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_DIR</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">((</span><span class="n">DATA_DIR</span> <span class="o">/</span> <span class="s2">&quot;images_256&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">())[:</span><span class="mi">3</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">((</span><span class="n">DATA_DIR</span> <span class="o">/</span> <span class="s2">&quot;masks_256&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">())[:</span><span class="mi">3</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[WindowsPath(&#39;C:/Users/User/Documents/DeepLearning/ai4mars_DL-v3/data/images_256/NLA_397681586EDR_F0020000AUT_04096M1.jpg&#39;), WindowsPath(&#39;C:/Users/User/Documents/DeepLearning/ai4mars_DL-v3/data/images_256/NLA_397681801EDR_F0020000AUT_04096M1.jpg&#39;), WindowsPath(&#39;C:/Users/User/Documents/DeepLearning/ai4mars_DL-v3/data/images_256/NLA_397681867EDR_F0020000AUT_04096M1.jpg&#39;)]
+[WindowsPath(&#39;C:/Users/User/Documents/DeepLearning/ai4mars_DL-v3/data/masks_256/NLA_397681586EDR_F0020000AUT_04096M1.png&#39;), WindowsPath(&#39;C:/Users/User/Documents/DeepLearning/ai4mars_DL-v3/data/masks_256/NLA_397681801EDR_F0020000AUT_04096M1.png&#39;), WindowsPath(&#39;C:/Users/User/Documents/DeepLearning/ai4mars_DL-v3/data/masks_256/NLA_397681867EDR_F0020000AUT_04096M1.png&#39;)]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="configuracion-de-hiperparametros">
+<h2>3. Configuración de hiperparámetros<a class="headerlink" href="#configuracion-de-hiperparametros" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Loss ─────────────────────────────────────────────────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">criterion_fn</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(</span><span class="n">ignore_index</span><span class="o">=</span><span class="n">IGNORE_INDEX</span><span class="p">)</span>
+
+<span class="c1"># ── Optimizer ────────────────────────────────────────────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">optimizer_fn</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">6e-5</span><span class="p">,</span>
+        <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>
+    <span class="p">)</span>
+
+<span class="c1"># ── Scheduler ────────────────────────────────────────────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">scheduler_fn</span><span class="p">(</span><span class="n">optimizer</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">CosineAnnealingLR</span><span class="p">(</span>
+        <span class="n">optimizer</span><span class="p">,</span>
+        <span class="n">T_max</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">eta_min</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hiperparámetros configurados:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Loss:      CrossEntropyLoss (ignore_index=255)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Optimizer: AdamW (lr=6e-5, wd=0.01, betas=(0.9, 0.999))&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Scheduler: CosineAnnealingLR (T_max=30, eta_min=1e-6)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Hiperparámetros configurados:
+  Loss:      CrossEntropyLoss (ignore_index=255)
+  Optimizer: AdamW (lr=6e-5, wd=0.01, betas=(0.9, 0.999))
+  Scheduler: CosineAnnealingLR (T_max=30, eta_min=1e-6)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="entrenamiento-multi-seed">
+<h2>4. Entrenamiento multi-seed<a class="headerlink" href="#entrenamiento-multi-seed" title="Permalink to this heading">#</a></h2>
+<p><strong>Modo rápido</strong> (<code class="docutils literal notranslate"><span class="pre">fast_subset=True</span></code>): usa ~200 imágenes de train y ~50 de val.
+Sirve para verificar que el pipeline no tiene errores antes de correr el entrenamiento completo.
+Cambiar a <code class="docutils literal notranslate"><span class="pre">fast_subset=False</span></code> para el entrenamiento real.</p>
+<blockquote>
+<div><p>⚠️ Tiempo estimado en RTX 4050 (6GB): ~11h con <code class="docutils literal notranslate"><span class="pre">fast_subset=False</span></code>.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Cambiar fast_subset=False para entrenamiento real ────────────────────────</span>
+<span class="n">FAST_SUBSET</span> <span class="o">=</span> <span class="kc">False</span>   <span class="c1"># True = prueba rápida | False = entrenamiento completo</span>
+
+<span class="n">summary</span> <span class="o">=</span> <span class="n">run_multi_seed</span><span class="p">(</span>
+    <span class="n">model_fn</span>      <span class="o">=</span> <span class="n">build_segformer</span><span class="p">,</span>
+    <span class="n">df_train</span>      <span class="o">=</span> <span class="n">df_train</span><span class="p">,</span>
+    <span class="n">df_val</span>        <span class="o">=</span> <span class="n">df_val</span><span class="p">,</span>
+    <span class="n">df_gold</span>       <span class="o">=</span> <span class="n">df_gold</span><span class="p">,</span>
+    <span class="n">criterion_fn</span>  <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">,</span>
+    <span class="n">optimizer_fn</span>  <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">,</span>
+    <span class="n">scheduler_fn</span>  <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">,</span>
+    <span class="n">model_name</span>    <span class="o">=</span> <span class="s2">&quot;SegFormer-B2&quot;</span><span class="p">,</span>
+    <span class="n">device</span>        <span class="o">=</span> <span class="n">DEVICE</span><span class="p">,</span>
+    <span class="n">seeds</span>         <span class="o">=</span> <span class="n">SEEDS</span><span class="p">,</span>
+    <span class="n">num_epochs</span>    <span class="o">=</span> <span class="mi">80</span><span class="p">,</span>
+    <span class="n">patience</span>      <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">batch_size</span>    <span class="o">=</span> <span class="n">BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">num_workers</span>   <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">use_amp</span>       <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">fast_subset</span>   <span class="o">=</span> <span class="n">FAST_SUBSET</span><span class="p">,</span>
+    <span class="n">n_train_fast</span>  <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="n">n_val_fast</span>    <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] You passed `num_labels=4` which is incompatible to the `id2label` map of length `1000`.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>───────────────────────────────────────────────────────
+  Seed 42 | SegFormer-B2
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "53c66cba227f41dbab427151aad2d2e2", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] <span class=" -Color -Color-Bold">SegformerForSemanticSegmentation LOAD REPORT</span> from: nvidia/mit-b2
+Key                                                     | Status     | 
+--------------------------------------------------------+------------+-
+classifier.weight                                       | UNEXPECTED | 
+classifier.bias                                         | UNEXPECTED | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.bias   | MISSING    | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.weight | MISSING    | 
+decode_head.classifier.weight                           | MISSING    | 
+decode_head.batch_norm.num_batches_tracked              | MISSING    | 
+decode_head.batch_norm.weight                           | MISSING    | 
+decode_head.batch_norm.running_var                      | MISSING    | 
+decode_head.batch_norm.bias                             | MISSING    | 
+decode_head.classifier.bias                             | MISSING    | 
+decode_head.linear_fuse.weight                          | MISSING    | 
+decode_head.batch_norm.running_mean                     | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Entrenamiento desde cero
+
+============================================================
+  SegFormer-B2_seed42 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.2566 mIoU=0.6281 | val_loss=0.1958 val_mIoU=0.7070 | rock=0.2700
+Ep   2/80 | loss=0.1605 mIoU=0.7253 | val_loss=0.1276 val_mIoU=0.7661 | rock=0.3482
+Ep   3/80 | loss=0.1378 mIoU=0.7575 | val_loss=0.1044 val_mIoU=0.7864 | rock=0.3749
+Checkpoint periódico guardado (epoch 3)
+Ep   4/80 | loss=0.1206 mIoU=0.7778 | val_loss=0.1038 val_mIoU=0.8060 | rock=0.4540
+Ep   5/80 | loss=0.1059 mIoU=0.8074 | val_loss=0.1080 val_mIoU=0.8023 | rock=0.4632
+Ep   6/80 | loss=0.0988 mIoU=0.8151 | val_loss=0.1230 val_mIoU=0.7980 | rock=0.4512
+Checkpoint periódico guardado (epoch 6)
+Ep   7/80 | loss=0.0894 mIoU=0.8334 | val_loss=0.1408 val_mIoU=0.8083 | rock=0.4971
+Ep   8/80 | loss=0.0863 mIoU=0.8484 | val_loss=0.1014 val_mIoU=0.8192 | rock=0.5089
+Ep   9/80 | loss=0.0781 mIoU=0.8539 | val_loss=0.1108 val_mIoU=0.8085 | rock=0.4861
+Checkpoint periódico guardado (epoch 9)
+Ep  10/80 | loss=0.0785 mIoU=0.8533 | val_loss=0.1038 val_mIoU=0.8235 | rock=0.5315
+Ep  11/80 | loss=0.0631 mIoU=0.8779 | val_loss=0.1098 val_mIoU=0.8003 | rock=0.4211
+Ep  12/80 | loss=0.0624 mIoU=0.8719 | val_loss=0.1175 val_mIoU=0.8297 | rock=0.5457
+Checkpoint periódico guardado (epoch 12)
+Ep  13/80 | loss=0.0649 mIoU=0.8815 | val_loss=0.1085 val_mIoU=0.8345 | rock=0.5673
+Ep  14/80 | loss=0.0538 mIoU=0.8943 | val_loss=0.1290 val_mIoU=0.8313 | rock=0.5526
+Ep  15/80 | loss=0.0518 mIoU=0.9010 | val_loss=0.1243 val_mIoU=0.8111 | rock=0.4965
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.0502 mIoU=0.8987 | val_loss=0.1110 val_mIoU=0.8335 | rock=0.5502
+Ep  17/80 | loss=0.0450 mIoU=0.9101 | val_loss=0.1031 val_mIoU=0.8380 | rock=0.5512
+Ep  18/80 | loss=0.0450 mIoU=0.9115 | val_loss=0.1080 val_mIoU=0.8330 | rock=0.5288
+Checkpoint periódico guardado (epoch 18)
+Ep  19/80 | loss=0.0391 mIoU=0.9228 | val_loss=0.1115 val_mIoU=0.8358 | rock=0.5444
+Ep  20/80 | loss=0.0387 mIoU=0.9221 | val_loss=0.1143 val_mIoU=0.8389 | rock=0.5495
+Ep  21/80 | loss=0.0356 mIoU=0.9256 | val_loss=0.1156 val_mIoU=0.8378 | rock=0.5551
+Checkpoint periódico guardado (epoch 21)
+Ep  22/80 | loss=0.0337 mIoU=0.9306 | val_loss=0.1126 val_mIoU=0.8391 | rock=0.5465
+Ep  23/80 | loss=0.0330 mIoU=0.9302 | val_loss=0.1086 val_mIoU=0.8467 | rock=0.5712
+Ep  24/80 | loss=0.0317 mIoU=0.9349 | val_loss=0.1086 val_mIoU=0.8464 | rock=0.5710
+Checkpoint periódico guardado (epoch 24)
+Ep  25/80 | loss=0.0302 mIoU=0.9361 | val_loss=0.1136 val_mIoU=0.8438 | rock=0.5646
+Ep  26/80 | loss=0.0299 mIoU=0.9383 | val_loss=0.1138 val_mIoU=0.8424 | rock=0.5625
+Ep  27/80 | loss=0.0306 mIoU=0.9352 | val_loss=0.1090 val_mIoU=0.8445 | rock=0.5627
+Checkpoint periódico guardado (epoch 27)
+Ep  28/80 | loss=0.0298 mIoU=0.9389 | val_loss=0.1149 val_mIoU=0.8435 | rock=0.5664
+Ep  29/80 | loss=0.0293 mIoU=0.9385 | val_loss=0.1110 val_mIoU=0.8446 | rock=0.5673
+Ep  30/80 | loss=0.0287 mIoU=0.9408 | val_loss=0.1147 val_mIoU=0.8442 | rock=0.5668
+Checkpoint periódico guardado (epoch 30)
+Ep  31/80 | loss=0.0287 mIoU=0.9403 | val_loss=0.1124 val_mIoU=0.8441 | rock=0.5652
+Ep  32/80 | loss=0.0284 mIoU=0.9414 | val_loss=0.1146 val_mIoU=0.8446 | rock=0.5683
+Ep  33/80 | loss=0.0286 mIoU=0.9419 | val_loss=0.1152 val_mIoU=0.8441 | rock=0.5678
+  Early stopping en epoch 33 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.8467 (epoch 23) | tiempo=4005s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.8248
+ Progreso guardado (1/3 seeds)
+
+───────────────────────────────────────────────────────
+  Seed 123 | SegFormer-B2
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] You passed `num_labels=4` which is incompatible to the `id2label` map of length `1000`.
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "a750a1cdc484416ba4507e5247634e58", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] <span class=" -Color -Color-Bold">SegformerForSemanticSegmentation LOAD REPORT</span> from: nvidia/mit-b2
+Key                                                     | Status     | 
+--------------------------------------------------------+------------+-
+classifier.weight                                       | UNEXPECTED | 
+classifier.bias                                         | UNEXPECTED | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.bias   | MISSING    | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.weight | MISSING    | 
+decode_head.classifier.weight                           | MISSING    | 
+decode_head.batch_norm.num_batches_tracked              | MISSING    | 
+decode_head.batch_norm.weight                           | MISSING    | 
+decode_head.batch_norm.running_var                      | MISSING    | 
+decode_head.batch_norm.bias                             | MISSING    | 
+decode_head.classifier.bias                             | MISSING    | 
+decode_head.linear_fuse.weight                          | MISSING    | 
+decode_head.batch_norm.running_mean                     | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Entrenamiento desde cero
+
+============================================================
+  SegFormer-B2_seed123 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.2602 mIoU=0.6317 | val_loss=0.1278 val_mIoU=0.7375 | rock=0.2282
+Ep   2/80 | loss=0.1570 mIoU=0.7329 | val_loss=0.1265 val_mIoU=0.7279 | rock=0.1984
+Ep   3/80 | loss=0.1326 mIoU=0.7640 | val_loss=0.1186 val_mIoU=0.7832 | rock=0.4009
+Checkpoint periódico guardado (epoch 3)
+Ep   4/80 | loss=0.1202 mIoU=0.7827 | val_loss=0.1147 val_mIoU=0.7847 | rock=0.4076
+Ep   5/80 | loss=0.1182 mIoU=0.7929 | val_loss=0.0998 val_mIoU=0.7984 | rock=0.4239
+Ep   6/80 | loss=0.1009 mIoU=0.8136 | val_loss=0.1158 val_mIoU=0.7994 | rock=0.4546
+Checkpoint periódico guardado (epoch 6)
+Ep   7/80 | loss=0.1002 mIoU=0.8267 | val_loss=0.0998 val_mIoU=0.8012 | rock=0.4315
+Ep   8/80 | loss=0.0836 mIoU=0.8441 | val_loss=0.1090 val_mIoU=0.8186 | rock=0.4897
+Ep   9/80 | loss=0.0783 mIoU=0.8566 | val_loss=0.1060 val_mIoU=0.8272 | rock=0.5325
+Checkpoint periódico guardado (epoch 9)
+Ep  10/80 | loss=0.0723 mIoU=0.8653 | val_loss=0.1178 val_mIoU=0.8106 | rock=0.4755
+Ep  11/80 | loss=0.0731 mIoU=0.8689 | val_loss=0.1118 val_mIoU=0.8111 | rock=0.4787
+Ep  12/80 | loss=0.0633 mIoU=0.8856 | val_loss=0.1221 val_mIoU=0.8300 | rock=0.5343
+Checkpoint periódico guardado (epoch 12)
+Ep  13/80 | loss=0.0611 mIoU=0.8872 | val_loss=0.1013 val_mIoU=0.8274 | rock=0.5228
+Ep  14/80 | loss=0.0533 mIoU=0.8986 | val_loss=0.1332 val_mIoU=0.8145 | rock=0.5472
+Ep  15/80 | loss=0.0550 mIoU=0.8983 | val_loss=0.1126 val_mIoU=0.8337 | rock=0.5538
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.0493 mIoU=0.9091 | val_loss=0.1202 val_mIoU=0.8357 | rock=0.5603
+Ep  17/80 | loss=0.0443 mIoU=0.9132 | val_loss=0.1260 val_mIoU=0.8263 | rock=0.5144
+Ep  18/80 | loss=0.0407 mIoU=0.9146 | val_loss=0.1213 val_mIoU=0.8396 | rock=0.5550
+Checkpoint periódico guardado (epoch 18)
+Ep  19/80 | loss=0.0389 mIoU=0.9241 | val_loss=0.1099 val_mIoU=0.8351 | rock=0.5433
+Ep  20/80 | loss=0.0370 mIoU=0.9249 | val_loss=0.1206 val_mIoU=0.8351 | rock=0.5514
+Ep  21/80 | loss=0.0359 mIoU=0.9267 | val_loss=0.1160 val_mIoU=0.8389 | rock=0.5544
+Checkpoint periódico guardado (epoch 21)
+Ep  22/80 | loss=0.0342 mIoU=0.9306 | val_loss=0.1272 val_mIoU=0.8372 | rock=0.5581
+Ep  23/80 | loss=0.0325 mIoU=0.9328 | val_loss=0.1321 val_mIoU=0.8395 | rock=0.5633
+Ep  24/80 | loss=0.0325 mIoU=0.9346 | val_loss=0.1229 val_mIoU=0.8420 | rock=0.5697
+Checkpoint periódico guardado (epoch 24)
+Ep  25/80 | loss=0.0307 mIoU=0.9353 | val_loss=0.1315 val_mIoU=0.8439 | rock=0.5795
+Ep  26/80 | loss=0.0306 mIoU=0.9358 | val_loss=0.1177 val_mIoU=0.8432 | rock=0.5663
+Ep  27/80 | loss=0.0303 mIoU=0.9383 | val_loss=0.1225 val_mIoU=0.8416 | rock=0.5635
+Checkpoint periódico guardado (epoch 27)
+Ep  28/80 | loss=0.0292 mIoU=0.9394 | val_loss=0.1280 val_mIoU=0.8401 | rock=0.5621
+Ep  29/80 | loss=0.0287 mIoU=0.9393 | val_loss=0.1237 val_mIoU=0.8421 | rock=0.5670
+Ep  30/80 | loss=0.0284 mIoU=0.9417 | val_loss=0.1243 val_mIoU=0.8418 | rock=0.5663
+Checkpoint periódico guardado (epoch 30)
+Ep  31/80 | loss=0.0278 mIoU=0.9413 | val_loss=0.1281 val_mIoU=0.8422 | rock=0.5673
+Ep  32/80 | loss=0.0282 mIoU=0.9423 | val_loss=0.1217 val_mIoU=0.8420 | rock=0.5649
+Ep  33/80 | loss=0.0284 mIoU=0.9405 | val_loss=0.1285 val_mIoU=0.8420 | rock=0.5683
+Checkpoint periódico guardado (epoch 33)
+Ep  34/80 | loss=0.0275 mIoU=0.9418 | val_loss=0.1235 val_mIoU=0.8418 | rock=0.5643
+Ep  35/80 | loss=0.0275 mIoU=0.9423 | val_loss=0.1212 val_mIoU=0.8419 | rock=0.5636
+  Early stopping en epoch 35 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.8439 (epoch 25) | tiempo=4233s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.8378
+ Progreso guardado (2/3 seeds)
+
+───────────────────────────────────────────────────────
+  Seed 7 | SegFormer-B2
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] You passed `num_labels=4` which is incompatible to the `id2label` map of length `1000`.
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "72f060760569499b8230f17f09e24d48", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] <span class=" -Color -Color-Bold">SegformerForSemanticSegmentation LOAD REPORT</span> from: nvidia/mit-b2
+Key                                                     | Status     | 
+--------------------------------------------------------+------------+-
+classifier.weight                                       | UNEXPECTED | 
+classifier.bias                                         | UNEXPECTED | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.bias   | MISSING    | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.weight | MISSING    | 
+decode_head.classifier.weight                           | MISSING    | 
+decode_head.batch_norm.num_batches_tracked              | MISSING    | 
+decode_head.batch_norm.weight                           | MISSING    | 
+decode_head.batch_norm.running_var                      | MISSING    | 
+decode_head.batch_norm.bias                             | MISSING    | 
+decode_head.classifier.bias                             | MISSING    | 
+decode_head.linear_fuse.weight                          | MISSING    | 
+decode_head.batch_norm.running_mean                     | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Entrenamiento desde cero
+
+============================================================
+  SegFormer-B2_seed7 | device=cuda | AMP=True
+  epochs=80 | patience=10 | aux_weight=0.0
+============================================================
+Ep   1/80 | loss=0.2566 mIoU=0.6365 | val_loss=0.2052 val_mIoU=0.7221 | rock=0.3151
+Ep   2/80 | loss=0.1534 mIoU=0.7306 | val_loss=0.1066 val_mIoU=0.7816 | rock=0.3678
+Ep   3/80 | loss=0.1425 mIoU=0.7559 | val_loss=0.1194 val_mIoU=0.7411 | rock=0.2198
+Checkpoint periódico guardado (epoch 3)
+Ep   4/80 | loss=0.1231 mIoU=0.7790 | val_loss=0.1316 val_mIoU=0.7965 | rock=0.4518
+Ep   5/80 | loss=0.1068 mIoU=0.8045 | val_loss=0.1056 val_mIoU=0.7967 | rock=0.4359
+Ep   6/80 | loss=0.0942 mIoU=0.8283 | val_loss=0.1289 val_mIoU=0.8080 | rock=0.5010
+Checkpoint periódico guardado (epoch 6)
+Ep   7/80 | loss=0.0963 mIoU=0.8284 | val_loss=0.1050 val_mIoU=0.8150 | rock=0.4904
+Ep   8/80 | loss=0.0838 mIoU=0.8468 | val_loss=0.1091 val_mIoU=0.8107 | rock=0.4914
+Ep   9/80 | loss=0.0811 mIoU=0.8568 | val_loss=0.1029 val_mIoU=0.8283 | rock=0.5290
+Checkpoint periódico guardado (epoch 9)
+Ep  10/80 | loss=0.0773 mIoU=0.8564 | val_loss=0.1042 val_mIoU=0.8216 | rock=0.5057
+Ep  11/80 | loss=0.0721 mIoU=0.8741 | val_loss=0.1139 val_mIoU=0.7941 | rock=0.4346
+Ep  12/80 | loss=0.0681 mIoU=0.8774 | val_loss=0.1068 val_mIoU=0.8222 | rock=0.5288
+Checkpoint periódico guardado (epoch 12)
+Ep  13/80 | loss=0.0596 mIoU=0.8899 | val_loss=0.1154 val_mIoU=0.8145 | rock=0.4769
+Ep  14/80 | loss=0.0566 mIoU=0.8932 | val_loss=0.0992 val_mIoU=0.8345 | rock=0.5545
+Ep  15/80 | loss=0.0514 mIoU=0.9061 | val_loss=0.1216 val_mIoU=0.8323 | rock=0.5507
+Checkpoint periódico guardado (epoch 15)
+Ep  16/80 | loss=0.0493 mIoU=0.9073 | val_loss=0.1116 val_mIoU=0.8345 | rock=0.5413
+Ep  17/80 | loss=0.0457 mIoU=0.9110 | val_loss=0.1056 val_mIoU=0.8384 | rock=0.5637
+Ep  18/80 | loss=0.0417 mIoU=0.9190 | val_loss=0.1272 val_mIoU=0.8304 | rock=0.5429
+Checkpoint periódico guardado (epoch 18)
+Ep  19/80 | loss=0.0392 mIoU=0.9223 | val_loss=0.1097 val_mIoU=0.8365 | rock=0.5474
+Ep  20/80 | loss=0.0365 mIoU=0.9242 | val_loss=0.1175 val_mIoU=0.8333 | rock=0.5323
+Ep  21/80 | loss=0.0352 mIoU=0.9304 | val_loss=0.1244 val_mIoU=0.8284 | rock=0.5448
+Checkpoint periódico guardado (epoch 21)
+Ep  22/80 | loss=0.0343 mIoU=0.9265 | val_loss=0.1315 val_mIoU=0.8356 | rock=0.5484
+Ep  23/80 | loss=0.0331 mIoU=0.9329 | val_loss=0.1219 val_mIoU=0.8352 | rock=0.5516
+Ep  24/80 | loss=0.0325 mIoU=0.9312 | val_loss=0.1162 val_mIoU=0.8358 | rock=0.5441
+Checkpoint periódico guardado (epoch 24)
+Ep  25/80 | loss=0.0320 mIoU=0.9341 | val_loss=0.1237 val_mIoU=0.8364 | rock=0.5490
+Ep  26/80 | loss=0.0300 mIoU=0.9367 | val_loss=0.1188 val_mIoU=0.8373 | rock=0.5480
+Ep  27/80 | loss=0.0292 mIoU=0.9399 | val_loss=0.1203 val_mIoU=0.8391 | rock=0.5535
+Checkpoint periódico guardado (epoch 27)
+Ep  28/80 | loss=0.0289 mIoU=0.9403 | val_loss=0.1153 val_mIoU=0.8370 | rock=0.5483
+Ep  29/80 | loss=0.0281 mIoU=0.9426 | val_loss=0.1199 val_mIoU=0.8370 | rock=0.5498
+Ep  30/80 | loss=0.0285 mIoU=0.9393 | val_loss=0.1214 val_mIoU=0.8366 | rock=0.5470
+Checkpoint periódico guardado (epoch 30)
+Ep  31/80 | loss=0.0288 mIoU=0.9399 | val_loss=0.1209 val_mIoU=0.8364 | rock=0.5464
+Ep  32/80 | loss=0.0277 mIoU=0.9396 | val_loss=0.1218 val_mIoU=0.8360 | rock=0.5461
+Ep  33/80 | loss=0.0284 mIoU=0.9410 | val_loss=0.1231 val_mIoU=0.8381 | rock=0.5518
+Checkpoint periódico guardado (epoch 33)
+Ep  34/80 | loss=0.0279 mIoU=0.9398 | val_loss=0.1226 val_mIoU=0.8360 | rock=0.5445
+Ep  35/80 | loss=0.0282 mIoU=0.9401 | val_loss=0.1270 val_mIoU=0.8370 | rock=0.5501
+Ep  36/80 | loss=0.0278 mIoU=0.9431 | val_loss=0.1216 val_mIoU=0.8386 | rock=0.5496
+Checkpoint periódico guardado (epoch 36)
+Ep  37/80 | loss=0.0278 mIoU=0.9391 | val_loss=0.1244 val_mIoU=0.8374 | rock=0.5493
+  Early stopping en epoch 37 (sin mejora por 10 epochs)
+
+  Mejor val mIoU=0.8391 (epoch 27) | tiempo=4484s
+ Checkpoint periódico eliminado
+  Gold test mIoU=0.8383
+ Progreso guardado (3/3 seeds)
+
+============================================================
+  SegFormer-B2: mIoU=0.8337 ± 0.0063  IC95=±0.0071
+  IoU(soil      )=0.9783 ± 0.0021
+  IoU(bedrock   )=0.9397 ± 0.0025
+  IoU(sand      )=0.9575 ± 0.0057
+  IoU(big_rock  )=0.4592 ± 0.0184
+============================================================
+ Archivo de progreso eliminado (todos los seeds completados)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="resultados">
+<h2>5. Resultados<a class="headerlink" href="#resultados" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla resumen agregada (media ± std, IC95%)</span>
+<span class="n">print_summary_table</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>============================================================
+  RESUMEN — SegFormer-B2
+============================================================
+  Métrica                 Media       Std      IC95
+  ------------------------------------------------
+  mIoU                   0.8337    0.0063  ± 0.0071
+  Pixel Accuracy         0.9814
+  ------------------------------------------------
+  IoU soil               0.9783    0.0021
+  IoU bedrock            0.9397    0.0025
+  IoU sand               0.9575    0.0057
+  IoU big_rock           0.4592    0.0184
+  ------------------------------------------------
+  Params (M)           —
+  Tiempo medio (s)         4241
+  Epoch mejor (mean)       25.0
+============================================================
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Curvas de entrenamiento del mejor seed</span>
+<span class="n">plot_best_seed_curves</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/2a1282a017edc895b68d20f44d9c0006ab7c86ce22a37eeddf76a4b58e6792b9.png" src="../_images/2a1282a017edc895b68d20f44d9c0006ab7c86ce22a37eeddf76a4b58e6792b9.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Guardar en benchmark_results.csv</span>
+<span class="n">params_M</span> <span class="o">=</span> <span class="n">count_parameters</span><span class="p">(</span><span class="n">build_segformer</span><span class="p">())</span>
+<span class="n">df_csv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">BENCHMARK_CSV</span><span class="p">)</span>
+<span class="n">df_csv</span> <span class="o">=</span> <span class="n">df_csv</span><span class="p">[</span><span class="n">df_csv</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">MODEL_NAME</span><span class="p">]</span>
+<span class="n">df_csv</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">BENCHMARK_CSV</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">append_benchmark_results</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">params_M</span><span class="o">=</span><span class="n">params_M</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parámetros del modelo: </span><span class="si">{</span><span class="n">params_M</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">M&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] You passed `num_labels=4` which is incompatible to the `id2label` map of length `1000`.
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "25714ab1f7aa42bfa2457344511f30eb", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] <span class=" -Color -Color-Bold">SegformerForSemanticSegmentation LOAD REPORT</span> from: nvidia/mit-b2
+Key                                                     | Status     | 
+--------------------------------------------------------+------------+-
+classifier.weight                                       | UNEXPECTED | 
+classifier.bias                                         | UNEXPECTED | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.bias   | MISSING    | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.weight | MISSING    | 
+decode_head.classifier.weight                           | MISSING    | 
+decode_head.batch_norm.num_batches_tracked              | MISSING    | 
+decode_head.batch_norm.weight                           | MISSING    | 
+decode_head.batch_norm.running_var                      | MISSING    | 
+decode_head.batch_norm.bias                             | MISSING    | 
+decode_head.classifier.bias                             | MISSING    | 
+decode_head.linear_fuse.weight                          | MISSING    | 
+decode_head.batch_norm.running_mean                     | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Resultados guardados en C:\Users\User\Documents\DeepLearning\ai4mars_DL-v3\results\benchmark_results.csv
+Parámetros del modelo: 27.35M
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="analisis-cualitativo">
+<h2>6. Análisis cualitativo<a class="headerlink" href="#analisis-cualitativo" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualizar predicciones del mejor seed sobre el gold test set</span>
+<span class="n">best_seed</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s2">&quot;per_seed&quot;</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;mIoU&quot;</span><span class="p">])[</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Visualizando predicciones del mejor seed: </span><span class="si">{</span><span class="n">best_seed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">set_seed</span><span class="p">(</span><span class="n">best_seed</span><span class="p">)</span>
+<span class="n">best_model</span> <span class="o">=</span> <span class="n">build_segformer</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mars_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">CHECKPOINTS_DIR</span>
+<span class="n">ckpt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+    <span class="n">CHECKPOINTS_DIR</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;SegFormer-B2_seed</span><span class="si">{</span><span class="n">best_seed</span><span class="si">}</span><span class="s2">_best.pth&quot;</span><span class="p">,</span>
+    <span class="n">map_location</span><span class="o">=</span><span class="n">DEVICE</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">best_model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">ckpt</span><span class="p">[</span><span class="s2">&quot;model_state&quot;</span><span class="p">])</span>
+
+<span class="n">visualize_predictions</span><span class="p">(</span><span class="n">best_model</span><span class="p">,</span> <span class="n">df_gold</span><span class="p">,</span> <span class="n">DEVICE</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">std</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Visualizando predicciones del mejor seed: 7
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] You passed `num_labels=4` which is incompatible to the `id2label` map of length `1000`.
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "4f8bbf203c6047caa95f1c0a3429e8bc", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[transformers] <span class=" -Color -Color-Bold">SegformerForSemanticSegmentation LOAD REPORT</span> from: nvidia/mit-b2
+Key                                                     | Status     | 
+--------------------------------------------------------+------------+-
+classifier.weight                                       | UNEXPECTED | 
+classifier.bias                                         | UNEXPECTED | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.bias   | MISSING    | 
+decode_head.linear_projections.{0, 1, 2, 3}.proj.weight | MISSING    | 
+decode_head.classifier.weight                           | MISSING    | 
+decode_head.batch_norm.num_batches_tracked              | MISSING    | 
+decode_head.batch_norm.weight                           | MISSING    | 
+decode_head.batch_norm.running_var                      | MISSING    | 
+decode_head.batch_norm.bias                             | MISSING    | 
+decode_head.classifier.bias                             | MISSING    | 
+decode_head.linear_fuse.weight                          | MISSING    | 
+decode_head.batch_norm.running_mean                     | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+</pre></div>
+</div>
+<img alt="../_images/20d640d4ef11545524853f3362a71b6d3e7f53d65fc98acf5016b5bc5ee92ffc.png" src="../_images/20d640d4ef11545524853f3362a71b6d3e7f53d65fc98acf5016b5bc5ee92ffc.png" />
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="05e_model_depthformer.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="06_benchmark_estadistico.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">06 - Benchmark estadistico y resultados finales</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports-y-configuracion">0. Imports y configuración</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#carga-de-datos">1. Carga de datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definicion-del-modelo">2. Definición del modelo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion-de-hiperparametros">3. Configuración de hiperparámetros</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entrenamiento-multi-seed">4. Entrenamiento multi-seed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados">5. Resultados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-cualitativo">6. Análisis cualitativo</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Entregable 3 - Deep Learning
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

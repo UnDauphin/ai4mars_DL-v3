@@ -1,0 +1,724 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>01 — Justificación de SegFormer-B2 como Modelo Original del Proyecto AI4MARS &#8212; Segmentacion Semantica de Terreno Marciano</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/04b_justificacion_segformer';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="05a — DeepLabV3+ (ResNet-50)" href="05a_model_deeplabv3plus.html" />
+    <link rel="prev" title="04 — Revisión del Estado del Arte" href="04_marco_teorico.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Wall-e.jpg" class="logo__image only-light" alt="Segmentacion Semantica de Terreno Marciano - Home"/>
+    <script>document.write(`<img src="../_static/Wall-e.jpg" class="logo__image only-dark" alt="Segmentacion Semantica de Terreno Marciano - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Segmentacion semantica de terreno marciano
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Analisis de datos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_eda_exploratorio.html">01 — EDA Exploratorio: Dataset AI4MARS Completo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_preprocessing.html">02 — Preprocesamiento: Resize, Split y Estadísticas de Normalización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_eda_msl.html">03 — EDA Profundo: Subconjunto MSL Procesado</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Estado del arte</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04_marco_teorico.html">04 — Revisión del Estado del Arte</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">01 — Justificación de SegFormer-B2 como Modelo Original del Proyecto AI4MARS</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos benchmark</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="05a_model_deeplabv3plus.html">05a — DeepLabV3+ (ResNet-50)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05b_model_transunet.html">05b - IC-TransUNet benchmark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05c_model_marsseg.html">05c — MarsSeg (ResNet-50 + MiniASPP + PSA + SPPM)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05d_model_terseg.html">05d — TerSeg (Dual-Branch ResNet-34 + Swin-Tiny)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05e_model_depthformer.html">05e — DepthFormer-RGB (Swin-Tiny + UPerNet + PPM)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05f_model_segformer.html">05f - SegFormer-B2</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_benchmark_estadistico.html">06 - Benchmark estadistico y resultados finales</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_discusion_discrepancia_visual.html">02 — Análisis de la Discrepancia Visual entre Predicción y Ground Truth en AI4MARS</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/UnDauphin/ai4mars_DL-v3" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/04b_justificacion_segformer.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>01 — Justificación de SegFormer-B2 como Modelo Original del Proyecto AI4MARS</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sentido-de-la-originalidad-en-este-proyecto">1. Sentido de la “originalidad” en este proyecto</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#justificacion-tecnica-de-segformer-para-la-segmentacion-de-terreno-marciano">2. Justificación técnica de SegFormer para la segmentación de terreno marciano</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-jerarquico-multiescala-mix-transformer-mit">2.1 Encoder jerárquico multiescala (Mix Transformer — MiT)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ausencia-de-codificacion-posicional-fija">2.2 Ausencia de codificación posicional fija</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder-mlp-ligero-y-campo-receptivo-efectivo-amplio">2.3 Decoder MLP ligero y campo receptivo efectivo amplio</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relacion-con-las-caracteristicas-especificas-del-problema-ai4mars">3. Relación con las características específicas del problema AI4MARS</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deteccion-de-big-rock-clase-minoritaria-y-dificil">3.1 Detección de <code class="docutils literal notranslate"><span class="pre">big_rock</span></code>: clase minoritaria y difícil</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representacion-multiescala-y-texturas-marcianas">3.2 Representación multiescala y texturas marcianas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estabilidad-en-entrenamiento-con-datos-limitados">3.3 Estabilidad en entrenamiento con datos limitados</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#justificacion-cientifica-y-computacional-integrada">4. Justificación científica y computacional integrada</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-breve-con-los-benchmarks-del-proyecto">5. Comparación breve con los benchmarks del proyecto</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion-para-defensa-oral">6. Conclusión para defensa oral</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="justificacion-de-segformer-b2-como-modelo-original-del-proyecto-ai4mars">
+<h1>01 — Justificación de SegFormer-B2 como Modelo Original del Proyecto AI4MARS<a class="headerlink" href="#justificacion-de-segformer-b2-como-modelo-original-del-proyecto-ai4mars" title="Permalink to this heading">#</a></h1>
+<section id="sentido-de-la-originalidad-en-este-proyecto">
+<h2>1. Sentido de la “originalidad” en este proyecto<a class="headerlink" href="#sentido-de-la-originalidad-en-este-proyecto" title="Permalink to this heading">#</a></h2>
+<p>En el contexto de este entregable, la originalidad de SegFormer-B2 no se refiere a que la arquitectura sea nueva en la literatura general —fue publicada en NeurIPS 2021 (Xie et al.)— sino a que su <strong>aplicación al dominio específico de AI4MARS y a la segmentación semántica de terreno marciano con imágenes NavCam</strong> no aparece documentada en los trabajos revisados.</p>
+<p>La búsqueda sistemática realizada en bases de datos académicas Q1 (Scopus, Web of Science, IEEE Xplore, arXiv) identificó publicaciones sobre SegFormer en dominios muy diversos. Para contextualizar la amplitud de su adopción, la Tabla 1 resume los dominios de aplicación encontrados en los 50 artículos recuperados de Web of Science:</p>
+<p><strong>Tabla 1. Dominios de aplicación de SegFormer en los 50 artículos de Web of Science</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Dominio de aplicación</p></th>
+<th class="head"><p>Ejemplos representativos</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Geociencias y riesgo natural</p></td>
+<td><p>Detección de deslizamientos, cambio de uso de suelo</p></td>
+</tr>
+<tr class="row-odd"><td><p>Teledetección y SAR</p></td>
+<td><p>Imágenes de satélite, ondas oceánicas internas, espacios verdes urbanos</p></td>
+</tr>
+<tr class="row-even"><td><p>Agricultura</p></td>
+<td><p>Enfermedades de plantas, impurezas en grano de arroz, rodenticidas</p></td>
+</tr>
+<tr class="row-odd"><td><p>Medicina e imagen clínica</p></td>
+<td><p>Tumores cerebrales, pólipos de colon, hígado, cuello uterino, aorta</p></td>
+</tr>
+<tr class="row-even"><td><p>Industria y materiales</p></td>
+<td><p>Corrosión metálica, fugas magnéticas, carbón y roca</p></td>
+</tr>
+<tr class="row-odd"><td><p>Imagen submarina</p></td>
+<td><p>Imágenes subacuáticas, segmentación de montes submarinos</p></td>
+</tr>
+<tr class="row-even"><td><p>Visión UAV y minería</p></td>
+<td><p>Minas desde UAV, extracción de vegetación</p></td>
+</tr>
+<tr class="row-odd"><td><p>Segmentación de celdas</p></td>
+<td><p>Detección de fallas en manufactura</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Ninguno de estos 50 trabajos corresponde a la segmentación de terreno marciano, al dataset AI4MARS, ni a imágenes NavCam o HazCam de rovers de la NASA. En ese sentido, la adaptación y evaluación de SegFormer-B2 sobre AI4MARS constituye una <strong>contribución original dentro del alcance de este proyecto</strong>: una arquitectura de referencia aplicada a un dominio donde no había sido evaluada en la bibliografía revisada.</p>
+</section>
+<hr class="docutils" />
+<section id="justificacion-tecnica-de-segformer-para-la-segmentacion-de-terreno-marciano">
+<h2>2. Justificación técnica de SegFormer para la segmentación de terreno marciano<a class="headerlink" href="#justificacion-tecnica-de-segformer-para-la-segmentacion-de-terreno-marciano" title="Permalink to this heading">#</a></h2>
+<section id="encoder-jerarquico-multiescala-mix-transformer-mit">
+<h3>2.1 Encoder jerárquico multiescala (Mix Transformer — MiT)<a class="headerlink" href="#encoder-jerarquico-multiescala-mix-transformer-mit" title="Permalink to this heading">#</a></h3>
+<p>SegFormer emplea un encoder Transformer jerárquico denominado MiT (Mix Transformer), que genera representaciones en cuatro escalas de resolución: 1/4, 1/8, 1/16 y 1/32 de la imagen original. A diferencia de ViT, que produce un único mapa de características de baja resolución, MiT captura simultáneamente detalles finos de alta resolución (bordes, texturas locales) y contexto semántico global (relaciones de largo alcance entre regiones).</p>
+<p>Esta propiedad es directamente relevante para las imágenes NavCam del rover Curiosity. El terreno marciano presenta una mezcla de estructuras a escalas muy distintas: superficies extensas de suelo y bedrock que requieren contexto amplio para ser correctamente delimitadas, y rocas sueltas (<code class="docutils literal notranslate"><span class="pre">big_rock</span></code>) que pueden ocupar regiones pequeñas y dispersas dentro de la imagen. Un encoder de escala única tiende a sacrificar uno de los dos extremos; el diseño jerárquico de MiT los aborda de forma complementaria.</p>
+</section>
+<section id="ausencia-de-codificacion-posicional-fija">
+<h3>2.2 Ausencia de codificación posicional fija<a class="headerlink" href="#ausencia-de-codificacion-posicional-fija" title="Permalink to this heading">#</a></h3>
+<p>Una limitación conocida de los Transformers clásicos (ViT, SETR) es su dependencia de una codificación posicional de resolución fija. Cuando la resolución de inferencia difiere de la de entrenamiento —situación habitual en segmentación semántica, donde las imágenes del mundo real tienen tamaños variables— el modelo debe interpolar los embeddings posicionales, lo que degrada el rendimiento de forma medible.</p>
+<p>SegFormer reemplaza la codificación posicional explícita por <strong>Mix-FFN</strong>, un módulo que incorpora una convolución 3×3 dentro de la red feed-forward de cada bloque Transformer. Xie et al. (2021) demostraron que esta convolución es suficiente para proporcionar información posicional implícita, eliminando la sensibilidad a cambios de resolución. El beneficio cuantificado en Cityscapes es notable: con codificación posicional fija la caída de mIoU al cambiar de resolución es de 3.3 puntos; con Mix-FFN la caída se reduce a 0.7 puntos.</p>
+<p>En el contexto de AI4MARS, las imágenes NavCam del dataset original presentan resoluciones heterogéneas, y el proyecto estandariza a 256×256 px mediante preprocesamiento. La robustez ante variaciones de resolución reduce el riesgo de degradación en eventuales ajustes de tamaño o en el uso de otras cámaras del rover.</p>
+</section>
+<section id="decoder-mlp-ligero-y-campo-receptivo-efectivo-amplio">
+<h3>2.3 Decoder MLP ligero y campo receptivo efectivo amplio<a class="headerlink" href="#decoder-mlp-ligero-y-campo-receptivo-efectivo-amplio" title="Permalink to this heading">#</a></h3>
+<p>El decoder de SegFormer consiste exclusivamente en capas MLP lineales que unifican los canales de las cuatro escalas del encoder, los upsamplean a 1/4 de la imagen y producen la máscara de predicción final. Esta simplicidad no es una concesión en rendimiento: es viable precisamente porque el encoder Transformer ya tiene un <strong>campo receptivo efectivo (ERF)</strong> mucho mayor que encoders CNN equivalentes.</p>
+<p>Xie et al. (2021) visualizan explícitamente este fenómeno: el decoder MLP de SegFormer exhibe atención tanto local como altamente no-local al mismo tiempo, al combinar las representaciones de los cuatro estadios del encoder. El mismo decoder acoplado a un backbone CNN (ResNet, ResNeXt) produce resultados significativamente inferiores, lo que confirma que el beneficio es propio de la combinación encoder Transformer + decoder MLP.</p>
+<p>Para la segmentación marciana, esto se traduce en dos ventajas concretas: mayor estabilidad durante el entrenamiento (menos hiperparámetros a ajustar en el decoder) y menor coste computacional en inferencia, relevante para sistemas de visión embarcados donde los recursos son limitados.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="relacion-con-las-caracteristicas-especificas-del-problema-ai4mars">
+<h2>3. Relación con las características específicas del problema AI4MARS<a class="headerlink" href="#relacion-con-las-caracteristicas-especificas-del-problema-ai4mars" title="Permalink to this heading">#</a></h2>
+<section id="deteccion-de-big-rock-clase-minoritaria-y-dificil">
+<h3>3.1 Detección de <code class="docutils literal notranslate"><span class="pre">big_rock</span></code>: clase minoritaria y difícil<a class="headerlink" href="#deteccion-de-big-rock-clase-minoritaria-y-dificil" title="Permalink to this heading">#</a></h3>
+<p>El análisis de pesos de clase del proyecto confirma que <code class="docutils literal notranslate"><span class="pre">big_rock</span></code> representa únicamente el <strong>0.89% de los píxeles</strong> en el conjunto de entrenamiento, con un peso compensatorio de 3.58× en la función de pérdida. Esta es la clase más difícil de todos los modelos evaluados, y también la que más diferencia a los modelos entre sí.</p>
+<p>La capacidad de SegFormer para capturar contexto global (estadio 4 del encoder, con atención altamente no-local) es especialmente útil para detectar objetos pequeños y dispersos. Modelos con campo receptivo limitado —como los basados en convoluciones atrous sin mecanismo de atención global— pueden perder el contexto necesario para distinguir una roca suelta del bedrock circundante. SegFormer-B2 alcanza un IoU de <code class="docutils literal notranslate"><span class="pre">big_rock</span></code> de <strong>0.459</strong> en el gold test, superando a DeepLabV3+ (0.408) y siendo el segundo mejor resultado general, solo por detrás de TerSeg (0.510).</p>
+</section>
+<section id="representacion-multiescala-y-texturas-marcianas">
+<h3>3.2 Representación multiescala y texturas marcianas<a class="headerlink" href="#representacion-multiescala-y-texturas-marcianas" title="Permalink to this heading">#</a></h3>
+<p>Las imágenes NavCam del rover Curiosity (convertidas a RGB desde escala de grises, con media≈0.23 en los tres canales) presentan bajo contraste inter-clase y alta ambigüedad en bordes. La representación multiescala del MiT permite al modelo operar simultáneamente sobre detalles texturales finos (que ayudan a distinguir arena de suelo) y sobre formas globales (que ayudan a delimitar regiones extensas de bedrock). Esta combinación es difícil de lograr con encoders de escala única.</p>
+</section>
+<section id="estabilidad-en-entrenamiento-con-datos-limitados">
+<h3>3.3 Estabilidad en entrenamiento con datos limitados<a class="headerlink" href="#estabilidad-en-entrenamiento-con-datos-limitados" title="Permalink to this heading">#</a></h3>
+<p>El proyecto entrena sobre un subconjunto de 6.000 imágenes MSL (4.200 train / 1.800 val) con 3 seeds independientes por modelo. SegFormer-B2 muestra la <strong>menor varianza entre todos los modelos evaluados</strong> (σ = 0.0063), lo que indica que su rendimiento es consistente y reproducible. Esta estabilidad es valiosa en escenarios de investigación donde el tiempo de cómputo limita el número de repeticiones posibles.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="justificacion-cientifica-y-computacional-integrada">
+<h2>4. Justificación científica y computacional integrada<a class="headerlink" href="#justificacion-cientifica-y-computacional-integrada" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Dimensión</p></th>
+<th class="head"><p>SegFormer-B2</p></th>
+<th class="head"><p>Relevancia para AI4MARS</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Parámetros</strong></p></td>
+<td><p>27.35M</p></td>
+<td><p>El modelo más compacto entre los de alto rendimiento</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Tiempo de entrenamiento</strong></p></td>
+<td><p>~71 min/run</p></td>
+<td><p>Razonable; DeepLabV3+ requiere ~154 min con peor resultado</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>mIoU (gold test)</strong></p></td>
+<td><p>0.8337 ± 0.0063</p></td>
+<td><p>2° en ranking; diferencia con 1° (0.8381) dentro del IC95</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Pixel accuracy</strong></p></td>
+<td><p>0.9814</p></td>
+<td><p>La más alta de todos los modelos (incluyendo TerSeg)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>IoU big_rock</strong></p></td>
+<td><p>0.459</p></td>
+<td><p>2° en ranking; supera a modelos CNN más pesados</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Varianza entre seeds</strong></p></td>
+<td><p>σ = 0.0063</p></td>
+<td><p>La más baja; indica robustez y reproducibilidad</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Robustez a resolución</strong></p></td>
+<td><p>Mix-FFN sin PE</p></td>
+<td><p>Ventaja estructural documentada en el paper original</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>La figura de eficiencia computacional del proyecto (precisión vs. complejidad y vs. costo de entrenamiento) muestra que SegFormer-B2 logra un mIoU comparable al mejor modelo (TerSeg) con aproximadamente la <strong>mitad de los parámetros</strong> (27.35M vs. 49.19M) y sin necesitar arquitectura dual-branch ni módulos de fusión personalizados. En el eje de costo computacional, SegFormer-B2 se posiciona en la zona de alto rendimiento con tiempo de entrenamiento moderado, mientras que DeepLabV3+ —con menor mIoU— requiere más del doble de tiempo.</p>
+<p>Desde la perspectiva de la escalabilidad, la familia SegFormer cubre un rango amplio (B0 a B5), lo que permite ajustar el modelo al hardware disponible sin cambiar la arquitectura base. SegFormer-B5 alcanza 84.0% mIoU en Cityscapes con menos parámetros que SETR, lo que evidencia su potencial de escalar si se dispone de mayor capacidad de cómputo.</p>
+</section>
+<hr class="docutils" />
+<section id="comparacion-breve-con-los-benchmarks-del-proyecto">
+<h2>5. Comparación breve con los benchmarks del proyecto<a class="headerlink" href="#comparacion-breve-con-los-benchmarks-del-proyecto" title="Permalink to this heading">#</a></h2>
+<p>La siguiente tabla resume los resultados del gold test (322 imágenes MSL, min3-100agree):</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Modelo</p></th>
+<th class="head"><p>mIoU (mean ± std)</p></th>
+<th class="head"><p>IoU soil</p></th>
+<th class="head"><p>IoU bedrock</p></th>
+<th class="head"><p>IoU sand</p></th>
+<th class="head"><p>IoU big_rock</p></th>
+<th class="head"><p>Params (M)</p></th>
+<th class="head"><p>Train (min)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>TerSeg</strong></p></td>
+<td><p><strong>0.8381 ± 0.0297</strong></p></td>
+<td><p>0.981</p></td>
+<td><p>0.919</p></td>
+<td><p>0.943</p></td>
+<td><p><strong>0.510</strong></p></td>
+<td><p>49.19</p></td>
+<td><p>~50</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>SegFormer-B2</strong></p></td>
+<td><p><strong>0.8337 ± 0.0063</strong></p></td>
+<td><p>0.978</p></td>
+<td><p><strong>0.940</strong></p></td>
+<td><p><strong>0.958</strong></p></td>
+<td><p>0.459</p></td>
+<td><p><strong>27.35</strong></p></td>
+<td><p>~71</p></td>
+</tr>
+<tr class="row-even"><td><p>DeepLabV3+</p></td>
+<td><p>0.8183 ± 0.0198</p></td>
+<td><p>0.975</p></td>
+<td><p>0.939</p></td>
+<td><p>0.952</p></td>
+<td><p>0.408</p></td>
+<td><p>42.00</p></td>
+<td><p>~154</p></td>
+</tr>
+<tr class="row-odd"><td><p>DepthFormer-RGB</p></td>
+<td><p>0.7219 ± 0.0290</p></td>
+<td><p>0.941</p></td>
+<td><p>0.896</p></td>
+<td><p>0.898</p></td>
+<td><p>0.154</p></td>
+<td><p>42.02</p></td>
+<td><p>~2*</p></td>
+</tr>
+<tr class="row-even"><td><p>MarsSeg</p></td>
+<td><p>0.7054 ± 0.0318</p></td>
+<td><p>0.914</p></td>
+<td><p>0.871</p></td>
+<td><p>0.863</p></td>
+<td><p>0.173</p></td>
+<td><p>34.87</p></td>
+<td><p>~4*</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>*DepthFormer y MarsSeg muestran tiempos muy bajos; inferencia: posiblemente entrenados con <code class="docutils literal notranslate"><span class="pre">FAST_SUBSET=True</span></code> o con menos epochs, lo que podría explicar también sus mIoU más bajos. No se afirma esto como causa definitiva.</p>
+<p><strong>Observaciones relevantes:</strong></p>
+<ul class="simple">
+<li><p>La diferencia en mIoU entre TerSeg y SegFormer-B2 es de 0.0044, valor que cae dentro del IC95 de ambos modelos (±0.0336 y ±0.0071 respectivamente). Estadísticamente, no puede afirmarse que TerSeg sea superior con certeza.</p></li>
+<li><p>SegFormer-B2 supera a TerSeg en bedrock (0.940 vs. 0.919) y sand (0.958 vs. 0.943), y tiene la mayor pixel accuracy (0.9814 vs. 0.9775).</p></li>
+<li><p>TerSeg supera a SegFormer-B2 en <code class="docutils literal notranslate"><span class="pre">big_rock</span></code> (0.510 vs. 0.459), lo que se explica por su arquitectura dual-branch CNN+Transformer, diseñada específicamente para capturar tanto detalles locales como contexto global de forma independiente y luego fusionarlos.</p></li>
+<li><p>SegFormer-B2 logra resultados comparables a TerSeg con 22M menos de parámetros, sin arquitectura especializada para el dominio marciano.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="conclusion-para-defensa-oral">
+<h2>6. Conclusión para defensa oral<a class="headerlink" href="#conclusion-para-defensa-oral" title="Permalink to this heading">#</a></h2>
+<p>SegFormer-B2 se justifica como modelo original de este proyecto por tres razones complementarias. Primero, no existen trabajos publicados —en los 50 artículos revisados de Web of Science— que apliquen SegFormer al dominio AI4MARS o a la segmentación de terreno marciano, lo que otorga novedad en la aplicación. Segundo, sus características arquitectónicas —encoder jerárquico multiescala, ausencia de codificación posicional fija, decoder MLP ligero— responden de forma directa a los retos específicos de este problema: imágenes de bajo contraste, clases desbalanceadas, necesidad de capturar objetos a múltiples escalas y robustez ante variaciones de resolución. Tercero, los resultados empíricos confirman que es el segundo modelo en mIoU global (0.8337, estadísticamente indistinguible del primero en IC95), el mejor en dos de las cuatro clases, el más estable entre seeds, y el más eficiente en términos de parámetros entre los modelos de alto rendimiento. Esta combinación de fundamento teórico, evidencia empírica y ausencia de aplicación previa en el dominio hace a SegFormer-B2 defendible como la contribución técnica central del proyecto.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="04_marco_teorico.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">04 — Revisión del Estado del Arte</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="05a_model_deeplabv3plus.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">05a — DeepLabV3+ (ResNet-50)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sentido-de-la-originalidad-en-este-proyecto">1. Sentido de la “originalidad” en este proyecto</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#justificacion-tecnica-de-segformer-para-la-segmentacion-de-terreno-marciano">2. Justificación técnica de SegFormer para la segmentación de terreno marciano</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-jerarquico-multiescala-mix-transformer-mit">2.1 Encoder jerárquico multiescala (Mix Transformer — MiT)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ausencia-de-codificacion-posicional-fija">2.2 Ausencia de codificación posicional fija</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder-mlp-ligero-y-campo-receptivo-efectivo-amplio">2.3 Decoder MLP ligero y campo receptivo efectivo amplio</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relacion-con-las-caracteristicas-especificas-del-problema-ai4mars">3. Relación con las características específicas del problema AI4MARS</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deteccion-de-big-rock-clase-minoritaria-y-dificil">3.1 Detección de <code class="docutils literal notranslate"><span class="pre">big_rock</span></code>: clase minoritaria y difícil</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representacion-multiescala-y-texturas-marcianas">3.2 Representación multiescala y texturas marcianas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estabilidad-en-entrenamiento-con-datos-limitados">3.3 Estabilidad en entrenamiento con datos limitados</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#justificacion-cientifica-y-computacional-integrada">4. Justificación científica y computacional integrada</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-breve-con-los-benchmarks-del-proyecto">5. Comparación breve con los benchmarks del proyecto</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion-para-defensa-oral">6. Conclusión para defensa oral</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Entregable 3 - Deep Learning
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

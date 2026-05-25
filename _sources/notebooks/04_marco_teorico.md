@@ -10,9 +10,9 @@ Criterios de **inclusión**: uso explícito de Deep Learning (CNN, Transformers)
 
 ---
 
-## 4.2 Identificación del Top de Modelos
+## 4.2 Identificación de la Propuesta Original y los Benchmarks
 
-Se identificaron 5 modelos relevantes con publicación académica verificada (conferencia, journal o preprint arXiv), priorizados por rendimiento en AI4MARS o datasets marcianos equivalentes, recencia (2021–2025) y cobertura representativa del espectro de arquitecturas CNN–Transformer–Híbrido.
+Se identificó una propuesta original del proyecto (**SegFormer-B2 adaptado a AI4MARS**) y cinco modelos benchmark relevantes con publicación académica verificada o arquitectura reciente reproducible. La selección prioriza rendimiento reportado en AI4MARS o datasets marcianos equivalentes, recencia (2021–2025) y cobertura representativa del espectro de arquitecturas CNN–Transformer–Híbrido.
 
 1. **DeepLabV3+ (Mohammad et al., 2024)**: CNN encoder-decoder con atrous convolutions y augmentación GAN (SemanticStyleGAN). Evaluado en AI4MARS: mIoU 87–88%, Acc 99%. Mejor modelo en AI4MARS estándar; el GAN augmentation aporta +2% en clases raras.
 
@@ -22,9 +22,9 @@ Se identificaron 5 modelos relevantes con publicación académica verificada (co
 
 4. **DepthFormer (Ma et al., 2025)**: Swin Transformer con entrada 4-banda (RGB + profundidad estéreo) y Pyramid Pooling Module. Evaluado en DepthMars (dataset propio, rover Zhurong): mIoU 75.99%, aAcc 98.28%. Primera integración de profundidad para segmentación marciana.
 
-5. **SegFormer (Xie et al., 2021)**: Transformer encoder jerárquico (MiT) + decoder MLP lightweight. Arquitectura de referencia en segmentación semántica eficiente; adaptada al dominio marciano con evaluación en AI4MARS reportando mIoU 83.55%. Su inclusión se justifica por su eficiencia computacional (25M parámetros, ~62G FLOPs) y por constituir la línea base Transformer más sólida del campo.
+5. **IC-TransUNet (Zhu et al., 2025)**: arquitectura CNN–Transformer dual-branch basada en InceptionNeXt y CSWin Transformer, adaptada en este proyecto como benchmark adicional para evaluar si una fusion local-global mas compleja supera a la propuesta SegFormer en AI4MARS.
 
-Estos modelos cubren el espectro completo de tendencias arquitectónicas relevantes: CNN especializado (DeepLabV3+, MarsSeg), Transformer puro (SegFormer, DepthFormer) e híbrido CNN+Transformer (TerSeg), con brechas identificadas en clases minoritarias (Big Rock ~2%, cráteres <1%) y en inferencia en tiempo real en hardware embarcado.
+La propuesta **SegFormer-B2** cubre el caso Transformer jerárquico eficiente. Los benchmarks cubren CNN especializado (DeepLabV3+, MarsSeg), Transformer con encoder Swin (DepthFormer), modelos híbridos CNN+Transformer (TerSeg) y una variante dual-branch reciente (IC-TransUNet). Esta cobertura permite evaluar si la mayor complejidad arquitectónica se traduce realmente en mejores resultados bajo el mismo protocolo AI4MARS.
 
 ---
 
@@ -206,13 +206,13 @@ El uso de WCE mejora mIoU de 71.31 a **75.99** (sin WCE → con WCE), con mejora
 
 ---
 
-### 4.3.5 SegFormer para Segmentación de Terreno Marciano
+### 4.3.5 SegFormer-B2 como Modelo Original del Proyecto
 
 **Referencia de la arquitectura:**
 > Xie, E., Wang, W., Yu, Z., Anandkumar, A., Alvarez, J. M., & Luo, P. (2021). *SegFormer: Simple and Efficient Design for Semantic Segmentation with Transformers*. Advances in Neural Information Processing Systems (NeurIPS), 34, 12077–12090.
 
-**Justificación de inclusión en el benchmark marciano:**
-SegFormer fue originalmente propuesto para segmentación semántica general. Su aplicabilidad al dominio marciano está evidenciada por su adaptación y evaluación en AI4MARS (Swan et al., 2021), con resultados reportados por Mohammad et al. (2024) y Fan et al. (2025) en sus respectivas tablas comparativas. Estos trabajos peer-reviewed confirman que SegFormer-B2 es una línea base Transformer sólida y reproducible para el problema de segmentación de terreno marciano, con métricas de mIoU 83.55% y Acc 90.86% en el gold set M3 de AI4MARS.
+**Justificación como propuesta original:**
+SegFormer fue originalmente propuesto para segmentación semántica general. En este proyecto se usa como propuesta original aplicada al dominio AI4MARS: una arquitectura Transformer jerárquica, eficiente y no especializada originalmente en Marte, evaluada bajo un protocolo común con gold test fijo y múltiples seeds. Su papel no es ser un benchmark más, sino funcionar como el modelo central que se contrasta contra CNNs, Transformers Swin e híbridos CNN+Transformer.
 
 **Tipo de arquitectura:** Transformer encoder jerárquico (Mix Transformer, MiT) + decoder MLP lightweight (All-MLP Decoder).
 
@@ -254,6 +254,26 @@ SegFormer combina un encoder Transformer jerárquico con un decoder MLP ultra-li
 
 ---
 
+### 4.3.6 IC-TransUNet como Benchmark CNN-Transformer Adicional
+
+**Referencia de la arquitectura:**
+> Zhu et al. (2025). *IC-TransUNet: CNN-transformer dual branch collaborative model for semantic segmentation of high-resolution remote sensing images*.
+
+**Tipo de arquitectura:** modelo dual-branch CNN + Transformer, con rama convolucional InceptionNeXt, rama Transformer tipo CSWin, modulos de fusion colaborativa y cabeza MLP de segmentacion.
+
+**Justificacion de inclusion como benchmark:**
+IC-TransUNet se incorpora como benchmark adicional para probar una hipotesis concreta: si una arquitectura dual-branch mas compleja, diseñada para combinar textura local y contexto global, supera a SegFormer-B2 en imagenes marcianas de baja textura y clases desbalanceadas. Su inclusion es util porque representa una familia reciente de modelos hibridos de alta capacidad, distinta de TerSeg y de los Transformers puros.
+
+**Adaptacion AI4MARS en este proyecto:**
+El notebook `05b_model_transunet.ipynb` adapta la arquitectura a entrada RGB 256x256, cuatro clases validas (`soil`, `bedrock`, `sand`, `big_rock`) y `ignore_index=255`. El entrenamiento usa el split fijo MSL 6k, normalizacion calculada solo con train y evaluacion final sobre el gold test MSL min3. Para compensar el desbalance, combina CE, Dice y Focal Loss con pesos por clase y muestreo ponderado hacia imagenes con `big_rock`.
+
+**Resultado esperado dentro del benchmark:**
+IC-TransUNet se evalua con las mismas seeds `[42, 123, 7]` y checkpoints de Fase 1. En la narrativa del proyecto funciona como contraste: si no supera a SegFormer-B2, refuerza que una arquitectura mas compleja no necesariamente mejora el balance precision-estabilidad-costo en AI4MARS.
+
+**Limitaciones:** La implementacion local depende de PyTorch y checkpoints generados en Colab Pro. El recalculo de metricas desde `.pth` debe ejecutarse en Colab o en un entorno local con `torch`; el Jupyter Book se construye con ejecucion desactivada y conserva los outputs/resultados agregados.
+
+---
+
 ## 4.4 Comparación Crítica
 
 ### 4.4.1 Tabla Comparativa de Desempeño
@@ -266,7 +286,7 @@ La comparación directa está parcialmente limitada por el uso de distintos data
 |---|---|---|---|---|---|
 | **DeepLabV3+ + GAN** | **88%** | **99%** | 61% | ~45M (R101) | 2024 |
 | DeepLabV3+ (sin GAN) | 87% | 99% | 59% | ~25–45M | 2024 |
-| SegFormer-B2 | 83.55% | 90.86% | — | ~25M | 2021/2024 |
+| SegFormer-B2 (propuesta del proyecto) | 83.55% | 90.86% | — | ~25M | 2021/2024 |
 | MarsSeg | 80.89%* | — | **80.89%*** | N/R | 2024 |
 | U-Net ResNet101 | 84% | 99% | 44% | ~45M | 2024 |
 
@@ -300,11 +320,15 @@ La comparación directa está parcialmente limitada por el uso de distintos data
 | DeepLabV3 | 71.94 | 95.17 |
 | SegFormer | 66.99 | 97.91 |
 
+**Sobre el benchmark unificado de este proyecto (AI4MARS MSL gold test):**
+
+La comparacion final del proyecto se reporta en el notebook `06_benchmark_estadistico.ipynb`. Alli SegFormer-B2 se analiza como propuesta original y se contrasta contra DeepLabV3+, MarsSeg, TerSeg, DepthFormer-RGB e IC-TransUNet bajo el mismo split, las mismas seeds y las mismas metricas.
+
 ### 4.4.2 Tendencias Identificadas
 
 **CNN clásicos vs. Transformers vs. Híbridos:**
 - Los CNNs especializados (DeepLabV3+) dominan en **AI4MARS estándar** gracias a sus atrous convolutions y data augmentation con GAN, alcanzando hasta 88% mIoU.
-- Los Transformers puros (SegFormer) ofrecen buen rendimiento en AI4MARS pero degradan significativamente en datasets multi-clase más complejos (50.23% en S⁵mars de 9 clases), sugiriendo que la atención global sin inductive bias local sufre con texturas sutiles y clases poco representadas.
+- Los Transformers jerarquicos eficientes (SegFormer-B2) ofrecen una frontera atractiva de rendimiento, estabilidad y costo en AI4MARS; su degradacion en datasets multi-clase mas complejos reportados por la literatura (50.23% en S⁵mars de 9 clases) delimita el tipo de escenario donde los hibridos pueden ser preferibles.
 - Los modelos **híbridos CNN+Transformer** (TerSeg, DepthFormer) representan el estado del arte más robusto: TerSeg logra el mejor balance eficiencia/rendimiento (22M params, 71.96% mIoU en S⁵mars), mientras DepthFormer introduce la modalidad de profundidad como ventaja diferencial en terrenos con relieve.
 - **MarsSeg** destaca como el mejor modelo para la clase crítica Big Rock en AI4MARS, gracias a su Focal-Dice loss y arquitectura orientada a objetos pequeños.
 
@@ -313,8 +337,8 @@ La tendencia clara de 2024–2025 es la arquitectura dual-branch donde Branch_C 
 
 ### 4.4.3 Robustez y Escalabilidad
 
-- **Robustez a desbalance de clases:** MarsSeg (Focal-Dice loss) > DeepLabV3+ (CE + GAN augmentation) > DepthFormer (WCE) > SegFormer (CE estándar). La clase Big Rock (~2%) y los Craters (<1%) son las más sensibles a la estrategia de pérdida.
-- **Escalabilidad computacional:** TerSeg (22M, 26G FLOPs) > SegFormer-B2 (25M, 62G FLOPs) > MarsSeg (N/R) > DeepLabV3+-R50 (~25M, ~177G FLOPs) > DeepLabV3+-R101 (~45M) > DepthFormer (~28M, resolución 2048×2048 → alto coste).
+- **Robustez a desbalance de clases:** MarsSeg (Focal-Dice loss) > DeepLabV3+ (CE + GAN augmentation) > DepthFormer (WCE) > SegFormer (CE estándar). La clase Big Rock (~2%) y los Craters (<1%) son las más sensibles a la estrategia de pérdida; IC-TransUNet se prueba en este proyecto con CE + Dice + Focal para contrastar esta limitacion.
+- **Escalabilidad computacional:** TerSeg (22M, 26G FLOPs) > SegFormer-B2 (25M, 62G FLOPs) > MarsSeg (N/R) > DeepLabV3+-R50 (~25M, ~177G FLOPs) > DeepLabV3+-R101 (~45M) > DepthFormer (~28M, resolución 2048×2048 → alto coste). IC-TransUNet añade una referencia dual-branch cuyo costo real se mide en el benchmark del proyecto.
 - **Viabilidad en hardware embarcado de rovers:** TerSeg es el más viable (26G FLOPs, 22M params); DepthFormer requiere cómputo estéreo previo para generar el canal de profundidad, limitando su aplicabilidad en tiempo real.
 
 ### 4.4.4 Gaps Identificados en la Literatura
@@ -328,4 +352,4 @@ La tendencia clara de 2024–2025 es la arquitectura dual-branch donde Branch_C 
 
 ---
 
-*Selección del Top 5 benchmark: Se seleccionaron DeepLabV3+ (Mohammad et al., 2024), MarsSeg (Li et al., 2024), TerSeg (Fan et al., 2025), DepthFormer (Ma et al., 2025) y SegFormer (Xie et al., 2021) por su respaldo en literatura peer-reviewed, disponibilidad de implementaciones reproducibles, y cobertura representativa del espectro CNN–Transformer–Híbrido relevante para la segmentación de terreno marciano sobre AI4MARS.*
+*Selección final: SegFormer-B2 se adopta como propuesta original del proyecto por su balance Transformer jerarquico, estabilidad y eficiencia. Como benchmarks se seleccionan DeepLabV3+ (Mohammad et al., 2024), MarsSeg (Li et al., 2024), TerSeg (Fan et al., 2025), DepthFormer (Ma et al., 2025) e IC-TransUNet (Zhu et al., 2025/adaptacion propia), cubriendo el espectro CNN–Transformer–Híbrido relevante para la segmentación de terreno marciano sobre AI4MARS.*
